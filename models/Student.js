@@ -1,0 +1,36 @@
+const mongoose = require('mongoose');
+
+const StudentSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true, index: true },
+  name: { type: String, required: true },
+  regNo: { type: String, required: true, unique: true },
+  branch: { type: String, default: 'CSE (AI & ML)' },
+  section: { type: String, default: 'Section A' },
+  year: { type: String, default: '3rd Year' },
+  cgpa: { type: Number, default: 8.92 },
+  attendance: {
+    overallPercentage: { type: Number, default: 88.5 },
+    totalClasses: { type: Number, default: 320 },
+    classesAttended: { type: Number, default: 283 },
+    classesAbsent: { type: Number, default: 37 }
+  },
+  marks: [{
+    subject: String,
+    score: Number,
+    maxScore: Number,
+    grade: String
+  }],
+  feeDetails: {
+    totalTuitionFee: { type: Number, default: 115000 },
+    scholarshipAmount: { type: Number, default: 35000 },
+    feePaid: { type: Number, default: 80000 },
+    pendingDues: { type: Number, default: 0 }
+  },
+  timetable: [{
+    time: String,
+    subject: String,
+    venue: String
+  }]
+});
+
+module.exports = mongoose.model('Student', StudentSchema);
