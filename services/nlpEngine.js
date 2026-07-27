@@ -3,25 +3,35 @@
  */
 
 const AU_KB = {
-  overview: `**Aditya University Overview:**\nAditya University is a premier private university located at Aditya Nagar, ADB Road, Surampalem, Kakinada District, Andhra Pradesh – 533437.\n\n• **Accreditations:** NAAC Accredited | NBA Tier-1 Accredited (CE, EEE, ME, ECE, CSE & IT)\n• **NIRF Rank Band:** 151–200 (University Category)\n• **Official Website:** https://www.adityauniversity.in/`,
+  overview: `**Aditya University Overview:**\nAditya University is a premier multidisciplinary institution located at Aditya Nagar, ADB Road, Surampalem, Kakinada District, Andhra Pradesh – 533437.\n\n• **Accreditations:** NAAC A++ Accredited | NBA Tier-1 Accredited (CE, EEE, ME, ECE, CSE & IT)\n• **NIRF Rank Band:** 151–200 (University Category)\n• **Establishment:** Founded in 1984 under Aditya Academy; Established under the AP Private Universities Act, 2016.\n• **Legacy:** 80+ Institutions, 8,000+ Staff, and 80,000+ Students across Andhra Pradesh.\n• **Official Website:** https://www.adityauniversity.in/`,
 
-  academics: `**Academic Information & Resources at Aditya University:**\n\n📚 **Key Portals & Links:**\n• **Academic Calendar:** https://www.adityauniversity.in/academics/academic-calendar\n• **Regulations & Curriculum:** https://www.adityauniversity.in/academics/regulations-and-curriculum\n• **Aditya Learning Academy (ALA):** https://www.adityauniversity.in/academics/aditya-learning-academy-ala\n• **Knimbus Digital Library:** https://adityauniversity.knimbus.com/\n• **Innovative Teaching Practices:** https://www.adityauniversity.in/academics/innovative-teaching-practices\n• **Code of Conduct:** https://www.adityauniversity.in/academics/code-of-conduct\n• **Aditya Educast:** https://www.adityauniversity.in/academics/aditya-educast`,
+  leadership: `**Aditya University Leadership & Administration:**\n\n🏛️ **Key Officers:**\n• **Chancellor:** Dr. N. Sesha Reddy\n• **Pro-Chancellors:** Dr. N. Satish Reddy & Sri. N. Deepak Reddy\n• **Dy. Pro-Chancellor:** Dr. M. Sreenivasa Reddy\n• **Vice Chancellor:** Dr. M.B. Srinivas\n• **Pro Vice-Chancellors:** Dr. A. Ramesh (Engg. & Sciences), Dr. S. Rama Sree (Academics), Dr. Thangjam Ravichandra (S & P)\n• **Registrar:** Dr. G. Suresh\n• **Controller of Examinations:** Dr. J. Pavan\n\n🎓 **Deans:**\n• **Research & Consultancy:** Dr. A. Saravanan\n• **International Relations:** Dr. P. S. Ranjit\n• **Admissions:** Dr. A. Ramakrishna\n• **Career Development:** Dr. G. Sanjiv Rao\n• **Student Welfare:** Dr. Y. Krishna Srinivasa Subba Rao\n• **School of Engineering:** Dr. G. Sridevi\n• **School of Pharmacy:** Dr. D. Sathis Kumar\n• **IQAC:** Dr. G. Ramakrishna`,
 
-  programs: `**All Degree Programs Offered at Aditya University:**\n\n🎓 **School of Engineering (UG – B.Tech & BCA):**\n• B.Tech. - Computer Science & Engineering (CSE)\n• B.Tech. - CSE (Data Science)\n• B.Tech. - CSE (AIML in association with Google Cloud / Microsoft / SAP)\n• B.Tech. - Artificial Intelligence & Machine Learning (AI & ML)\n• B.Tech. - Electronics & Communication Engineering (ECE)\n• B.Tech. - Electrical & Electronics Engineering (EEE)\n• B.Tech. - Civil Engineering • B.Tech. - Mechanical Engineering\n• B.Tech. - Mining Engineering • B.Tech. - Agricultural Engineering\n• B.Tech. - Petroleum Technology • BCA (Bachelor of Computer Applications)\n\n🎓 **School of Engineering (PG – M.Tech & MCA):**\nM.Tech AI & Data Science • M.Tech CSE • M.Tech Power Electronics • M.Tech VLSI Design • M.Tech Energy Science • M.Tech Structural Engg • MCA\n\n🎓 **School of Business (BBA & MBA):**\nBBA & MBA in Business Analytics (KPMG), FinTech (EY), Global Finance (PWC), Health Care Management, Deloitte MBA\n\n🎓 **School of Sciences & Pharmacy:**\nB.Sc / M.Sc Cyber Security & Forensic Science • B.Pharm • Pharm.D • M.Pharm • Ph.D in all disciplines\n\n🔗 All Programs: https://www.adityauniversity.in/programs`,
+  rankings: `**Rankings & Recognitions of Aditya University:**\n\n🏆 **National Rankings:**\n• **NIRF:** 151–200 Rank Band in University Category (50th Rank in India)\n• **NBA Accreditation:** Tier-1 Accredited for CE, EEE, ME, ECE, CSE, IT\n• **NAAC:** NAAC A++ Accreditation\n• **Times Higher Education:** 14th Among Private Institutions across India\n• **Academic Insights:** 27th Rank in Top 50 Engineering Colleges\n• **SiliconIndia:** 4th Rank in South India\n• **The Week - Hansa Research:** 36th Rank (Technical Universities in India)\n• **QS Gauge Rating:** Diamond Rating\n• **SWAYAM-NPTEL:** 'AA' Rating Local Chapter\n• **SIRO:** Recognized as Scientific and Industrial Research Organisation`,
+
+  history: `**History & Legacy of Aditya University:**\n\n• **Founding:** Aditya Academy was established in 1984 by Dr. N. Sesha Reddy as a non-profit educational society.\n• **Engineering College (2001):** Aditya Engineering College (AEC) was founded in 2001.\n• **University Status:** Evolved into Aditya University under the Andhra Pradesh Private Universities Act, 2016.\n• **Scale:** Grows with 80+ Institutions, 8,000+ Staff, and 80,000+ Students.`,
+
+  vision: `**Vision, Mission & Core Values:**\n\n🌟 **Vision:**\nTo be a globally recognized university through excellence in Education, Innovation, and Sustainable growth.\n\n🎯 **Mission:**\nDeliver collaborative education to prepare students for global challenges through Transformative learning, a Vibrant research ecosystem, and a Sustainable community.\n\n💎 **Core Values:**\n1. Excellence\n2. Inclusivity and Diversity\n3. Integrity and Ethical Conduct\n4. Global Outlook`,
+
+  happenings: `**Recent Events & Happenings at Aditya University:**\n\n🎉 **Latest Events:**\n• **GenAI Business Conclave 2026:** Empowering Students with Future Skills (25-Jul-2026)\n• **Thunder Thursday:** Campus Cultural Evening (23-Jul-2026)\n• **Centific Technology Orientation:** Organized by Dept. of Placements (21-Jul-2026)\n• **Vivo India - Frame Your Vision:** Film & Photography Club Workshop (21-Jul-2026)\n• **AI-Driven VLSI & Semiconductor Lecture:** ECE Dept. Guest Lecture (20-Jul-2026)\n• **Blood Donation Camp:** Associated with KKD GGH by School of Pharmacy & NSS (15-Jul-2026)`,
+
+  placements: `**Placements & Career Development (2025–2026 Batch):**\n\n🏆 **Highest Alumni Offers:**\n• M. Akhilesh – **₹106.00 LPA**\n• G. Rajesh – **₹106.00 LPA**\n\n🏆 **Top Batch Placements (2025-2026):**\n• D. Veera Venkata Durga Bhan Raju – **₹39.60 LPA**\n• Y. Ramya – **₹31.62 LPA** | N. Sai Raghavendra Nithin – **₹31.62 LPA**\n• P. Srinivas – **₹29.87 LPA** | S. Roshin Roja – **₹29.87 LPA**\n• A. Pujitha – **₹27.81 LPA** | Charlton Shallock – **₹27.79 LPA** | G. Dhruvith – **₹26.31 LPA**\n• K. Sumanth – **₹18.10 LPA**\n\n🏢 **Top Recruiters:** Capgemini, Accenture, Autodesk, Hitachi, L&T, Walmart, Toyota Connect, Control's, Darwin Labs, Increff, Daiseki, Sansyu.\n\n🔗 Details: https://www.adityauniversity.in/placements/overview`,
+
+  academics: `**Academic Information & Resources:**\n\n📚 **Key Portals & Links:**\n• **Academic Calendar:** https://www.adityauniversity.in/academics/academic-calendar\n• **Regulations & Curriculum:** https://www.adityauniversity.in/academics/regulations-and-curriculum\n• **Aditya Learning Academy (ALA):** https://www.adityauniversity.in/academics/aditya-learning-academy-ala\n• **Knimbus Digital Library:** https://adityauniversity.knimbus.com/\n• **Aditya Educast:** https://www.adityauniversity.in/academics/aditya-educast`,
+
+  programs: `**Degree Programs Offered at Aditya University:**\n\n🎓 **School of Engineering (B.Tech & BCA):**\n• AI & Machine Learning | Data Science | CSE | ECE | EEE | Civil | Mechanical | Mining | Agricultural | Petroleum | BCA\n\n🎓 **School of Engineering (M.Tech & MCA):**\n• Structural Engg | Power Electronics | VLSI Design | Energy Science | Real Estate Valuation | AI & Data Science | MCA\n\n🎓 **School of Business (BBA & MBA):**\n• BBA & MBA in Business Analytics (KPMG), FinTech (EY), Global Finance (PWC), Health Care Management, Deloitte MBA\n\n🎓 **School of Pharmacy & Sciences:**\n• B.Pharm | Pharm.D | M.Pharm | B.Sc & M.Sc Cyber Security & Forensic Science | Ph.D. in all disciplines`,
 
   schools: `**Schools at Aditya University:**\n1. **School of Engineering:** https://www.adityauniversity.in/schools/school-of-engineering\n2. **School of Business:** https://www.adityauniversity.in/schools/school-of-business\n3. **School of Sciences:** https://www.adityauniversity.in/schools/school-of-sciences\n4. **School of Pharmacy:** https://www.adityauniversity.in/schools/school-of-pharmacy`,
 
-  admissions: `**Admissions, Eligibility & Fee Structure:**\n\n📋 **Online Application Portal:** https://apply.adityauniversity.in/\n📋 **Admission Guidelines:** https://www.adityauniversity.in/admissions/admission-process\n📚 **Program Fees & Eligibility:** https://www.adityauniversity.in/admissions/programs-eligibility-fee-structure\n🎓 **Scholarships:** Merit-based (EAMCET / APICET / Merit Ranks) & Need-based concessions available at https://www.adityauniversity.in/admissions/scholarship\n🏠 **Hostel Fee Structure:** https://www.adityauniversity.in/admissions/hostel-fee\n📞 **Admissions Helpline:** +91 9989 776661 | info@adityauniversity.in`,
+  admissions: `**Admissions, Eligibility & Fees:**\n\n📋 **Online Application:** https://apply.adityauniversity.in/\n📚 **Program Fees & Eligibility:** https://www.adityauniversity.in/admissions/programs-eligibility-fee-structure\n🎓 **Scholarships:** Merit-based (EAMCET / APICET / Merit Ranks) & Need-based concessions at https://www.adityauniversity.in/admissions/scholarship\n🏠 **Hostel Fee:** https://www.adityauniversity.in/admissions/hostel-fee\n📞 **Helpline:** +91 9989 776661 | info@adityauniversity.in`,
 
-  placements: `**Placements Statistics (2025–2026 Batch):**\n\n🏆 **Highest Salary Package:** **₹39.60 LPA** (D. Veera Venkata Durga Bhan Raju)\n🏆 **Top Packages:** **₹27.79 LPA** (Charlton Shallock), **₹26.31 LPA** (G. Dhruvith)\n📊 **Average Package:** ₹6.5 LPA across CSE/IT/ECE branches.\n🏢 **Top Recruiters:** Capgemini, Accenture, Autodesk, Hitachi, L&T, Walmart, Toyota Connect, Darwin Labs, Increff, Daiseki, Sansyu, AdTech, IHARA, ZopSmart.\n\n🔗 More Details: https://www.adityauniversity.in/placements/overview`,
+  exams: `**Examinations & Results:**\n• Examination Overview: https://www.adityauniversity.in/examinations/overview\n• Exam Notifications: https://www.adityauniversity.in/examinations/examination-notification\n• Model Question Papers: https://www.adityauniversity.in/examinations/model-question-papers\n• Exam Results Portal: https://www.adityauniversity.in/examinations/results`,
 
-  exams: `**Examinations, Results & Question Papers:**\n• Examination Overview: https://www.adityauniversity.in/examinations/overview\n• Notifications & Schedules: https://www.adityauniversity.in/examinations/examination-notification\n• Model & Old Papers: https://www.adityauniversity.in/examinations/model-question-papers\n• Exam Results Portal: https://www.adityauniversity.in/examinations/results`,
+  hostel: `Aditya University offers Single, Double, Triple, and Quadruple hostel rooms for students.\nAmenities: AC, Electricity, High-speed Wi-Fi, TV & Refrigerator.\n🏠 Hostel Fee Details: https://www.adityauniversity.in/admissions/hostel-fee`,
 
-  hostel: `Aditya University offers various types of hostel rooms for students.\nHostel room options:\n* Single Room\n* Double Room\n* Triple Room\n* Quadruple Room\n\nState-of-the-art amenities are available in every room, including:\n* Electricity supply\n* Air conditioning\n* Wi-Fi internet\n* TV and Refrigerator (in select rooms)\n\nFor official information, you may contact the University Hostel Office.\n🏠 Hostel Fee Details: https://www.adityauniversity.in/admissions/hostel-fee`,
+  library: `**Central Library & Knimbus:**\n• Equipped with 100,000+ volumes, e-journals, and research papers.\n• Knimbus Portal: https://adityauniversity.knimbus.com/`,
 
-  library: `**Knowledge Resource Center (Library):**\n• Central Library equipped with over 100,000 volumes, e-journals, and research papers.\n• **Knimbus Digital Portal:** https://adityauniversity.knimbus.com/\n• **Working Hours:** Mon–Sat, 8:00 AM – 8:00 PM`,
-
-  contact: `**Contact Aditya University:**\n📍 Address: Aditya Nagar, ADB Road, Surampalem, Kakinada District, Andhra Pradesh – 533437\n📞 Phone: +91 9989 776661\n📧 Email: info@adityauniversity.in\n🌐 Website: https://www.adityauniversity.in`
+  contact: `**Contact Aditya University:**\n📍 Address: Aditya Nagar, ADB Road, Surampalem, Kakinada District, AP – 533437\n📞 Phone: +91 9989 776661\n📧 Email: info@adityauniversity.in\n🌐 Website: https://www.adityauniversity.in`
 };
 
 // Full Text Dynamic Neural Translation Engine
@@ -99,45 +109,61 @@ function getKBAnswer(question) {
   if (!question) return null;
   const q = question.toLowerCase().trim();
 
-  // 1. Degree Programs & Courses (check first to avoid 'offered' matching placements)
+  // 1. Leadership & Key Officers (Chancellor, VC, Registrar, Deans)
+  if (/\b(chancellor|pro-chancellor|vice chancellor|vc|pro vice-chancellor|registrar|dean|deans|sesha reddy|satish reddy|deepak reddy|sreenivasa reddy|srinivas|ramesh|rama sree|ravichandra|g suresh|saravanan|ranjit|pavan|ramakrishna|ramu|kishore|sanjiv rao|sridevi|sathis kumar|vanathi|bagadi|chavan|srikanth|ayyappa swamy|who is the chancellor|who is the vc|who is the registrar|leadership|head|management)\b/.test(q))
+    return AU_KB.leadership;
+
+  // 2. Rankings & Recognitions
+  if (/\b(nirf|ranking|rankings|accreditation|accreditations|naac|nba|tier-1|tier 1|academic insights|siliconindia|the week|qs gauge|swayam|nptel|siro|rating|recognit)\b/.test(q))
+    return AU_KB.rankings;
+
+  // 3. History & Legacy
+  if (/\b(history|legacy|established|founded|foundation|sesha reddy|aditya academy|1984|2001|2016|how old|institutions|staff|count)\b/.test(q))
+    return AU_KB.history;
+
+  // 4. Vision, Mission & Core Values
+  if (/\b(vision|mission|value|values|core value|goal|objective|motto)\b/.test(q))
+    return AU_KB.vision;
+
+  // 5. Recent Happenings & Events
+  if (/\b(event|events|happening|happenings|genai|conclave|thunder thursday|vivo|centific|blood donation|workshop|guest lecture)\b/.test(q))
+    return AU_KB.happenings;
+
+  // 6. Degree Programs & Courses
   if (/\b(program|programs|course|courses|btech|mtech|bba|mba|bca|mca|phd|pharmacy|degree|branch|branches|specializ|b\.tech|m\.tech|engineering|business)\b/.test(q))
     return AU_KB.programs;
 
-  // 2. Hostel & Transport
+  // 7. Hostel & Transport
   if (/\b(hostel|mess|food|bus|transport|room|rooms|wifi|accommodation|single room|double room|triple room|quadruple room|stay|canteen)\b/.test(q))
     return AU_KB.hostel;
 
-  // 3. Placements & Salary Packages
-  if (/\b(placement|placements|recruit|recruiter|recruiters|package|lpa|salary|job|hire|hiring|drive|job offer|placement offer|placed|company|companies|highest package|average package)\b/.test(q))
+  // 8. Placements & Salary Packages
+  if (/\b(placement|placements|recruit|recruiter|recruiters|package|lpa|salary|job|hire|hiring|drive|job offer|placement offer|placed|company|companies|highest package|average package|akhilesh|rajesh|durga bhan raju)\b/.test(q))
     return AU_KB.placements;
 
-  // 4. Admissions, Application & Fees
+  // 9. Admissions, Application & Fees
   if (/\b(admission|admissions|apply|application|eligibility|fee structure|fee details|how to join|enroll|tuition|scholarship|cutoff|rank|cost|price)\b/.test(q))
     return AU_KB.admissions;
 
-  // 5. Schools & Faculties
+  // 10. Schools & Faculties
   if (/\b(school|schools|engineering school|business school|science school|pharmacy school)\b/.test(q))
     return AU_KB.schools;
 
-  // 6. Academics, Calendar & Syllabus
+  // 11. Academics, Calendar & Syllabus
   if (/\b(academic|academics|calendar|curriculum|regulation|regulations|syllabus|conduct|learning academy|educast)\b/.test(q))
     return AU_KB.academics;
 
-  // 7. Examinations & Results
+  // 12. Examinations & Results
   if (/\b(exam|exams|examination|examinations|result|results|question paper|notification|hall ticket|model paper|gpa|cgpa)\b/.test(q))
     return AU_KB.exams;
 
-  // 8. Library
+  // 13. Library
   if (/\b(library|book|books|knimbus|journal|reading room)\b/.test(q))
     return AU_KB.library;
 
-  // 9. Contact & Campus Location
+  // 14. Contact & Campus Location
   if (/\b(contact|address|phone|email|location|reach|office|website|about|overview|vision|mission|helpline|where is)\b/.test(q))
     return AU_KB.contact;
-
-  // 10. Rankings & Accreditations
-  if (/\b(nirf|ranking|rankings|accreditation|accreditations|naac|nba)\b/.test(q))
-    return AU_KB.overview;
 
   return null;
 }

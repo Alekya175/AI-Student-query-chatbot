@@ -1,0 +1,65 @@
+[
+  {
+    "email": "student@aditya.edu",
+    "name": "Aditya Student",
+    "regNo": "21A91A0501",
+    "branch": "CSE (AI & ML)",
+    "section": "Section A",
+    "year": "3rd Year",
+    "cgpa": 8.92,
+    "attendance": {
+      "overallPercentage": 88.5,
+      "totalClasses": 320,
+      "classesAttended": 283,
+      "classesAbsent": 37
+    },
+    "marks": [
+      { "subject": "AI & Machine Learning", "score": 46, "maxScore": 50, "grade": "A+" },
+      { "subject": "Web Technologies", "score": 48, "maxScore": 50, "grade": "O" },
+      { "subject": "Cloud Computing (Google)", "score": 44, "maxScore": 50, "grade": "A+" },
+      { "subject": "Database Management Systems", "score": 47, "maxScore": 50, "grade": "O" }
+    ],
+    "feeDetails": {
+      "totalTuitionFee": 115000,
+      "scholarshipAmount": 35000,
+      "feePaid": 80000,
+      "pendingDues": 0
+    },
+    "timetable": [
+      { "time": "09:00 AM – 10:00 AM", "subject": "AI & ML", "venue": "Lab 3" },
+      { "time": "10:00 AM – 11:00 AM", "subject": "Web Technologies", "venue": "LH-201" },
+      { "time": "11:15 AM – 01:00 PM", "subject": "Cloud Computing Workshop", "venue": "Auditorium" },
+      { "time": "02:00 PM – 04:00 PM", "subject": "Project Lab & Incubation", "venue": "AGBI Center" }
+    ]
+  },
+  {
+    "email": "john.doe@aditya.edu",
+    "name": "John Doe",
+    "regNo": "21A91A0502",
+    "branch": "CSE (Data Science)",
+    "section": "Section B",
+    "year": "3rd Year",
+    "cgpa": 9.15,
+    "attendance": {
+      "overallPercentage": 92.0,
+      "totalClasses": 320,
+      "classesAttended": 294,
+      "classesAbsent": 26
+    },
+    "marks": [
+      { "subject": "Data Mining", "score": 49, "maxScore": 50, "grade": "O" },
+      { "subject": "Machine Learning", "score": 47, "maxScore": 50, "grade": "O" },
+      { "subject": "Python Data Science", "score": 48, "maxScore": 50, "grade": "O" }
+    ],
+    "feeDetails": {
+      "totalTuitionFee": 115000,
+      "scholarshipAmount": 40000,
+      "feePaid": 75000,
+      "pendingDues": 0
+    },
+    "timetable": [
+      { "time": "09:00 AM – 10:00 AM", "subject": "Data Mining", "venue": "LH-102" },
+      { "time": "10:00 AM – 11:00 AM", "subject": "Machine Learning", "venue": "LH-102" }
+    ]
+  }
+]
