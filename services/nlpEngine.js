@@ -5,7 +5,7 @@
 const AU_KB = {
   overview: `**Aditya University Overview:**\nAditya University is a premier multidisciplinary institution located at Aditya Nagar, ADB Road, Surampalem, Kakinada District, Andhra Pradesh – 533437.\n\n• **Accreditations:** NAAC A++ Accredited | NBA Tier-1 Accredited (CE, EEE, ME, ECE, CSE & IT)\n• **NIRF Rank Band:** 151–200 (University Category)\n• **Establishment:** Founded in 1984 under Aditya Academy; Established under the AP Private Universities Act, 2016.\n• **Legacy:** 80+ Institutions, 8,000+ Staff, and 80,000+ Students across Andhra Pradesh.\n• **Official Website:** https://www.adityauniversity.in/`,
 
-  leadership: `**Aditya University Leadership & Administration:**\n\n🏛️ **Key Officers:**\n• **Chancellor:** Dr. N. Sesha Reddy\n• **Pro-Chancellors:** Dr. N. Satish Reddy & Sri. N. Deepak Reddy\n• **Dy. Pro-Chancellor:** Dr. M. Sreenivasa Reddy\n• **Vice Chancellor:** Dr. M.B. Srinivas\n• **Pro Vice-Chancellors:** Dr. A. Ramesh (Engg. & Sciences), Dr. S. Rama Sree (Academics), Dr. Thangjam Ravichandra (S & P)\n• **Registrar:** Dr. G. Suresh\n• **Controller of Examinations:** Dr. J. Pavan\n\n🎓 **Deans:**\n• **Research & Consultancy:** Dr. A. Saravanan\n• **International Relations:** Dr. P. S. Ranjit\n• **Admissions:** Dr. A. Ramakrishna\n• **Career Development:** Dr. G. Sanjiv Rao\n• **Student Welfare:** Dr. Y. Krishna Srinivasa Subba Rao\n• **School of Engineering:** Dr. G. Sridevi\n• **School of Pharmacy:** Dr. D. Sathis Kumar\n• **IQAC:** Dr. G. Ramakrishna`,
+  leadership: `**Aditya University Leadership & Faculty:**\n\n🏛️ **Key Officers:**\n• **Chancellor:** Dr. N. Sesha Reddy\n• **Pro-Chancellors:** Dr. N. Satish Reddy & Sri. N. Deepak Reddy\n• **Dy. Pro-Chancellor:** Dr. M. Sreenivasa Reddy\n• **Vice Chancellor:** Dr. M.B. Srinivas\n• **Pro Vice-Chancellors:** Dr. A. Ramesh (Engg. & Sciences), Dr. S. Rama Sree (Academics), Dr. Thangjam Ravichandra (S & P)\n• **Registrar:** Dr. G. Suresh | **Controller of Examinations:** Dr. J. Pavan\n\n👨‍🏫 **School Deans & Faculty Leadership:**\n• **School of Engineering:** Dr. G. Sridevi (Dean)\n• **School of Computing:** Dr. M. V Rajesh (Associate Dean)\n• **Freshman Engineering:** Dr. A. Vanathi (Associate Dean)\n• **School of Business:** Dr. Sowjanya Bagadi (Associate Dean)\n• **School of Pharmacy:** Dr. D. Sathis Kumar (Dean)\n• **School of Sciences:** Mr. V. Anil Chavan (Associate Dean)\n• **Research & Consultancy:** Dr. A. Saravanan (Dean)\n• **International Relations:** Dr. P. S. Ranjit (Dean)\n• **Career Development:** Dr. G. Sanjiv Rao (Dean)\n• **Student Welfare:** Dr. Y. Krishna Srinivasa Subba Rao (Dean)\n• **Admissions:** Dr. A. Ramakrishna (Dean)\n• **IQAC:** Dr. G. Ramakrishna (Dean)`,
 
   rankings: `**Rankings & Recognitions of Aditya University:**\n\n🏆 **National Rankings:**\n• **NIRF:** 151–200 Rank Band in University Category (50th Rank in India)\n• **NBA Accreditation:** Tier-1 Accredited for CE, EEE, ME, ECE, CSE, IT\n• **NAAC:** NAAC A++ Accreditation\n• **Times Higher Education:** 14th Among Private Institutions across India\n• **Academic Insights:** 27th Rank in Top 50 Engineering Colleges\n• **SiliconIndia:** 4th Rank in South India\n• **The Week - Hansa Research:** 36th Rank (Technical Universities in India)\n• **QS Gauge Rating:** Diamond Rating\n• **SWAYAM-NPTEL:** 'AA' Rating Local Chapter\n• **SIRO:** Recognized as Scientific and Industrial Research Organisation`,
 
@@ -109,8 +109,8 @@ function getKBAnswer(question) {
   if (!question) return null;
   const q = question.toLowerCase().trim();
 
-  // 1. Leadership & Key Officers (Chancellor, VC, Registrar, Deans)
-  if (/\b(chancellor|pro-chancellor|vice chancellor|vc|pro vice-chancellor|registrar|dean|deans|sesha reddy|satish reddy|deepak reddy|sreenivasa reddy|srinivas|ramesh|rama sree|ravichandra|g suresh|saravanan|ranjit|pavan|ramakrishna|ramu|kishore|sanjiv rao|sridevi|sathis kumar|vanathi|bagadi|chavan|srikanth|ayyappa swamy|who is the chancellor|who is the vc|who is the registrar|leadership|head|management)\b/.test(q))
+  // 1. Faculty & Leadership (Check first for faculty queries)
+  if (/\b(faculty|department head|department heads|hod|hods|professor|professors|lecturer|lecturers|deans|chancellor|pro-chancellor|vice chancellor|vc|pro vice-chancellor|registrar|leadership|management)\b/.test(q))
     return AU_KB.leadership;
 
   // 2. Rankings & Recognitions
@@ -118,11 +118,11 @@ function getKBAnswer(question) {
     return AU_KB.rankings;
 
   // 3. History & Legacy
-  if (/\b(history|legacy|established|founded|foundation|sesha reddy|aditya academy|1984|2001|2016|how old|institutions|staff|count)\b/.test(q))
+  if (/\b(history|legacy|established|founded|foundation|aditya academy|1984|2001|2016|how old|institutions|staff|count)\b/.test(q))
     return AU_KB.history;
 
   // 4. Vision, Mission & Core Values
-  if (/\b(vision|mission|value|values|core value|goal|objective|motto)\b/.test(q))
+  if (/\b(vision|mission|values|core values|motto)\b/.test(q))
     return AU_KB.vision;
 
   // 5. Recent Happenings & Events
@@ -162,7 +162,7 @@ function getKBAnswer(question) {
     return AU_KB.library;
 
   // 14. Contact & Campus Location
-  if (/\b(contact|address|phone|email|location|reach|office|website|about|overview|vision|mission|helpline|where is)\b/.test(q))
+  if (/\b(contact|address|phone|email|location|reach|office|website|about us|about university|helpline|where is)\b/.test(q))
     return AU_KB.contact;
 
   return null;
