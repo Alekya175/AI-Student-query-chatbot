@@ -1657,5 +1657,178 @@
         "faculty": "G. Prudhvi"
       }
     ]
+  },
+  {
+    "section": "AIML 5th Sem - T5 (THUB - Cognitive Analytics)",
+    "roomNo": "307",
+    "floor": "Second Floor",
+    "block": "Bhaskar Bhavan",
+    "semester": "III-B. Tech / V Sem (A.Y. 2026-27)",
+    "schedule": {
+      "Monday": [
+        {
+          "time": "9:30 - 11:10",
+          "subject": "Soft Computing",
+          "code": "SC"
+        },
+        {
+          "time": "11:20 - 12:10",
+          "subject": "API & Micro Services",
+          "code": "API"
+        },
+        {
+          "time": "1:50 - 4:20",
+          "subject": "T-HUB Technical Training / Employability",
+          "code": "THUB"
+        }
+      ],
+      "Tuesday": [
+        {
+          "time": "9:30 - 11:10",
+          "subject": "Machine Learning",
+          "code": "ML"
+        },
+        {
+          "time": "11:20 - 12:10",
+          "subject": "Engineering Economics & Management",
+          "code": "EEM"
+        },
+        {
+          "time": "1:50 - 4:20",
+          "subject": "T-HUB Technical Training / Employability",
+          "code": "THUB"
+        }
+      ],
+      "Wednesday": [
+        {
+          "time": "9:30 - 10:20",
+          "subject": "Computer Vision",
+          "code": "CV"
+        },
+        {
+          "time": "10:20 - 11:10",
+          "subject": "API & Micro Services",
+          "code": "API"
+        },
+        {
+          "time": "11:20 - 12:10",
+          "subject": "Machine Learning",
+          "code": "ML"
+        },
+        {
+          "time": "1:50 - 4:20",
+          "subject": "T-HUB Technical Training / Employability",
+          "code": "THUB"
+        }
+      ],
+      "Thursday": [
+        {
+          "time": "9:30 - 11:10",
+          "subject": "OOAD",
+          "code": "OOAD"
+        },
+        {
+          "time": "11:20 - 12:10",
+          "subject": "Computer Vision",
+          "code": "CV"
+        },
+        {
+          "time": "1:50 - 4:20",
+          "subject": "T-HUB Technical Training / Employability",
+          "code": "THUB"
+        }
+      ],
+      "Friday": [
+        {
+          "time": "9:30 - 10:20",
+          "subject": "Soft Computing",
+          "code": "SC"
+        },
+        {
+          "time": "10:20 - 11:10",
+          "subject": "Computer Networks",
+          "code": "CN"
+        },
+        {
+          "time": "11:20 - 12:10",
+          "subject": "API & Micro Services",
+          "code": "API"
+        },
+        {
+          "time": "1:50 - 4:20",
+          "subject": "T-HUB Technical Training / Employability",
+          "code": "THUB"
+        }
+      ],
+      "Saturday": [
+        {
+          "time": "9:30 - 11:10",
+          "subject": "ES-Aptitude",
+          "code": "APT"
+        },
+        {
+          "time": "11:20 - 12:10",
+          "subject": "ES-Softskills",
+          "code": "SS"
+        },
+        {
+          "time": "1:50 - 4:20",
+          "subject": "T-HUB Technical Training / Employability",
+          "code": "THUB"
+        }
+      ]
+    },
+    "faculty": [
+      {
+        "subject": "Computer Networks",
+        "code": "CN",
+        "faculty": "K. Naga Rajani"
+      },
+      {
+        "subject": "Machine Learning",
+        "code": "ML",
+        "faculty": "Mr. G. Siva Shankar"
+      },
+      {
+        "subject": "OOAD",
+        "code": "OOAD",
+        "faculty": "K. Naga Rajani"
+      },
+      {
+        "subject": "Engineering Economics & Management",
+        "code": "EEM",
+        "faculty": "Dr. N. Bhanu Teja"
+      },
+      {
+        "subject": "Computer Vision",
+        "code": "CV",
+        "faculty": "Mr. D. Satyanarayana"
+      },
+      {
+        "subject": "API & Micro Services",
+        "code": "API",
+        "faculty": "Kasimbee Shaik"
+      },
+      {
+        "subject": "Soft Computing",
+        "code": "SC",
+        "faculty": "Dr. M. Vamsi Krishna"
+      },
+      {
+        "subject": "Softskills",
+        "code": "SS",
+        "faculty": "GVS Kiran Kumar"
+      },
+      {
+        "subject": "Aptitude",
+        "code": "APT",
+        "faculty": "S. Tejeswar Reddy"
+      },
+      {
+        "subject": "T-HUB Employability In-Charge",
+        "code": "THUB",
+        "faculty": "Mr. M. Subrahmanyam / G. Durga Prasad"
+      }
+    ]
   }
 ]

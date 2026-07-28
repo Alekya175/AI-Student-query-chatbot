@@ -914,5 +914,25 @@
     "floor": "First Floor",
     "cabin": "R. Cabin 2",
     "mobile": "7731096290"
+  },
+  {
+    "empId": "5561",
+    "name": "Dr. N. Bhanu Teja",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "Second Floor",
+    "cabin": "L. Cabin 3",
+    "mobile": "9949806418"
+  },
+  {
+    "empId": "5562",
+    "name": "G. Durga Prasad",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "Second Floor",
+    "cabin": "R. Cabin 4",
+    "mobile": "8099903403"
   }
 ]
