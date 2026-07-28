@@ -1014,5 +1014,15 @@
     "floor": "Second Floor",
     "cabin": "R. Cabin 4",
     "mobile": "7010832410"
+  },
+  {
+    "empId": "1330",
+    "name": "Dr. K. Naga Bhargavi",
+    "designation": "HOD & Associate Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "First Floor",
+    "cabin": "HoD cabin",
+    "mobile": "8919776949"
   }
 ]

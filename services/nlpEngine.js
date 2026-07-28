@@ -79,85 +79,114 @@ async function translateText(text, targetLang) {
   return text;
 }
 
-// Precision Faculty Status & Availability Finder Engine
+// Precision Faculty Status & Availability Finder Engine with Longest-Match Token Scoring
 function searchSpecificFaculty(question) {
   if (!question || FACULTY_LIST.length === 0) return null;
-  const q = question.toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
+  const cleanQ = question.toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
+
+  let bestFaculty = null;
+  let maxMatchScore = 0;
 
   for (const f of FACULTY_LIST) {
     const rawName = f.name.toLowerCase().replace(/^(dr|mr|ms|mrs)\.?\s+/i, '');
     const cleanName = rawName.replace(/[^a-z0-9\s]/g, ' ').trim();
-    const parts = cleanName.split(/\s+/).filter(p => p.length > 2);
+    const parts = cleanName.split(/\s+/).filter(p => p.length > 1);
 
-    if (parts.length > 0 && parts.every(part => q.includes(part))) {
-      // Check if faculty has a scheduled class in timetables
-      let activeClass = null;
-
-      for (const t of TIMETABLES_LIST) {
-        const matchSub = t.faculty.find(sub => {
-          const subFacClean = sub.faculty.toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
-          return parts.every(p => subFacClean.includes(p));
-        });
-
-        if (matchSub) {
-          activeClass = {
-            roomNo: t.roomNo,
-            floor: t.floor || (t.roomNo.startsWith('1') ? 'Ground Floor' : 'First Floor'),
-            block: t.block || 'Bhaskar Bhavan',
-            section: t.section,
-            subject: matchSub.subject
-          };
-          break;
-        }
-      }
-
-      const empTxt = f.empId ? `\n• **Emp ID:** ${f.empId}` : '';
-      const deptTxt = f.department ? `\n• **Department:** ${f.department}` : '';
-      const blockTxt = f.block ? `\n• **Block / Building:** ${f.block}` : '';
-      const floorTxt = f.floor ? `\n• **Floor:** ${f.floor}` : '';
-      const cabinTxt = f.cabin ? `\n• **Cabin Number / Room:** ${f.cabin}` : '';
-      const mobileTxt = f.mobile ? `\n• **Mobile Contact:** +91 ${f.mobile}` : '';
-
-      if (activeClass) {
-        return `👨‍🏫 **Faculty Availability & Room Location Details**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation:** ${f.designation}${deptTxt}\n\n🏫 **Assigned Class Location:**\n• **Current Status:** Taking Class in Room ${activeClass.roomNo}\n• **Subject:** ${activeClass.subject}\n• **Room Number:** Room ${activeClass.roomNo} (${activeClass.floor}, ${activeClass.block})\n• **Section:** ${activeClass.section}\n\n📌 **Faculty Cabin (Meet when free):**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}`;
-      } else {
-        return `👨‍🏫 **Faculty Profile & Availability Details**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation / Role:** ${f.designation}${deptTxt}\n\n🟢 **Availability Status:** Free from class / Available in Cabin\n📌 **Cabin Location Details:**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}\n• **Institution:** Aditya University`;
+    if (parts.length > 0 && parts.every(part => cleanQ.includes(part))) {
+      // Score based on matched string length to prioritize exact full names (e.g. Dr. Dara Rambabu over Dr. N. Rambabu)
+      const score = parts.join(' ').length;
+      if (score > maxMatchScore) {
+        maxMatchScore = score;
+        bestFaculty = f;
       }
     }
   }
 
-  return null;
+  if (!bestFaculty) return null;
+  const f = bestFaculty;
+
+  // Check if faculty has a scheduled class in timetables
+  let activeClass = null;
+  const rawFacName = f.name.toLowerCase().replace(/^(dr|mr|ms|mrs)\.?\s+/i, '');
+  const facParts = rawFacName.replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(p => p.length > 1);
+
+  for (const t of TIMETABLES_LIST) {
+    const matchSub = t.faculty.find(sub => {
+      const subFacClean = sub.faculty.toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
+      return facParts.every(p => subFacClean.includes(p));
+    });
+
+    if (matchSub) {
+      activeClass = {
+        roomNo: t.roomNo,
+        hallName: t.hallName || `Room ${t.roomNo}`,
+        floor: t.floor || (t.roomNo.startsWith('1') ? 'Ground Floor' : t.roomNo.startsWith('2') ? 'First Floor' : 'Second Floor'),
+        block: t.block || 'Bhaskar Bhavan',
+        section: t.section,
+        subject: matchSub.subject
+      };
+      break;
+    }
+  }
+
+  const empTxt = f.empId ? `\n• **Emp ID:** ${f.empId}` : '';
+  const deptTxt = f.department ? `\n• **Department:** ${f.department}` : '';
+  const blockTxt = f.block ? `\n• **Block / Building:** ${f.block}` : '';
+  const floorTxt = f.floor ? `\n• **Floor:** ${f.floor}` : '';
+  const cabinTxt = f.cabin ? `\n• **Cabin Number / Room:** ${f.cabin}` : '';
+  const mobileTxt = f.mobile ? `\n• **Mobile Contact:** +91 ${f.mobile}` : '';
+
+  if (activeClass && /where|class|available|free|room|teaching|right now|currently/.test(cleanQ)) {
+    return `👨‍🏫 **Faculty Availability & Room Location Details**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation:** ${f.designation}${deptTxt}\n\n🏫 **Assigned Class Location:**\n• **Current Status:** Assigned to Teach Class in ${activeClass.hallName}\n• **Subject:** ${activeClass.subject}\n• **Room Number:** Room ${activeClass.roomNo} (${activeClass.floor}, ${activeClass.block})\n• **Section / Stream:** ${activeClass.section}\n\n📌 **Faculty Cabin (Meet when free):**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}`;
+  }
+
+  return `👨‍🏫 **Faculty Profile & Availability Details**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation / Role:** ${f.designation}${deptTxt}\n\n🟢 **Availability Status:** Free from class / Available in Cabin\n📌 **Cabin Location Details:**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}\n• **Institution:** Aditya University`;
 }
 
-// Section & Room Timetable Search Engine
+// Section & Room Timetable Search Engine with Hall Differentiator
 function getTimetableByRoomOrSection(question) {
   if (!question || TIMETABLES_LIST.length === 0) return null;
   const q = question.toLowerCase();
 
-  const isTTQuery = /timetable|time table|schedule|class schedule|room|period|subjects|slots|which class|happening/.test(q);
+  const isTTQuery = /timetable|time table|schedule|class schedule|room|period|subjects|slots|which class|happening|hall|lh|cv/.test(q);
   if (!isTTQuery) return null;
 
+  const roomMatches = [];
+
   for (const t of TIMETABLES_LIST) {
-    const matchRoom = q.includes(t.roomNo);
-    const matchSec = q.includes(t.section.toLowerCase());
-    const matchGoogle = t.section.includes('GOOGLE') && q.includes('google');
-    const matchMS = t.section.includes('MICROSOFT') && q.includes('microsoft');
-    const matchT7 = t.section.includes('T7') && q.includes('t7');
-    const matchT6 = t.section.includes('T6') && (q.includes('t6') || q.includes('smart'));
+    const rNo = t.roomNo.toLowerCase();
+    const hName = (t.hallName || '').toLowerCase();
 
-    if (matchRoom || matchSec || matchGoogle || matchMS || matchT7 || matchT6) {
-      const floorStr = t.floor || (t.roomNo.startsWith('1') ? 'Ground Floor' : 'First Floor');
-      const scheduleText = Object.entries(t.schedule).map(([day, list]) => {
-        const periodStr = Array.isArray(list) ? list.map(item => `${item.time}: ${item.subject}`).join(' | ') : list;
-        return `• **${day}:** ${periodStr}`;
-      }).join('\n');
-      const facultyText = t.faculty.map(f => `• **${f.subject}:** ${f.faculty}`).join('\n');
-
-      return `📅 **Class Time Table - ${t.section}**\n\n🏫 **Room Number:** Room ${t.roomNo}\n🏢 **Floor & Building:** ${floorStr}, ${t.block}\n🎓 **Semester:** ${t.semester}\n\n**Weekly Class Schedule:**\n${scheduleText}\n\n**Subject Faculty Assignments:**\n${facultyText}`;
+    if (hName && q.includes(hName)) {
+      roomMatches.push(t);
+    } else if (q.includes(`cv-${rNo}`) || q.includes(`cv ${rNo}`) || q.includes(`lh ${rNo}`) || q.includes(`lh-${rNo}`)) {
+      if (t.hallName && t.hallName.toLowerCase().includes('cv')) roomMatches.push(t);
+    } else if (q.includes(`room ${rNo}`)) {
+      roomMatches.push(t);
+    } else if (q.includes(t.section.toLowerCase())) {
+      roomMatches.push(t);
     }
   }
 
-  return null;
+  if (roomMatches.length === 0) {
+    for (const t of TIMETABLES_LIST) {
+      if (q.includes(t.roomNo)) roomMatches.push(t);
+    }
+  }
+
+  if (roomMatches.length === 0) return null;
+
+  return roomMatches.map(t => {
+    const floorStr = t.floor || (t.roomNo.startsWith('1') ? 'Ground Floor' : t.roomNo.startsWith('2') ? 'First Floor' : 'Second Floor');
+    const hallStr = t.hallName ? ` (${t.hallName})` : '';
+    const scheduleText = Object.entries(t.schedule).map(([day, list]) => {
+      const periodStr = Array.isArray(list) ? list.map(item => `${item.time}: ${item.subject}`).join(' | ') : list;
+      return `• **${day}:** ${periodStr}`;
+    }).join('\n');
+    const facultyText = t.faculty.map(f => `• **${f.subject}:** ${f.faculty}`).join('\n');
+
+    return `📅 **Class Time Table - ${t.section}**\n\n🏫 **Room Number:** Room ${t.roomNo}${hallStr}\n🏢 **Floor & Building:** ${floorStr}, ${t.block}\n🎓 **Semester:** ${t.semester}\n\n**Weekly Class Schedule:**\n${scheduleText}\n\n**Subject Faculty Assignments:**\n${facultyText}`;
+  }).join('\n\n---\n\n');
 }
 
 // Student Personal Data Engine for Logged-In Students
