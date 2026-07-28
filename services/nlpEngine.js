@@ -15,6 +15,17 @@ try {
   console.warn('[NLP Engine] Warning: Could not load data/faculty.json:', err.message);
 }
 
+// Load Section Timetables Dataset
+let TIMETABLES_LIST = [];
+try {
+  const ttPath = path.join(__dirname, '..', 'data', 'timetables.json');
+  if (fs.existsSync(ttPath)) {
+    TIMETABLES_LIST = JSON.parse(fs.readFileSync(ttPath, 'utf8'));
+  }
+} catch (err) {
+  console.warn('[NLP Engine] Warning: Could not load data/timetables.json:', err.message);
+}
+
 const AU_KB = {
   overview: `**Aditya University Overview:**\nAditya University is a premier multidisciplinary institution located at Aditya Nagar, ADB Road, Surampalem, Kakinada District, Andhra Pradesh – 533437.\n\n• **Accreditations:** NAAC A++ Accredited | NBA Tier-1 Accredited (CE, EEE, ME, ECE, CSE & IT)\n• **NIRF Rank Band:** 151–200 (University Category)\n• **Establishment:** Founded in 1984 under Aditya Academy; Established under the AP Private Universities Act, 2016.\n• **Legacy:** 80+ Institutions, 8,000+ Staff, and 80,000+ Students across Andhra Pradesh.\n• **Official Website:** https://www.adityauniversity.in/`,
 
@@ -93,6 +104,33 @@ function searchSpecificFaculty(question) {
   return null;
 }
 
+// Section & Room Timetable Search Engine
+function getTimetableByRoomOrSection(question) {
+  if (!question || TIMETABLES_LIST.length === 0) return null;
+  const q = question.toLowerCase();
+
+  const isTTQuery = /timetable|time table|schedule|class schedule|room|period|subjects|slots/.test(q);
+  if (!isTTQuery) return null;
+
+  for (const t of TIMETABLES_LIST) {
+    const matchRoom = q.includes(t.roomNo);
+    const matchSec = q.includes(t.section.toLowerCase());
+    const matchGoogle = t.section.includes('GOOGLE') && q.includes('google');
+    const matchMS = t.section.includes('MICROSOFT') && q.includes('microsoft');
+    const matchT7 = t.section.includes('T7') && q.includes('t7');
+    const matchT6 = t.section.includes('T6') && (q.includes('t6') || q.includes('smart'));
+
+    if (matchRoom || matchSec || matchGoogle || matchMS || matchT7 || matchT6) {
+      const scheduleText = Object.entries(t.schedule).map(([day, text]) => `• **${day}:** ${text}`).join('\n');
+      const facultyText = t.faculty.map(f => `• **${f.subject}:** ${f.faculty}`).join('\n');
+
+      return `📅 **Class Time Table - ${t.section}**\n\n🏫 **Room No:** ${t.roomNo} (${t.block})\n🎓 **Semester:** ${t.semester}\n\n**Weekly Class Schedule:**\n${scheduleText}\n\n**Subject Faculty Assignments:**\n${facultyText}`;
+    }
+  }
+
+  return null;
+}
+
 // Student Personal Data Engine for Logged-In Students
 function getStudentPersonalDetails(user, question, studentRecord) {
   if (!user || user.role === 'guest') return null;
@@ -151,59 +189,63 @@ function getKBAnswer(question) {
   const specificFaculty = searchSpecificFaculty(q);
   if (specificFaculty) return specificFaculty;
 
-  // 2. Faculty & Leadership Overview
+  // 2. Room / Section Timetable Direct Lookup
+  const specificTT = getTimetableByRoomOrSection(q);
+  if (specificTT) return specificTT;
+
+  // 3. Faculty & Leadership Overview
   if (/\b(faculty|department head|department heads|hod|hods|professor|professors|lecturer|lecturers|deans|chancellor|pro-chancellor|vice chancellor|vc|pro vice-chancellor|registrar|leadership|management)\b/.test(q))
     return AU_KB.leadership;
 
-  // 3. Rankings & Recognitions
+  // 4. Rankings & Recognitions
   if (/\b(nirf|ranking|rankings|accreditation|accreditations|naac|nba|tier-1|tier 1|academic insights|siliconindia|the week|qs gauge|swayam|nptel|siro|rating|recognit)\b/.test(q))
     return AU_KB.rankings;
 
-  // 4. History & Legacy
+  // 5. History & Legacy
   if (/\b(history|legacy|established|founded|foundation|aditya academy|1984|2001|2016|how old|institutions|staff|count)\b/.test(q))
     return AU_KB.history;
 
-  // 5. Vision, Mission & Core Values
+  // 6. Vision, Mission & Core Values
   if (/\b(vision|mission|values|core values|motto)\b/.test(q))
     return AU_KB.vision;
 
-  // 6. Recent Happenings & Events
+  // 7. Recent Happenings & Events
   if (/\b(event|events|happening|happenings|genai|conclave|thunder thursday|vivo|centific|blood donation|workshop|guest lecture)\b/.test(q))
     return AU_KB.happenings;
 
-  // 7. Degree Programs & Courses
+  // 8. Degree Programs & Courses
   if (/\b(program|programs|course|courses|btech|mtech|bba|mba|bca|mca|phd|pharmacy|degree|branch|branches|specializ|b\.tech|m\.tech|engineering|business)\b/.test(q))
     return AU_KB.programs;
 
-  // 8. Hostel & Transport
+  // 9. Hostel & Transport
   if (/\b(hostel|mess|food|bus|transport|room|rooms|wifi|accommodation|single room|double room|triple room|quadruple room|stay|canteen)\b/.test(q))
     return AU_KB.hostel;
 
-  // 9. Placements & Salary Packages
+  // 10. Placements & Salary Packages
   if (/\b(placement|placements|recruit|recruiter|recruiters|package|lpa|salary|job|hire|hiring|drive|job offer|placement offer|placed|company|companies|highest package|average package|akhilesh|rajesh|durga bhan raju)\b/.test(q))
     return AU_KB.placements;
 
-  // 10. Admissions, Application & Fees
+  // 11. Admissions, Application & Fees
   if (/\b(admission|admissions|apply|application|eligibility|fee structure|fee details|how to join|enroll|tuition|scholarship|cutoff|rank|cost|price)\b/.test(q))
     return AU_KB.admissions;
 
-  // 11. Schools & Faculties
+  // 12. Schools & Faculties
   if (/\b(school|schools|engineering school|business school|science school|pharmacy school)\b/.test(q))
     return AU_KB.schools;
 
-  // 12. Academics, Calendar & Syllabus
+  // 13. Academics, Calendar & Syllabus
   if (/\b(academic|academics|calendar|curriculum|regulation|regulations|syllabus|conduct|learning academy|educast)\b/.test(q))
     return AU_KB.academics;
 
-  // 13. Examinations & Results
+  // 14. Examinations & Results
   if (/\b(exam|exams|examination|examinations|result|results|question paper|notification|hall ticket|model paper|gpa|cgpa)\b/.test(q))
     return AU_KB.exams;
 
-  // 14. Library
+  // 15. Library
   if (/\b(library|book|books|knimbus|journal|reading room)\b/.test(q))
     return AU_KB.library;
 
-  // 15. Contact & Campus Location
+  // 16. Contact & Campus Location
   if (/\b(contact|address|phone|email|location|reach|office|website|about us|about university|helpline|where is)\b/.test(q))
     return AU_KB.contact;
 

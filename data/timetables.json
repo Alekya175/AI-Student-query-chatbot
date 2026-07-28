@@ -1,0 +1,129 @@
+[
+  {
+    "section": "AIML - T1 (GOOGLE)",
+    "roomNo": "216",
+    "block": "Bhaskar Bhavan",
+    "semester": "II-B. Tech / III Sem (A.Y. 2026-27)",
+    "schedule": {
+      "Monday": "10:30-11:20: ES-Aptitude | 01:00-01:50: P&S | 01:50-02:40: DBMS | 02:50-03:40: FIP",
+      "Tuesday": "09:30-10:20: ASE | 10:30-11:20: AI | 01:00-01:50: DAE | 02:50-03:40: ADSAA",
+      "Wednesday": "09:30-11:20: C++ | 01:00-01:50: P&S | 01:50-03:40: ES-SoftSkills",
+      "Thursday": "09:30-10:20: C++ | 10:30-11:20: ADSAA | 01:00-01:50: AI | 01:50-02:40: DBMS",
+      "Friday": "10:30-11:20: DBMS | 01:00-01:50: C++ | 01:50-02:40: DAE",
+      "Saturday": "09:30-10:20: AI | 10:30-11:20: P&S | 11:20-12:10: C++ | 01:00-01:50: ADSAA | 01:50-02:40: DBMS | 02:50-03:40: ASE | 03:40-04:20: FIP"
+    },
+    "faculty": [
+      { "subject": "Probability & Statistics (P&S)", "faculty": "Dr. G. V. Chandramouli" },
+      { "subject": "ADSAA", "faculty": "Mr. Govindaraju" },
+      { "subject": "Artificial Intelligence (AI)", "faculty": "Dr. N. Rambabu" },
+      { "subject": "C++ Programming", "faculty": "K. Shyamala Kalyani" },
+      { "subject": "DBMS", "faculty": "Mr. M. Sudheer" },
+      { "subject": "Agile Software Engg (ASE)", "faculty": "A. Divya Bharati" },
+      { "subject": "Data Analysis Essentials (DAE)", "faculty": "A. Divya Bharati" },
+      { "subject": "Softskills", "faculty": "P. Durga Raja Choudhuri" },
+      { "subject": "Aptitude", "faculty": "S. Tejeswar Reddy" }
+    ]
+  },
+  {
+    "section": "AIML - T2 (MICROSOFT)",
+    "roomNo": "208",
+    "block": "Bhaskar Bhavan",
+    "semester": "II-B. Tech / III Sem (A.Y. 2026-27)",
+    "schedule": {
+      "Monday": "10:30-11:20: ES-Aptitude | 01:00-01:50: DAE | 02:50-03:40: AI",
+      "Tuesday": "09:30-11:20: DP 900 Certification | 01:00-01:50: P&S | 01:50-02:40: DBMS | 02:50-03:40: ADSAA",
+      "Wednesday": "09:30-11:20: DBMS | 01:00-01:50: C++ | 01:50-03:40: ES-SoftSkills",
+      "Thursday": "09:30-10:20: ASE | 10:30-11:20: DAE | 01:00-01:50: ADSAA | 01:50-02:40: C++",
+      "Friday": "09:30-10:20: P&S | 10:30-11:20: AI | 01:00-01:50: DBMS | 01:50-02:40: ADSAA",
+      "Saturday": "09:30-11:20: C++ | 01:00-01:50: DP 900 Certification | 01:50-02:40: FIP"
+    },
+    "faculty": [
+      { "subject": "Probability & Statistics (P&S)", "faculty": "V. Lakshmi Shalaji" },
+      { "subject": "ADSAA", "faculty": "R. Kabilesh" },
+      { "subject": "Artificial Intelligence (AI)", "faculty": "Dr. K R K V Prasad" },
+      { "subject": "C++ Programming", "faculty": "M. Chaitanya" },
+      { "subject": "DBMS", "faculty": "S. Ramana" },
+      { "subject": "Agile Software Engg (ASE)", "faculty": "Mr. A. Chaitanya" },
+      { "subject": "Data Analysis Essentials (DAE)", "faculty": "Mr. A. Chaitanya" },
+      { "subject": "DP 900 Certification", "faculty": "V. Ramya Sri" },
+      { "subject": "Softskills", "faculty": "P. Durga Raja Choudhuri" },
+      { "subject": "Aptitude", "faculty": "B. Kameswara Sarma" }
+    ]
+  },
+  {
+    "section": "AIML - T1 (MICROSOFT)",
+    "roomNo": "203",
+    "block": "Bhaskar Bhavan",
+    "semester": "II-B. Tech / III Sem (A.Y. 2026-27)",
+    "schedule": {
+      "Monday": "10:30-11:20: ES-Aptitude | 01:00-01:50: DP 900 Certification | 02:50-03:40: ADSAA",
+      "Tuesday": "09:30-10:20: DBMS | 10:30-11:20: ADSAA | 01:00-01:50: DAE | 01:50-02:40: C++",
+      "Wednesday": "09:30-10:20: ADSAA | 10:30-11:20: AI | 01:00-01:50: ASE | 01:50-03:40: ES-SoftSkills",
+      "Thursday": "09:30-10:20: P&S | 10:30-11:20: C++ | 01:00-01:50: AI | 01:50-02:40: DBMS",
+      "Friday": "09:30-10:20: DBMS | 10:30-11:20: P&S | 01:00-01:50: DAE | 01:50-02:40: C++",
+      "Saturday": "09:30-11:20: DP 900 Certification | 01:00-01:50: DBMS | 01:50-02:40: ADSAA | 02:50-03:40: FIP"
+    },
+    "faculty": [
+      { "subject": "Probability & Statistics (P&S)", "faculty": "V. Lakshmi Shalaji" },
+      { "subject": "ADSAA", "faculty": "R. Kabilesh" },
+      { "subject": "Artificial Intelligence (AI)", "faculty": "Dr. K R K V Prasad" },
+      { "subject": "C++ Programming", "faculty": "M. Chaitanya" },
+      { "subject": "DBMS", "faculty": "S. Ramana" },
+      { "subject": "Agile Software Engg (ASE)", "faculty": "Mr. A. Chaitanya" },
+      { "subject": "Data Analysis Essentials (DAE)", "faculty": "Mr. A. Chaitanya" },
+      { "subject": "DP 900 Certification", "faculty": "V. Ramya Sri" },
+      { "subject": "Softskills", "faculty": "Korada Sravani" },
+      { "subject": "Aptitude", "faculty": "Ch. Venkata Sai" }
+    ]
+  },
+  {
+    "section": "AIML - T7",
+    "roomNo": "220",
+    "block": "Bhaskar Bhavan",
+    "semester": "II-B. Tech / III Sem (A.Y. 2026-27)",
+    "schedule": {
+      "Monday": "10:30-11:20: ES-Aptitude | 01:00-01:50: DBMS | 02:50-03:40: P&S",
+      "Tuesday": "09:30-10:20: ASE | 10:30-11:20: ADSAA | 01:00-01:50: AI | 01:50-02:40: C++",
+      "Wednesday": "09:30-10:20: P&S | 10:30-11:20: AI | 01:00-01:50: DBMS | 01:50-03:40: ES-SoftSkills",
+      "Thursday": "09:30-10:20: ADSAA | 10:30-11:20: DBMS | 01:00-01:50: DAE | 01:50-02:40: C++",
+      "Friday": "10:30-11:20: C++ | 01:00-01:50: DAE | 01:50-02:40: DBMS | 02:50-03:40: FIP"
+    },
+    "faculty": [
+      { "subject": "Probability & Statistics (P&S)", "faculty": "Dr. V. Venkat Kumar" },
+      { "subject": "ADSAA", "faculty": "Ch. Sri Divya" },
+      { "subject": "Artificial Intelligence (AI)", "faculty": "Mr. Sarath Chandra" },
+      { "subject": "C++ Programming", "faculty": "K. Shyamala Kalyani" },
+      { "subject": "DBMS", "faculty": "Mr. M. Sudheer" },
+      { "subject": "Agile Software Engg (ASE)", "faculty": "Dr. M. Naresh" },
+      { "subject": "Data Analysis Essentials (DAE)", "faculty": "P. Srieesha" },
+      { "subject": "Softskills", "faculty": "Eeda Vamsi" },
+      { "subject": "Aptitude", "faculty": "APT11" }
+    ]
+  },
+  {
+    "section": "AIML - T6 (SMART INTERVIEWS)",
+    "roomNo": "223",
+    "block": "Bhaskar Bhavan",
+    "semester": "II-B. Tech / III Sem (A.Y. 2026-27)",
+    "schedule": {
+      "Monday": "09:30-11:20: C++ | 01:00-01:50: AI | 01:50-02:40: P&S",
+      "Tuesday": "09:30-10:20: ADSAA | 10:30-11:20: DAE | 01:00-01:50: C++ | 01:50-02:40: AI | 02:50-03:40: ASE",
+      "Wednesday": "09:30-10:20: P&S | 10:30-11:20: DBMS | 01:00-01:50: ADSAA | 01:50-02:40: DAE",
+      "Thursday": "09:30-11:20: SMART INTERVIEWS | 01:00-03:40: SMART INTERVIEWS",
+      "Friday": "09:30-11:20: SMART INTERVIEWS | 01:00-03:40: SMART INTERVIEWS",
+      "Saturday": "09:30-11:20: DBMS | 01:00-01:50: ES-Aptitude | 01:50-03:40: ES-Softskills"
+    },
+    "faculty": [
+      { "subject": "Probability & Statistics (P&S)", "faculty": "V. Lakshmi Shalaji" },
+      { "subject": "ADSAA", "faculty": "Mr. Govindaraju" },
+      { "subject": "Artificial Intelligence (AI)", "faculty": "Dr. B. Devaraj Naik" },
+      { "subject": "C++ Programming", "faculty": "P. Lakshmi Kantham" },
+      { "subject": "DBMS", "faculty": "T. Srinivas" },
+      { "subject": "Agile Software Engg (ASE)", "faculty": "P. Srieesha" },
+      { "subject": "Data Analysis Essentials (DAE)", "faculty": "Dr. M. Naresh" },
+      { "subject": "Smart Interviews", "faculty": "Dr. B. Devaraj Naik / V. Abilish" },
+      { "subject": "Softskills", "faculty": "Eeda Vamsi" },
+      { "subject": "Aptitude", "faculty": "APT11" }
+    ]
+  }
+]
