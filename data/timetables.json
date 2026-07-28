@@ -1830,5 +1830,661 @@
         "faculty": "Mr. M. Subrahmanyam / G. Durga Prasad"
       }
     ]
+  },
+  {
+    "section": "AIML 7th Sem - Sec AIML-1 (CV-104)",
+    "roomNo": "104",
+    "hallName": "CV-104",
+    "floor": "Ground Floor",
+    "block": "Bhaskar Bhavan",
+    "semester": "IV B.Tech / VII Sem (A.Y. 2026-27)",
+    "schedule": {
+      "Monday": [
+        {
+          "time": "9:30 - 10:20",
+          "subject": "Quantum Science & Technology",
+          "code": "Q&ST"
+        },
+        {
+          "time": "11:10 - 12:50",
+          "subject": "Prompt Engineering Lab",
+          "code": "PE LAB"
+        },
+        {
+          "time": "1:50 - 2:40",
+          "subject": "Quantum Science & Technology",
+          "code": "Q&ST"
+        },
+        {
+          "time": "2:40 - 3:30",
+          "subject": "Human Resource & Project Management",
+          "code": "HR&PM"
+        },
+        {
+          "time": "3:30 - 4:20",
+          "subject": "Makeup/FIP",
+          "code": "FIP"
+        }
+      ],
+      "Tuesday": [
+        {
+          "time": "9:30 - 10:20",
+          "subject": "Quantum Science & Technology",
+          "code": "Q&ST"
+        },
+        {
+          "time": "10:20 - 11:10",
+          "subject": "Block Chain Technology",
+          "code": "BCT"
+        },
+        {
+          "time": "11:10 - 12:00",
+          "subject": "Smart Manufacturing",
+          "code": "SM"
+        },
+        {
+          "time": "12:00 - 12:50",
+          "subject": "Generative AI",
+          "code": "GEnAI"
+        },
+        {
+          "time": "1:50 - 2:40",
+          "subject": "Research Methodology",
+          "code": "RM"
+        },
+        {
+          "time": "2:40 - 3:30",
+          "subject": "Human Resource & Project Management",
+          "code": "HR&PM"
+        },
+        {
+          "time": "3:30 - 4:20",
+          "subject": "Makeup/FIP",
+          "code": "FIP"
+        }
+      ],
+      "Wednesday": [
+        {
+          "time": "9:30 - 10:20",
+          "subject": "Quantum Science & Technology",
+          "code": "Q&ST"
+        },
+        {
+          "time": "10:20 - 11:10",
+          "subject": "Coding",
+          "code": "CC"
+        },
+        {
+          "time": "11:10 - 12:00",
+          "subject": "Generative AI",
+          "code": "GEnAI"
+        },
+        {
+          "time": "12:00 - 12:50",
+          "subject": "Block Chain Technology",
+          "code": "BCT"
+        },
+        {
+          "time": "1:50 - 4:20",
+          "subject": "GLOBAL PLACEMENTS / PSA",
+          "code": "PSA"
+        }
+      ],
+      "Thursday": [
+        {
+          "time": "9:30 - 10:20",
+          "subject": "Smart Manufacturing",
+          "code": "SM"
+        },
+        {
+          "time": "10:20 - 11:10",
+          "subject": "Human Resource & Project Management",
+          "code": "HR&PM"
+        },
+        {
+          "time": "11:10 - 12:00",
+          "subject": "Block Chain Technology",
+          "code": "BCT"
+        },
+        {
+          "time": "12:00 - 12:50",
+          "subject": "Generative AI",
+          "code": "GEnAI"
+        },
+        {
+          "time": "1:50 - 2:40",
+          "subject": "Smart Manufacturing",
+          "code": "SM"
+        },
+        {
+          "time": "2:40 - 3:30",
+          "subject": "Coding",
+          "code": "CC"
+        },
+        {
+          "time": "3:30 - 4:20",
+          "subject": "Makeup/FIP",
+          "code": "FIP"
+        }
+      ],
+      "Friday": [
+        {
+          "time": "9:30 - 10:20",
+          "subject": "Human Resource & Project Management",
+          "code": "HR&PM"
+        },
+        {
+          "time": "10:20 - 11:10",
+          "subject": "Research Methodology",
+          "code": "RM"
+        },
+        {
+          "time": "11:10 - 12:00",
+          "subject": "Smart Manufacturing",
+          "code": "SM"
+        },
+        {
+          "time": "12:00 - 12:50",
+          "subject": "Coding",
+          "code": "CC"
+        },
+        {
+          "time": "1:50 - 2:40",
+          "subject": "Block Chain Technology",
+          "code": "BCT"
+        },
+        {
+          "time": "2:40 - 3:30",
+          "subject": "Generative AI",
+          "code": "GEnAI"
+        },
+        {
+          "time": "3:30 - 4:20",
+          "subject": "Makeup/FIP",
+          "code": "FIP"
+        }
+      ]
+    },
+    "faculty": [
+      {
+        "subject": "Generative AI",
+        "code": "GEnAI",
+        "faculty": "Dr. Manikyala Rao"
+      },
+      {
+        "subject": "Human Resource & Project Management",
+        "code": "HR&PM",
+        "faculty": "Dr. Maxim Raul Bharathi"
+      },
+      {
+        "subject": "Block Chain Technology",
+        "code": "BCT",
+        "faculty": "Dr. K. Naga Bhargavi"
+      },
+      {
+        "subject": "Smart Manufacturing",
+        "code": "SM",
+        "faculty": "Dr. Md Ahasan"
+      },
+      {
+        "subject": "Quantum Science & Technology",
+        "code": "Q&ST",
+        "faculty": "Dr. N. Rajesh"
+      },
+      {
+        "subject": "Prompt Engineering Lab",
+        "code": "PE LAB",
+        "faculty": "Dr. T. Chandra Sekhar / Dr. Sravan Kumar"
+      },
+      {
+        "subject": "Research Methodology",
+        "code": "RM",
+        "faculty": "Dr. N. Rambabu"
+      },
+      {
+        "subject": "Coding",
+        "code": "CC",
+        "faculty": "Chaitanya / E. Rahelu Ramya / V. Shalem Teja"
+      },
+      {
+        "subject": "Makeup/FIP",
+        "code": "FIP",
+        "faculty": "Anusha / Dharani / Annapurna"
+      },
+      {
+        "subject": "PSA",
+        "code": "PSA",
+        "faculty": "Dr. T. Chandra Sekhar"
+      }
+    ]
+  },
+  {
+    "section": "AIML 7th Sem - Sec AIML-2 (CV-115)",
+    "roomNo": "115",
+    "hallName": "CV-115",
+    "floor": "Ground Floor",
+    "block": "Bhaskar Bhavan",
+    "semester": "IV B.Tech / VII Sem (A.Y. 2026-27)",
+    "schedule": {
+      "Monday": [
+        {
+          "time": "9:30 - 10:20",
+          "subject": "Block Chain Technology",
+          "code": "BCT"
+        },
+        {
+          "time": "10:20 - 11:10",
+          "subject": "Quantum Science & Technology",
+          "code": "Q&ST"
+        },
+        {
+          "time": "11:10 - 12:00",
+          "subject": "Research Methodology",
+          "code": "RM"
+        },
+        {
+          "time": "12:00 - 12:50",
+          "subject": "Human Resource & Project Management",
+          "code": "HR&PM"
+        },
+        {
+          "time": "1:50 - 2:40",
+          "subject": "Human Resource & Project Management",
+          "code": "HR&PM"
+        },
+        {
+          "time": "2:40 - 3:30",
+          "subject": "Generative AI",
+          "code": "GEnAI"
+        },
+        {
+          "time": "3:30 - 4:20",
+          "subject": "Makeup/FIP",
+          "code": "FIP"
+        }
+      ],
+      "Tuesday": [
+        {
+          "time": "9:30 - 11:10",
+          "subject": "Smart Manufacturing",
+          "code": "SM"
+        },
+        {
+          "time": "11:10 - 12:00",
+          "subject": "Coding",
+          "code": "CC"
+        },
+        {
+          "time": "12:00 - 12:50",
+          "subject": "Quantum Science & Technology",
+          "code": "Q&ST"
+        },
+        {
+          "time": "1:50 - 2:40",
+          "subject": "Quantum Science & Technology",
+          "code": "Q&ST"
+        },
+        {
+          "time": "2:40 - 3:30",
+          "subject": "Generative AI",
+          "code": "GEnAI"
+        },
+        {
+          "time": "3:30 - 4:20",
+          "subject": "Makeup/FIP",
+          "code": "FIP"
+        }
+      ],
+      "Wednesday": [
+        {
+          "time": "9:30 - 10:20",
+          "subject": "Human Resource & Project Management",
+          "code": "HR&PM"
+        },
+        {
+          "time": "10:20 - 11:10",
+          "subject": "Coding",
+          "code": "CC"
+        },
+        {
+          "time": "11:10 - 12:00",
+          "subject": "Quantum Science & Technology",
+          "code": "Q&ST"
+        },
+        {
+          "time": "12:00 - 12:50",
+          "subject": "Block Chain Technology",
+          "code": "BCT"
+        },
+        {
+          "time": "1:50 - 4:20",
+          "subject": "GLOBAL PLACEMENTS / PSA",
+          "code": "PSA"
+        }
+      ],
+      "Thursday": [
+        {
+          "time": "9:30 - 11:10",
+          "subject": "Smart Manufacturing",
+          "code": "SM"
+        },
+        {
+          "time": "11:10 - 12:00",
+          "subject": "Research Methodology",
+          "code": "RM"
+        },
+        {
+          "time": "12:00 - 12:50",
+          "subject": "Block Chain Technology",
+          "code": "BCT"
+        },
+        {
+          "time": "1:50 - 2:40",
+          "subject": "Generative AI",
+          "code": "GEnAI"
+        },
+        {
+          "time": "2:40 - 3:30",
+          "subject": "Block Chain Technology",
+          "code": "BCT"
+        },
+        {
+          "time": "3:30 - 4:20",
+          "subject": "Makeup/FIP",
+          "code": "FIP"
+        }
+      ],
+      "Friday": [
+        {
+          "time": "9:30 - 12:00",
+          "subject": "Prompt Engineering Lab",
+          "code": "PE LAB"
+        },
+        {
+          "time": "12:00 - 12:50",
+          "subject": "Coding",
+          "code": "CC"
+        },
+        {
+          "time": "1:50 - 2:40",
+          "subject": "Human Resource & Project Management",
+          "code": "HR&PM"
+        },
+        {
+          "time": "2:40 - 3:30",
+          "subject": "Generative AI",
+          "code": "GEnAI"
+        },
+        {
+          "time": "3:30 - 4:20",
+          "subject": "Makeup/FIP",
+          "code": "FIP"
+        }
+      ]
+    },
+    "faculty": [
+      {
+        "subject": "Generative AI",
+        "code": "GEnAI",
+        "faculty": "Dr. T. Chandra Sekhar"
+      },
+      {
+        "subject": "Human Resource & Project Management",
+        "code": "HR&PM",
+        "faculty": "Dr. P. Gangadhar Rao"
+      },
+      {
+        "subject": "Block Chain Technology",
+        "code": "BCT",
+        "faculty": "Dr. Sravan Kumar"
+      },
+      {
+        "subject": "Smart Manufacturing",
+        "code": "SM",
+        "faculty": "Mr. K. L. Kishore"
+      },
+      {
+        "subject": "Quantum Science & Technology",
+        "code": "Q&ST",
+        "faculty": "Dr. N. Rajesh"
+      },
+      {
+        "subject": "Prompt Engineering Lab",
+        "code": "PE LAB",
+        "faculty": "Dr. Sravan Kumar / Dr. N. Rajesh"
+      },
+      {
+        "subject": "Research Methodology",
+        "code": "RM",
+        "faculty": "Dr. KRKV Prasad"
+      },
+      {
+        "subject": "Coding",
+        "code": "CC",
+        "faculty": "P. Shreya Prabhalitha / K. Greeshma / E. Rahelu Ramya"
+      },
+      {
+        "subject": "Makeup/FIP",
+        "code": "FIP",
+        "faculty": "Bharathi / Satya Jyothi / Aparna"
+      },
+      {
+        "subject": "PSA",
+        "code": "PSA",
+        "faculty": "Dr. Sravan Kumar"
+      }
+    ]
+  },
+  {
+    "section": "AIML 7th Sem - Sec AIML-3 (CV-116)",
+    "roomNo": "116",
+    "hallName": "CV-116",
+    "floor": "Ground Floor",
+    "block": "Bhaskar Bhavan",
+    "semester": "IV B.Tech / VII Sem (A.Y. 2026-27)",
+    "schedule": {
+      "Monday": [
+        {
+          "time": "9:30 - 10:20",
+          "subject": "Human Resource & Project Management",
+          "code": "HR&PM"
+        },
+        {
+          "time": "10:20 - 12:00",
+          "subject": "Research Methodology",
+          "code": "RM"
+        },
+        {
+          "time": "12:00 - 12:50",
+          "subject": "Human Resource & Project Management",
+          "code": "HR&PM"
+        },
+        {
+          "time": "1:50 - 2:40",
+          "subject": "Block Chain Technology",
+          "code": "BCT"
+        },
+        {
+          "time": "2:40 - 3:30",
+          "subject": "Generative AI",
+          "code": "GEnAI"
+        },
+        {
+          "time": "3:30 - 4:20",
+          "subject": "Makeup/FIP",
+          "code": "FIP"
+        }
+      ],
+      "Tuesday": [
+        {
+          "time": "9:30 - 10:20",
+          "subject": "Quantum Science & Technology",
+          "code": "Q&ST"
+        },
+        {
+          "time": "10:20 - 11:10",
+          "subject": "Generative AI",
+          "code": "GEnAI"
+        },
+        {
+          "time": "11:10 - 12:00",
+          "subject": "Block Chain Technology",
+          "code": "BCT"
+        },
+        {
+          "time": "12:00 - 12:50",
+          "subject": "Human Resource & Project Management",
+          "code": "HR&PM"
+        },
+        {
+          "time": "1:50 - 3:30",
+          "subject": "Smart Manufacturing",
+          "code": "SM"
+        },
+        {
+          "time": "3:30 - 4:20",
+          "subject": "Makeup/FIP",
+          "code": "FIP"
+        }
+      ],
+      "Wednesday": [
+        {
+          "time": "9:30 - 10:20",
+          "subject": "Quantum Science & Technology",
+          "code": "Q&ST"
+        },
+        {
+          "time": "10:20 - 11:10",
+          "subject": "Generative AI",
+          "code": "GEnAI"
+        },
+        {
+          "time": "11:10 - 12:00",
+          "subject": "Block Chain Technology",
+          "code": "BCT"
+        },
+        {
+          "time": "12:00 - 12:50",
+          "subject": "Quantum Science & Technology",
+          "code": "Q&ST"
+        },
+        {
+          "time": "1:50 - 4:20",
+          "subject": "GLOBAL PLACEMENTS / PSA",
+          "code": "PSA"
+        }
+      ],
+      "Thursday": [
+        {
+          "time": "9:30 - 11:10",
+          "subject": "Prompt Engineering Lab",
+          "code": "PE LAB"
+        },
+        {
+          "time": "12:00 - 12:50",
+          "subject": "Coding",
+          "code": "CC"
+        },
+        {
+          "time": "1:50 - 3:30",
+          "subject": "Smart Manufacturing",
+          "code": "SM"
+        },
+        {
+          "time": "3:30 - 4:20",
+          "subject": "Makeup/FIP",
+          "code": "FIP"
+        }
+      ],
+      "Friday": [
+        {
+          "time": "9:30 - 10:20",
+          "subject": "Quantum Science & Technology",
+          "code": "Q&ST"
+        },
+        {
+          "time": "10:20 - 11:10",
+          "subject": "Coding",
+          "code": "CC"
+        },
+        {
+          "time": "11:10 - 12:00",
+          "subject": "Block Chain Technology",
+          "code": "BCT"
+        },
+        {
+          "time": "12:00 - 12:50",
+          "subject": "Generative AI",
+          "code": "GEnAI"
+        },
+        {
+          "time": "1:50 - 2:40",
+          "subject": "Coding",
+          "code": "CC"
+        },
+        {
+          "time": "2:40 - 3:30",
+          "subject": "Human Resource & Project Management",
+          "code": "HR&PM"
+        },
+        {
+          "time": "3:30 - 4:20",
+          "subject": "Makeup/FIP",
+          "code": "FIP"
+        }
+      ]
+    },
+    "faculty": [
+      {
+        "subject": "Generative AI",
+        "code": "GEnAI",
+        "faculty": "Dr. Manikyala Rao"
+      },
+      {
+        "subject": "Human Resource & Project Management",
+        "code": "HR&PM",
+        "faculty": "Dr. Dara Rambabu"
+      },
+      {
+        "subject": "Block Chain Technology",
+        "code": "BCT",
+        "faculty": "Dr. K. Naga Bhargavi"
+      },
+      {
+        "subject": "Smart Manufacturing",
+        "code": "SM",
+        "faculty": "Dr. G. V. K. Pradeep"
+      },
+      {
+        "subject": "Quantum Science & Technology",
+        "code": "Q&ST",
+        "faculty": "Dr. T. Chandra Sekhar"
+      },
+      {
+        "subject": "Prompt Engineering Lab",
+        "code": "PE LAB",
+        "faculty": "Dr. N. Rajesh / Dr. T. Chandra Sekhar"
+      },
+      {
+        "subject": "Research Methodology",
+        "code": "RM",
+        "faculty": "Dr. S. Ramasubbanna"
+      },
+      {
+        "subject": "Coding",
+        "code": "CC",
+        "faculty": "V. Shalem Teja / K. Greeshma / G. Sravani"
+      },
+      {
+        "subject": "Makeup/FIP",
+        "code": "FIP",
+        "faculty": "Atchutha / Sirisha / Naga Jyothi"
+      },
+      {
+        "subject": "PSA",
+        "code": "PSA",
+        "faculty": "Dr. N. Rajesh"
+      }
+    ]
   }
 ]

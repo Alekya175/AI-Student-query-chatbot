@@ -934,5 +934,85 @@
     "floor": "Second Floor",
     "cabin": "R. Cabin 4",
     "mobile": "8099903403"
+  },
+  {
+    "empId": "7001",
+    "name": "Dr. Manikyala Rao",
+    "designation": "Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "Second Floor",
+    "cabin": "L. Cabin 1",
+    "mobile": "9010166698"
+  },
+  {
+    "empId": "7002",
+    "name": "Dr. Maxim Raul Bharathi",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "First Floor",
+    "cabin": "R. Cabin 4",
+    "mobile": "8099903403"
+  },
+  {
+    "empId": "7003",
+    "name": "Dr. Md Ahasan",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "First Floor",
+    "cabin": "L. Cabin 3",
+    "mobile": "9959067891"
+  },
+  {
+    "empId": "7004",
+    "name": "Dr. Sravan Kumar",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "First Floor",
+    "cabin": "L. Cabin 4",
+    "mobile": "9949806418"
+  },
+  {
+    "empId": "7005",
+    "name": "Dr. P. Gangadhar Rao",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "Second Floor",
+    "cabin": "L. Cabin 2",
+    "mobile": "8187820919"
+  },
+  {
+    "empId": "7006",
+    "name": "Mr. K. L. Kishore",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "Second Floor",
+    "cabin": "R. Cabin 2",
+    "mobile": "9491577397"
+  },
+  {
+    "empId": "7007",
+    "name": "Dr. Dara Rambabu",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "Second Floor",
+    "cabin": "L. Cabin 3",
+    "mobile": "8297904022"
+  },
+  {
+    "empId": "7008",
+    "name": "Dr. G. V. K. Pradeep",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "Second Floor",
+    "cabin": "R. Cabin 4",
+    "mobile": "7010832410"
   }
 ]
