@@ -1,11 +1,24 @@
 /**
  * Official Aditya University (https://www.adityauniversity.in/) Universal Academic Knowledge & NLP Engine
  */
+const path = require('path');
+const fs = require('fs');
+
+// Load 200+ Faculty Dataset
+let FACULTY_LIST = [];
+try {
+  const facultyPath = path.join(__dirname, '..', 'data', 'faculty.json');
+  if (fs.existsSync(facultyPath)) {
+    FACULTY_LIST = JSON.parse(fs.readFileSync(facultyPath, 'utf8'));
+  }
+} catch (err) {
+  console.warn('[NLP Engine] Warning: Could not load data/faculty.json:', err.message);
+}
 
 const AU_KB = {
   overview: `**Aditya University Overview:**\nAditya University is a premier multidisciplinary institution located at Aditya Nagar, ADB Road, Surampalem, Kakinada District, Andhra Pradesh – 533437.\n\n• **Accreditations:** NAAC A++ Accredited | NBA Tier-1 Accredited (CE, EEE, ME, ECE, CSE & IT)\n• **NIRF Rank Band:** 151–200 (University Category)\n• **Establishment:** Founded in 1984 under Aditya Academy; Established under the AP Private Universities Act, 2016.\n• **Legacy:** 80+ Institutions, 8,000+ Staff, and 80,000+ Students across Andhra Pradesh.\n• **Official Website:** https://www.adityauniversity.in/`,
 
-  leadership: `**Aditya University Leadership & Faculty:**\n\n🏛️ **Key Officers:**\n• **Chancellor:** Dr. N. Sesha Reddy\n• **Pro-Chancellors:** Dr. N. Satish Reddy & Sri. N. Deepak Reddy\n• **Dy. Pro-Chancellor:** Dr. M. Sreenivasa Reddy\n• **Vice Chancellor:** Dr. M.B. Srinivas\n• **Pro Vice-Chancellors:** Dr. A. Ramesh (Engg. & Sciences), Dr. S. Rama Sree (Academics), Dr. Thangjam Ravichandra (S & P)\n• **Registrar:** Dr. G. Suresh | **Controller of Examinations:** Dr. J. Pavan\n\n👨‍🏫 **School Deans & Faculty Leadership:**\n• **School of Engineering:** Dr. G. Sridevi (Dean)\n• **School of Computing:** Dr. M. V Rajesh (Associate Dean)\n• **Freshman Engineering:** Dr. A. Vanathi (Associate Dean)\n• **School of Business:** Dr. Sowjanya Bagadi (Associate Dean)\n• **School of Pharmacy:** Dr. D. Sathis Kumar (Dean)\n• **School of Sciences:** Mr. V. Anil Chavan (Associate Dean)\n• **Research & Consultancy:** Dr. A. Saravanan (Dean)\n• **International Relations:** Dr. P. S. Ranjit (Dean)\n• **Career Development:** Dr. G. Sanjiv Rao (Dean)\n• **Student Welfare:** Dr. Y. Krishna Srinivasa Subba Rao (Dean)\n• **Admissions:** Dr. A. Ramakrishna (Dean)\n• **IQAC:** Dr. G. Ramakrishna (Dean)`,
+  leadership: `**Aditya University Leadership & Administration:**\n\n🏛️ **Key Officers:**\n• **Chancellor:** Dr. N. Sesha Reddy\n• **Pro-Chancellors:** Dr. N. Satish Reddy & Sri. N. Deepak Reddy\n• **Dy. Pro-Chancellor:** Dr. M. Sreenivasa Reddy\n• **Vice Chancellor:** Dr. M.B. Srinivas\n• **Pro Vice-Chancellors:** Dr. A. Ramesh (Engg. & Sciences), Dr. S. Rama Sree (Academics), Dr. Thangjam Ravichandra (S & P)\n• **Registrar:** Dr. G. Suresh | **Controller of Examinations:** Dr. J. Pavan\n\n👨‍🏫 **School Deans & Faculty Leadership:**\n• **School of Engineering:** Dr. G. Sridevi (Dean)\n• **School of Computing:** Dr. M. V Rajesh (Associate Dean)\n• **Freshman Engineering:** Dr. A. Vanathi (Associate Dean)\n• **School of Business:** Dr. Sowjanya Bagadi (Associate Dean)\n• **School of Pharmacy:** Dr. D. Sathis Kumar (Dean)\n• **School of Sciences:** Mr. V. Anil Chavan (Associate Dean)\n• **Research & Consultancy:** Dr. A. Saravanan (Dean)\n• **International Relations:** Dr. P. S. Ranjit (Dean)\n• **Career Development:** Dr. G. Sanjiv Rao (Dean)\n• **Student Welfare:** Dr. Y. Krishna Srinivasa Subba Rao (Dean)\n• **Admissions:** Dr. A. Ramakrishna (Dean)\n• **IQAC:** Dr. G. Ramakrishna (Dean)`,
 
   rankings: `**Rankings & Recognitions of Aditya University:**\n\n🏆 **National Rankings:**\n• **NIRF:** 151–200 Rank Band in University Category (50th Rank in India)\n• **NBA Accreditation:** Tier-1 Accredited for CE, EEE, ME, ECE, CSE, IT\n• **NAAC:** NAAC A++ Accreditation\n• **Times Higher Education:** 14th Among Private Institutions across India\n• **Academic Insights:** 27th Rank in Top 50 Engineering Colleges\n• **SiliconIndia:** 4th Rank in South India\n• **The Week - Hansa Research:** 36th Rank (Technical Universities in India)\n• **QS Gauge Rating:** Diamond Rating\n• **SWAYAM-NPTEL:** 'AA' Rating Local Chapter\n• **SIRO:** Recognized as Scientific and Industrial Research Organisation`,
 
@@ -53,6 +66,24 @@ async function translateText(text, targetLang) {
   }
 
   return text;
+}
+
+// Precision Specific Faculty Search Engine
+function searchSpecificFaculty(question) {
+  if (!question || FACULTY_LIST.length === 0) return null;
+  const q = question.toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
+
+  for (const f of FACULTY_LIST) {
+    const rawName = f.name.toLowerCase().replace(/^(dr|mr|ms|mrs)\.?\s+/i, '');
+    const cleanName = rawName.replace(/[^a-z0-9\s]/g, ' ').trim();
+    const parts = cleanName.split(/\s+/).filter(p => p.length > 2);
+
+    if (parts.length > 0 && parts.every(part => q.includes(part))) {
+      return `👨‍🏫 **Faculty Profile Details**\n\n• **Name:** ${f.name}\n• **Designation / Role:** ${f.designation}\n• **Institution:** Aditya University`;
+    }
+  }
+
+  return null;
 }
 
 // Student Personal Data Engine for Logged-In Students
@@ -109,59 +140,63 @@ function getKBAnswer(question) {
   if (!question) return null;
   const q = question.toLowerCase().trim();
 
-  // 1. Faculty & Leadership (Check first for faculty queries)
+  // 1. Specific Faculty Direct Lookup (Highest priority)
+  const specificFaculty = searchSpecificFaculty(q);
+  if (specificFaculty) return specificFaculty;
+
+  // 2. Faculty & Leadership Overview
   if (/\b(faculty|department head|department heads|hod|hods|professor|professors|lecturer|lecturers|deans|chancellor|pro-chancellor|vice chancellor|vc|pro vice-chancellor|registrar|leadership|management)\b/.test(q))
     return AU_KB.leadership;
 
-  // 2. Rankings & Recognitions
+  // 3. Rankings & Recognitions
   if (/\b(nirf|ranking|rankings|accreditation|accreditations|naac|nba|tier-1|tier 1|academic insights|siliconindia|the week|qs gauge|swayam|nptel|siro|rating|recognit)\b/.test(q))
     return AU_KB.rankings;
 
-  // 3. History & Legacy
+  // 4. History & Legacy
   if (/\b(history|legacy|established|founded|foundation|aditya academy|1984|2001|2016|how old|institutions|staff|count)\b/.test(q))
     return AU_KB.history;
 
-  // 4. Vision, Mission & Core Values
+  // 5. Vision, Mission & Core Values
   if (/\b(vision|mission|values|core values|motto)\b/.test(q))
     return AU_KB.vision;
 
-  // 5. Recent Happenings & Events
+  // 6. Recent Happenings & Events
   if (/\b(event|events|happening|happenings|genai|conclave|thunder thursday|vivo|centific|blood donation|workshop|guest lecture)\b/.test(q))
     return AU_KB.happenings;
 
-  // 6. Degree Programs & Courses
+  // 7. Degree Programs & Courses
   if (/\b(program|programs|course|courses|btech|mtech|bba|mba|bca|mca|phd|pharmacy|degree|branch|branches|specializ|b\.tech|m\.tech|engineering|business)\b/.test(q))
     return AU_KB.programs;
 
-  // 7. Hostel & Transport
+  // 8. Hostel & Transport
   if (/\b(hostel|mess|food|bus|transport|room|rooms|wifi|accommodation|single room|double room|triple room|quadruple room|stay|canteen)\b/.test(q))
     return AU_KB.hostel;
 
-  // 8. Placements & Salary Packages
+  // 9. Placements & Salary Packages
   if (/\b(placement|placements|recruit|recruiter|recruiters|package|lpa|salary|job|hire|hiring|drive|job offer|placement offer|placed|company|companies|highest package|average package|akhilesh|rajesh|durga bhan raju)\b/.test(q))
     return AU_KB.placements;
 
-  // 9. Admissions, Application & Fees
+  // 10. Admissions, Application & Fees
   if (/\b(admission|admissions|apply|application|eligibility|fee structure|fee details|how to join|enroll|tuition|scholarship|cutoff|rank|cost|price)\b/.test(q))
     return AU_KB.admissions;
 
-  // 10. Schools & Faculties
+  // 11. Schools & Faculties
   if (/\b(school|schools|engineering school|business school|science school|pharmacy school)\b/.test(q))
     return AU_KB.schools;
 
-  // 11. Academics, Calendar & Syllabus
+  // 12. Academics, Calendar & Syllabus
   if (/\b(academic|academics|calendar|curriculum|regulation|regulations|syllabus|conduct|learning academy|educast)\b/.test(q))
     return AU_KB.academics;
 
-  // 12. Examinations & Results
+  // 13. Examinations & Results
   if (/\b(exam|exams|examination|examinations|result|results|question paper|notification|hall ticket|model paper|gpa|cgpa)\b/.test(q))
     return AU_KB.exams;
 
-  // 13. Library
+  // 14. Library
   if (/\b(library|book|books|knimbus|journal|reading room)\b/.test(q))
     return AU_KB.library;
 
-  // 14. Contact & Campus Location
+  // 15. Contact & Campus Location
   if (/\b(contact|address|phone|email|location|reach|office|website|about us|about university|helpline|where is)\b/.test(q))
     return AU_KB.contact;
 
