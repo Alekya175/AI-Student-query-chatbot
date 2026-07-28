@@ -79,7 +79,55 @@ async function translateText(text, targetLang) {
   return text;
 }
 
-// Precision Faculty Status & Availability Finder Engine with Longest-Match Token Scoring
+// Helper: Parse Day & Time from query string
+function parseDayAndTime(question) {
+  const q = question.toLowerCase();
+
+  const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  let targetDay = null;
+  for (const d of days) {
+    if (q.includes(d)) {
+      targetDay = d.charAt(0).toUpperCase() + d.slice(1);
+      break;
+    }
+  }
+
+  let targetMinutes = null;
+  const timeMatch = q.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i);
+  if (timeMatch) {
+    let hour = parseInt(timeMatch[1]);
+    let min = timeMatch[2] ? parseInt(timeMatch[2]) : 0;
+    const ampm = timeMatch[3] ? timeMatch[3].toLowerCase() : null;
+
+    if (ampm === 'pm' && hour < 12) hour += 12;
+    else if (ampm === 'am' && hour === 12) hour = 0;
+    else if (!ampm) {
+      if (hour >= 1 && hour <= 5) hour += 12; // 1 to 5 without ampm = 1pm to 5pm
+      else if (hour === 12) hour = 12; // 12 noon
+    }
+    targetMinutes = hour * 60 + min;
+  }
+
+  return { targetDay, targetMinutes };
+}
+
+// Helper: Convert slot string like "9:30 - 10:20" or "1:50 - 2:40" into start & end minutes
+function parseSlotMinutes(slotStr) {
+  const parts = slotStr.split('-');
+  if (parts.length !== 2) return null;
+
+  function pTime(tStr) {
+    const [hStr, mStr] = tStr.trim().split(':');
+    let h = parseInt(hStr);
+    let m = mStr ? parseInt(mStr) : 0;
+    if (h >= 1 && h <= 5) h += 12; // afternoon period 1:00 PM to 5:00 PM
+    return h * 60 + m;
+  }
+
+  return { start: pTime(parts[0]), end: pTime(parts[1]) };
+}
+
+// Precision Time & Day Specific Faculty Location & Availability Finder Engine
 function searchSpecificFaculty(question) {
   if (!question || FACULTY_LIST.length === 0) return null;
   const cleanQ = question.toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
@@ -93,7 +141,6 @@ function searchSpecificFaculty(question) {
     const parts = cleanName.split(/\s+/).filter(p => p.length > 1);
 
     if (parts.length > 0 && parts.every(part => cleanQ.includes(part))) {
-      // Score based on matched string length to prioritize exact full names (e.g. Dr. Dara Rambabu over Dr. N. Rambabu)
       const score = parts.join(' ').length;
       if (score > maxMatchScore) {
         maxMatchScore = score;
@@ -105,7 +152,9 @@ function searchSpecificFaculty(question) {
   if (!bestFaculty) return null;
   const f = bestFaculty;
 
-  // Check if faculty has a scheduled class in timetables
+  // Extract requested Day and Time from student query
+  const { targetDay, targetMinutes } = parseDayAndTime(question);
+
   let activeClass = null;
   const rawFacName = f.name.toLowerCase().replace(/^(dr|mr|ms|mrs)\.?\s+/i, '');
   const facParts = rawFacName.replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(p => p.length > 1);
@@ -117,16 +166,42 @@ function searchSpecificFaculty(question) {
     });
 
     if (matchSub) {
-      activeClass = {
-        roomNo: t.roomNo,
-        hallName: t.hallName || `Room ${t.roomNo}`,
-        floor: t.floor || (t.roomNo.startsWith('1') ? 'Ground Floor' : t.roomNo.startsWith('2') ? 'First Floor' : 'Second Floor'),
-        block: t.block || 'Bhaskar Bhavan',
-        section: t.section,
-        subject: matchSub.subject
-      };
-      break;
+      if (targetDay && targetMinutes !== null) {
+        // Specific Day & Specific Time match
+        const daySlots = t.schedule[targetDay];
+        if (daySlots && Array.isArray(daySlots)) {
+          for (const slot of daySlots) {
+            if (slot.code === matchSub.code || slot.subject.toLowerCase().includes(matchSub.subject.toLowerCase())) {
+              const range = parseSlotMinutes(slot.time);
+              if (range && targetMinutes >= range.start && targetMinutes <= range.end) {
+                activeClass = {
+                  roomNo: t.roomNo,
+                  hallName: t.hallName || `Room ${t.roomNo}`,
+                  floor: t.floor || (t.roomNo.startsWith('1') ? 'Ground Floor' : t.roomNo.startsWith('2') ? 'First Floor' : 'Second Floor'),
+                  block: t.block || 'Bhaskar Bhavan',
+                  section: t.section,
+                  subject: matchSub.subject,
+                  slotTime: slot.time
+                };
+                break;
+              }
+            }
+          }
+        }
+      } else {
+        // General query without specific time: show assigned classroom
+        activeClass = {
+          roomNo: t.roomNo,
+          hallName: t.hallName || `Room ${t.roomNo}`,
+          floor: t.floor || (t.roomNo.startsWith('1') ? 'Ground Floor' : t.roomNo.startsWith('2') ? 'First Floor' : 'Second Floor'),
+          block: t.block || 'Bhaskar Bhavan',
+          section: t.section,
+          subject: matchSub.subject,
+          slotTime: 'Scheduled Lecture Period'
+        };
+      }
     }
+    if (activeClass) break;
   }
 
   const empTxt = f.empId ? `\n• **Emp ID:** ${f.empId}` : '';
@@ -136,11 +211,23 @@ function searchSpecificFaculty(question) {
   const cabinTxt = f.cabin ? `\n• **Cabin Number / Room:** ${f.cabin}` : '';
   const mobileTxt = f.mobile ? `\n• **Mobile Contact:** +91 ${f.mobile}` : '';
 
-  if (activeClass && /where|class|available|free|room|teaching|right now|currently/.test(cleanQ)) {
-    return `👨‍🏫 **Faculty Availability & Room Location Details**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation:** ${f.designation}${deptTxt}\n\n🏫 **Assigned Class Location:**\n• **Current Status:** Assigned to Teach Class in ${activeClass.hallName}\n• **Subject:** ${activeClass.subject}\n• **Room Number:** Room ${activeClass.roomNo} (${activeClass.floor}, ${activeClass.block})\n• **Section / Stream:** ${activeClass.section}\n\n📌 **Faculty Cabin (Meet when free):**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}`;
+  const dayStr = targetDay ? ` on ${targetDay}` : '';
+  const timeDisplayHour = targetMinutes !== null ? Math.floor(targetMinutes / 60) : null;
+  const timeDisplayMin = targetMinutes !== null ? String(targetMinutes % 60).padStart(2, '0') : null;
+  const timeStr = targetMinutes !== null ? ` at ${timeDisplayHour > 12 ? (timeDisplayHour - 12) : (timeDisplayHour === 0 ? 12 : timeDisplayHour)}:${timeDisplayMin}${timeDisplayHour >= 12 ? ' PM' : ' AM'}` : '';
+
+  if (activeClass && (targetDay || targetMinutes !== null)) {
+    return `👨‍🏫 **Faculty Schedule & Location Details**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation:** ${f.designation}${deptTxt}\n\n🏫 **Classroom Schedule (${targetDay || 'Requested Day'}${timeStr}):**\n• **Current Status:** 🔴 TAKING CLASS in ${activeClass.hallName}\n• **Subject:** ${activeClass.subject}\n• **Classroom:** ${activeClass.hallName} (${activeClass.floor}, ${activeClass.block})\n• **Class Slot:** ${activeClass.slotTime}\n• **Section:** ${activeClass.section}\n\n📌 **Faculty Cabin (Meet when free):**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}`;
+  } else if (!activeClass && (targetDay || targetMinutes !== null)) {
+    return `👨‍🏫 **Faculty Availability & Cabin Location**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation:** ${f.designation}${deptTxt}\n\n🟢 **Availability Status (${targetDay || 'Requested Day'}${timeStr}):** FREE (No Class Scheduled)\n\n📌 **Where to Meet (${f.name}):**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}\n• **Institution:** Aditya University`;
   }
 
-  return `👨‍🏫 **Faculty Profile & Availability Details**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation / Role:** ${f.designation}${deptTxt}\n\n🟢 **Availability Status:** Free from class / Available in Cabin\n📌 **Cabin Location Details:**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}\n• **Institution:** Aditya University`;
+  // General profile output if no day/time specified
+  if (activeClass) {
+    return `👨‍🏫 **Faculty Profile & Room Location Details**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation / Role:** ${f.designation}${deptTxt}\n\n🏫 **Assigned Teaching Classroom:**\n• **Classroom:** ${activeClass.hallName} (${activeClass.floor}, ${activeClass.block})\n• **Subject:** ${activeClass.subject}\n• **Section:** ${activeClass.section}\n\n📌 **Faculty Cabin Location:**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}`;
+  }
+
+  return `👨‍🏫 **Faculty Profile & Availability Details**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation / Role:** ${f.designation}${deptTxt}\n\n🟢 **Availability Status:** Available in Cabin\n📌 **Cabin Location Details:**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}\n• **Institution:** Aditya University`;
 }
 
 // Section & Room Timetable Search Engine with Hall Differentiator
