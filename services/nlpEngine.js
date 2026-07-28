@@ -79,7 +79,7 @@ async function translateText(text, targetLang) {
   return text;
 }
 
-// Precision Specific Faculty Search Engine (Including Department, Block, Floor, Cabin No & Mobile Number)
+// Precision Faculty Status & Availability Finder Engine
 function searchSpecificFaculty(question) {
   if (!question || FACULTY_LIST.length === 0) return null;
   const q = question.toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
@@ -90,6 +90,27 @@ function searchSpecificFaculty(question) {
     const parts = cleanName.split(/\s+/).filter(p => p.length > 2);
 
     if (parts.length > 0 && parts.every(part => q.includes(part))) {
+      // Check if faculty has a scheduled class in timetables
+      let activeClass = null;
+
+      for (const t of TIMETABLES_LIST) {
+        const matchSub = t.faculty.find(sub => {
+          const subFacClean = sub.faculty.toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
+          return parts.every(p => subFacClean.includes(p));
+        });
+
+        if (matchSub) {
+          activeClass = {
+            roomNo: t.roomNo,
+            floor: t.floor || (t.roomNo.startsWith('1') ? 'Ground Floor' : 'First Floor'),
+            block: t.block || 'Bhaskar Bhavan',
+            section: t.section,
+            subject: matchSub.subject
+          };
+          break;
+        }
+      }
+
       const empTxt = f.empId ? `\n• **Emp ID:** ${f.empId}` : '';
       const deptTxt = f.department ? `\n• **Department:** ${f.department}` : '';
       const blockTxt = f.block ? `\n• **Block / Building:** ${f.block}` : '';
@@ -97,7 +118,11 @@ function searchSpecificFaculty(question) {
       const cabinTxt = f.cabin ? `\n• **Cabin Number / Room:** ${f.cabin}` : '';
       const mobileTxt = f.mobile ? `\n• **Mobile Contact:** +91 ${f.mobile}` : '';
 
-      return `👨‍🏫 **Faculty Profile Details**\n\n• **Name:** ${f.name}${empTxt}\n• **Designation / Role:** ${f.designation}${deptTxt}${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}\n• **Institution:** Aditya University`;
+      if (activeClass) {
+        return `👨‍🏫 **Faculty Availability & Room Location Details**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation:** ${f.designation}${deptTxt}\n\n🏫 **Assigned Class Location:**\n• **Current Status:** Taking Class in Room ${activeClass.roomNo}\n• **Subject:** ${activeClass.subject}\n• **Room Number:** Room ${activeClass.roomNo} (${activeClass.floor}, ${activeClass.block})\n• **Section:** ${activeClass.section}\n\n📌 **Faculty Cabin (Meet when free):**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}`;
+      } else {
+        return `👨‍🏫 **Faculty Profile & Availability Details**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation / Role:** ${f.designation}${deptTxt}\n\n🟢 **Availability Status:** Free from class / Available in Cabin\n📌 **Cabin Location Details:**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}\n• **Institution:** Aditya University`;
+      }
     }
   }
 
@@ -109,7 +134,7 @@ function getTimetableByRoomOrSection(question) {
   if (!question || TIMETABLES_LIST.length === 0) return null;
   const q = question.toLowerCase();
 
-  const isTTQuery = /timetable|time table|schedule|class schedule|room|period|subjects|slots/.test(q);
+  const isTTQuery = /timetable|time table|schedule|class schedule|room|period|subjects|slots|which class|happening/.test(q);
   if (!isTTQuery) return null;
 
   for (const t of TIMETABLES_LIST) {
@@ -121,10 +146,14 @@ function getTimetableByRoomOrSection(question) {
     const matchT6 = t.section.includes('T6') && (q.includes('t6') || q.includes('smart'));
 
     if (matchRoom || matchSec || matchGoogle || matchMS || matchT7 || matchT6) {
-      const scheduleText = Object.entries(t.schedule).map(([day, text]) => `• **${day}:** ${text}`).join('\n');
+      const floorStr = t.floor || (t.roomNo.startsWith('1') ? 'Ground Floor' : 'First Floor');
+      const scheduleText = Object.entries(t.schedule).map(([day, list]) => {
+        const periodStr = Array.isArray(list) ? list.map(item => `${item.time}: ${item.subject}`).join(' | ') : list;
+        return `• **${day}:** ${periodStr}`;
+      }).join('\n');
       const facultyText = t.faculty.map(f => `• **${f.subject}:** ${f.faculty}`).join('\n');
 
-      return `📅 **Class Time Table - ${t.section}**\n\n🏫 **Room No:** ${t.roomNo} (${t.block})\n🎓 **Semester:** ${t.semester}\n\n**Weekly Class Schedule:**\n${scheduleText}\n\n**Subject Faculty Assignments:**\n${facultyText}`;
+      return `📅 **Class Time Table - ${t.section}**\n\n🏫 **Room Number:** Room ${t.roomNo}\n🏢 **Floor & Building:** ${floorStr}, ${t.block}\n🎓 **Semester:** ${t.semester}\n\n**Weekly Class Schedule:**\n${scheduleText}\n\n**Subject Faculty Assignments:**\n${facultyText}`;
     }
   }
 
@@ -246,7 +275,7 @@ function getKBAnswer(question) {
     return AU_KB.library;
 
   // 16. Contact & Campus Location
-  if (/\b(contact|address|phone|email|location|reach|office|website|about us|about university|helpline|where is)\b/.test(q))
+  if (/\b(contact|address|phone|email|location|reach|office|website|about us|about university|helpline|where is university|campus address)\b/.test(q))
     return AU_KB.contact;
 
   return null;
