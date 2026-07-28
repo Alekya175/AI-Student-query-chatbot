@@ -744,5 +744,175 @@
     "floor": "Second Floor",
     "cabin": "R. Cabin 1",
     "mobile": "8919656267"
+  },
+  {
+    "empId": "6140",
+    "name": "K. Naga Rajani",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "Second Floor",
+    "cabin": "R. Cabin 6",
+    "mobile": "8919044635"
+  },
+  {
+    "empId": "5629",
+    "name": "Mr. G. Siva Shankar",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "First Floor",
+    "cabin": "L. Cabin 5",
+    "mobile": "9652960594"
+  },
+  {
+    "empId": "4891",
+    "name": "Dr. M. Visaliakshi",
+    "designation": "Assoc. Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "Second Floor",
+    "cabin": "L. Cabin 1",
+    "mobile": "9059735168"
+  },
+  {
+    "empId": "6931",
+    "name": "D. Phani Kumar",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "Second Floor",
+    "cabin": "R. Cabin 2",
+    "mobile": "9491577397"
+  },
+  {
+    "empId": "5394",
+    "name": "Kasimbee Shaik",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "First Floor",
+    "cabin": "R. Cabin 6",
+    "mobile": "7731068542"
+  },
+  {
+    "empId": "2248",
+    "name": "Dr. KNSL Kumar",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "First Floor",
+    "cabin": "L. Cabin 1",
+    "mobile": "9398966914"
+  },
+  {
+    "empId": "6496",
+    "name": "R. Sri Divya",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "Second Floor",
+    "cabin": "L. Cabin 6",
+    "mobile": "9492113320"
+  },
+  {
+    "empId": "5237",
+    "name": "R. Suneetha",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "First Floor",
+    "cabin": "L. Cabin 2",
+    "mobile": "90003146497"
+  },
+  {
+    "empId": "5671",
+    "name": "S. Vijaya Nirmala",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "Second Floor",
+    "cabin": "R. Cabin 5",
+    "mobile": "9133119515"
+  },
+  {
+    "empId": "5249",
+    "name": "Ms. V. Suneetha",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "First Floor",
+    "cabin": "R. Cabin 3",
+    "mobile": "7396566314"
+  },
+  {
+    "empId": "4665",
+    "name": "Mr. D. Satyanarayana",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "Second Floor",
+    "cabin": "L. Cabin 5",
+    "mobile": "9182389089"
+  },
+  {
+    "empId": "5363",
+    "name": "Mrs. Ch. DVP Kumari",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "First Floor",
+    "cabin": "R. Cabin 6",
+    "mobile": "7989432687"
+  },
+  {
+    "empId": "5038",
+    "name": "Dr. M. Vamsi Krishna",
+    "designation": "Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "Second Floor",
+    "cabin": "L. Cabin 1",
+    "mobile": "9010166698"
+  },
+  {
+    "empId": "6543",
+    "name": "Dr. N. Rahul Paul",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "Second Floor",
+    "cabin": "L. Cabin 2",
+    "mobile": "8187820919"
+  },
+  {
+    "empId": "6905",
+    "name": "Mr. V. Shalem Teja",
+    "designation": "Teaching Assistant",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "Second Floor",
+    "cabin": "Cabin 55",
+    "mobile": "8807524429"
+  },
+  {
+    "empId": "5867",
+    "name": "Mrs. P. Annapurna",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "First Floor",
+    "cabin": "R. Cabin 1",
+    "mobile": "7981157620"
+  },
+  {
+    "empId": "6485",
+    "name": "B. Lakshmi Durga",
+    "designation": "Assistant Professor",
+    "department": "Artificial Intelligence and Machine Learning (AI & ML)",
+    "block": "Bhaskar Bhavan",
+    "floor": "First Floor",
+    "cabin": "R. Cabin 2",
+    "mobile": "7731096290"
   }
 ]
