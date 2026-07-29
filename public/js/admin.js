@@ -37,8 +37,28 @@ function renderTickets(tickets) {
     return;
   }
 
-  container.innerHTML = tickets.map(t => `
-    <div class="ticket-card" id="ticket-${t._id || t.ticketId}">
+  // Preserve active admin drafts & focus state before re-rendering
+  const savedDrafts = {};
+  let activeId = null;
+  let selectionStart = 0;
+  let selectionEnd = 0;
+
+  document.querySelectorAll('textarea[id^="replyText-"]').forEach(ta => {
+    if (ta.value) {
+      savedDrafts[ta.id] = ta.value;
+    }
+    if (document.activeElement === ta) {
+      activeId = ta.id;
+      selectionStart = ta.selectionStart;
+      selectionEnd = ta.selectionEnd;
+    }
+  });
+
+  // Re-render tickets list
+  container.innerHTML = tickets.map(t => {
+    const id = t._id || t.ticketId;
+    return `
+    <div class="ticket-card" id="ticket-${id}">
       <div class="ticket-meta">
         <div>
           <strong>${t.studentName || 'Student'}</strong> 
@@ -56,12 +76,26 @@ function renderTickets(tickets) {
         </div>
       ` : `
         <div class="ticket-reply-box">
-          <textarea id="replyText-${t._id || t.ticketId}" placeholder="Type reply to student..."></textarea>
-          <button onclick="submitReply('${t._id || t.ticketId}')" class="btn-primary" style="align-self:flex-end">Send Reply to Student ↗</button>
+          <textarea id="replyText-${id}" placeholder="Type reply to student..."></textarea>
+          <button onclick="submitReply('${id}')" class="btn-primary" style="align-self:flex-end">Send Reply to Student ↗</button>
         </div>
       `}
     </div>
-  `).join('');
+  `}).join('');
+
+  // Restore saved draft text and cursor focus
+  Object.keys(savedDrafts).forEach(id => {
+    const ta = document.getElementById(id);
+    if (ta) ta.value = savedDrafts[id];
+  });
+
+  if (activeId) {
+    const activeTa = document.getElementById(activeId);
+    if (activeTa) {
+      activeTa.focus();
+      try { activeTa.setSelectionRange(selectionStart, selectionEnd); } catch(_) {}
+    }
+  }
 }
 
 async function submitReply(ticketId) {
