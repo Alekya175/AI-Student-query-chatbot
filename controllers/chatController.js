@@ -155,17 +155,26 @@ exports.handleChat = async (req, res) => {
 };
 
 /**
- * Fetch Student Ticket Notifications from MongoDB
+ * Fetch Student Ticket Notifications from MongoDB & Queue Memory Buffer
  */
 exports.getStudentNotifications = async (req, res) => {
-  const studentEmail = req.params.email;
+  const studentEmail = (req.params.email || '').toLowerCase().trim();
   try {
-    const tickets = await Ticket.find({ studentId: studentEmail })
-      .sort({ createdAt: -1 })
-      .limit(10)
-      .lean();
+    let dbTickets = [];
+    try {
+      dbTickets = await Ticket.find({
+        $or: [{ studentId: studentEmail }, { studentEmail: studentEmail }]
+      }).sort({ createdAt: -1 }).limit(10).lean();
+    } catch (_) {}
 
-    res.json({ success: true, notifications: tickets });
+    const memTickets = (queueService.ticketQueue || []).filter(t => {
+      const sId = (t.studentId || '').toLowerCase();
+      const sEmail = (t.studentEmail || '').toLowerCase();
+      return (sId === studentEmail || sEmail === studentEmail) && !dbTickets.some(d => d.ticketId === t.ticketId);
+    });
+
+    const notifications = [...memTickets, ...dbTickets];
+    res.json({ success: true, notifications });
   } catch (err) {
     res.json({ success: false, notifications: [] });
   }
