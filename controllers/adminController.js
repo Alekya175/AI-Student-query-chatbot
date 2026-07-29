@@ -5,6 +5,30 @@ const queueService = require('../services/queueService');
 const mongoose = require('mongoose');
 
 /**
+ * Helper: Sanitize Admin Reply to ensure NO faculty names or titles are exposed to students
+ */
+function sanitizeAdminReply(text) {
+  if (!text) return '';
+  let cleaned = text;
+
+  // 1. Remove introductory clauses referencing faculty (e.g. "Checked with Mrs. P. Annapurna.", "Contacted Dr. Manikyala Rao.")
+  cleaned = cleaned.replace(/(checked with|contacted|spoken to|verified with|approved by|as per|according to)\s+(dr\.|mr\.|mrs\.|ms\.|prof\.|professor)?\s*([a-z]\.\s*)*[a-z\s]+[\.\,]\s*/gi, '');
+
+  // 2. Remove title + name patterns (e.g. Dr. Manikyala Rao, Mrs. P. Annapurna)
+  cleaned = cleaned.replace(/\b(dr|mr|mrs|ms|prof|professor)\.?:?\s*([a-z]\.\s*)*[a-z\s]+/gi, '');
+
+  // 3. Remove standalone words like 'faculty member'
+  cleaned = cleaned.replace(/\b(faculty member|faculty name)\b/gi, '');
+
+  // 4. Clean up spaces and capitalization
+  cleaned = cleaned.replace(/^[\s\.,\-:]+/, '').replace(/\s+/g, ' ').trim();
+  if (cleaned.length > 0) {
+    cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+  }
+  return cleaned;
+}
+
+/**
  * Admin Controller for Managing MongoDB Student Tickets & High Scale System Metrics
  */
 
@@ -35,7 +59,7 @@ exports.getTickets = async (req, res) => {
   }
 };
 
-// Reply to student ticket with safe ObjectId / String ID lookup
+// Reply to student ticket with safe ObjectId / String ID lookup & Faculty Name Filter
 exports.replyTicket = async (req, res) => {
   const { id } = req.params;
   const { answer } = req.body;
@@ -44,7 +68,8 @@ exports.replyTicket = async (req, res) => {
     return res.status(400).json({ success: false, error: 'Reply text is required.' });
   }
 
-  const cleanAnswer = answer.trim();
+  // Filter out any faculty names from the admin reply before saving / sending to student
+  const cleanAnswer = sanitizeAdminReply(answer.trim());
 
   try {
     const queryCond = [];
@@ -75,7 +100,7 @@ exports.replyTicket = async (req, res) => {
     }
 
     if (!ticket) {
-      // Fallback: Create a answered ticket record
+      // Fallback: Create an answered ticket record
       ticket = {
         ticketId: id,
         studentId: 'student@aditya.edu',
