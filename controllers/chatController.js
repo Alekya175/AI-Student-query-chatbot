@@ -75,7 +75,7 @@ exports.handleChat = async (req, res) => {
 
     const categoryNames = {
       complaint: 'complaint',
-      faculty: 'academic/attendance issue',
+      faculty: 'attendance/faculty issue',
       personal: 'personal issue',
       request: 'student request',
       general: 'query'
@@ -155,7 +155,7 @@ exports.handleChat = async (req, res) => {
 };
 
 /**
- * Fetch Student Ticket Notifications from MongoDB & Queue Memory Buffer (Excludes Read/Dismissed Tickets)
+ * Fetch Student Ticket Notifications from MongoDB & Queue Memory Buffer
  */
 exports.getStudentNotifications = async (req, res) => {
   const studentEmail = (req.params.email || '').toLowerCase().trim();
@@ -163,16 +163,14 @@ exports.getStudentNotifications = async (req, res) => {
     let dbTickets = [];
     try {
       dbTickets = await Ticket.find({
-        $or: [{ studentId: studentEmail }, { studentEmail: studentEmail }],
-        isRead: { $ne: true }
+        $or: [{ studentId: studentEmail }, { studentEmail: studentEmail }]
       }).sort({ createdAt: -1 }).limit(10).lean();
     } catch (_) {}
 
     const memTickets = (queueService.ticketQueue || []).filter(t => {
       const sId = (t.studentId || '').toLowerCase();
       const sEmail = (t.studentEmail || '').toLowerCase();
-      const isForStudent = (sId === studentEmail || sEmail === studentEmail);
-      return isForStudent && t.isRead !== true && !dbTickets.some(d => (d.ticketId && d.ticketId === t.ticketId) || (d._id && d._id.toString() === t._id));
+      return (sId === studentEmail || sEmail === studentEmail) && !dbTickets.some(d => d.ticketId === t.ticketId);
     });
 
     const notifications = [...memTickets, ...dbTickets];

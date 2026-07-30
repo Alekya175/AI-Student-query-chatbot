@@ -3,9 +3,6 @@ const router = express.Router();
 const chatController = require('../controllers/chatController');
 const adminController = require('../controllers/adminController');
 const User = require('../models/User');
-const Ticket = require('../models/Ticket');
-const queueService = require('../services/queueService');
-const mongoose = require('mongoose');
 
 // Guest & Auth Endpoints connected directly to MongoDB
 router.post('/auth/guest', (req, res) => {
@@ -95,33 +92,6 @@ router.post('/admin/login', (req, res) => {
 // Student Chat & Notifications Routes
 router.post('/chat', chatController.handleChat);
 router.get('/notifications/:email', chatController.getStudentNotifications);
-
-// Endpoint to mark notification as read/viewed permanently
-router.post('/notifications/mark-read/:ticketId', async (req, res) => {
-  const { ticketId } = req.params;
-  try {
-    const queryCond = [];
-    if (mongoose.Types.ObjectId.isValid(ticketId)) {
-      queryCond.push({ _id: ticketId });
-    }
-    queryCond.push({ ticketId });
-
-    await Ticket.updateMany({ $or: queryCond }, { $set: { isRead: true } });
-
-    // Update in-memory queued tickets as well
-    if (queueService.ticketQueue) {
-      queueService.ticketQueue.forEach(t => {
-        if (t.ticketId === ticketId || t._id === ticketId || (t._id && t._id.toString() === ticketId)) {
-          t.isRead = true;
-        }
-      });
-    }
-
-    res.json({ success: true });
-  } catch (err) {
-    res.json({ success: false });
-  }
-});
 
 // Admin Dashboard Routes
 router.get('/admin/tickets', adminController.getTickets);
