@@ -323,13 +323,59 @@ function getKBAnswer(question) {
   if (!question) return null;
   const q = question.toLowerCase().trim();
 
+  // 1. Check for specific faculty query first
   const specificFaculty = searchSpecificFaculty(q);
   if (specificFaculty) return specificFaculty;
 
+  // 2. Check for specific timetable query
   const specificTT = getTimetableByRoomOrSection(q);
   if (specificTT) return specificTT;
 
-  if (/\b(faculty|department head|department heads|hod|hods|professor|professors|lecturer|lecturers|deans|chancellor|pro-chancellor|vice chancellor|vc|pro vice-chancellor|registrar|leadership|management)\b/.test(q))
+  // 3. Laser-Focused Specific Officer / Position Queries
+
+  // A. AIML HOD
+  if (/\b(aiml hod|hod of aiml|hod aiml|who is hod|head of department|department head|aiml head)\b/.test(q) || (q.includes('hod') && !q.includes('other'))) {
+    return `👩‍🏫 **Department of AI & ML Head of Department (HOD)**\n\n👤 **Name:** Dr. Kovvuri N Bhargavi\n• **Designation:** HOD & Associate Professor\n• **Department:** Department of Artificial Intelligence and Machine Learning (AI & ML)\n📍 **Cabin Location:** HoD cabin, First Floor, Bhaskar Bhavan\n📞 **Mobile Contact:** +91 8919776949\n🏛️ **Institution:** Aditya University`;
+  }
+
+  // B. Chancellor
+  if (/\b(chancellor|who is chancellor)\b/.test(q) && !q.includes('pro') && !q.includes('vice')) {
+    return `🏛️ **Chancellor of Aditya University**\n\n👤 **Name:** Dr. N. Sesha Reddy\n• **Role:** Chancellor (Founder & Chairman)\n🏛️ **Institution:** Aditya University`;
+  }
+
+  // C. Pro-Chancellor
+  if (/\b(pro chancellor|pro-chancellor)\b/.test(q) && !q.includes('vice')) {
+    return `🏛️ **Pro-Chancellors of Aditya University**\n\n• **Pro-Chancellors:** Dr. N. Satish Reddy & Sri. N. Deepak Reddy\n• **Dy. Pro-Chancellor:** Dr. M. Sreenivasa Reddy\n🏛️ **Institution:** Aditya University`;
+  }
+
+  // D. Vice Chancellor / VC
+  if (/\b(vice chancellor|who is vc|who is vice chancellor|vc of aditya|vc name)\b/.test(q) || q === 'vc') {
+    return `🏛️ **Vice Chancellor of Aditya University**\n\n👤 **Name:** Dr. M.B. Srinivas\n• **Role:** Vice Chancellor\n🏛️ **Institution:** Aditya University`;
+  }
+
+  // E. Registrar
+  if (/\b(registrar|who is registrar)\b/.test(q)) {
+    return `🏛️ **Registrar of Aditya University**\n\n👤 **Name:** Dr. G. Suresh\n• **Role:** Registrar\n🏛️ **Institution:** Aditya University`;
+  }
+
+  // F. Controller of Examinations (COE)
+  if (/\b(controller of examinations|coe|exam controller)\b/.test(q)) {
+    return `🏛️ **Controller of Examinations (COE)**\n\n👤 **Name:** Dr. J. Pavan\n• **Role:** Controller of Examinations\n🏛️ **Institution:** Aditya University`;
+  }
+
+  // G. Engineering Dean
+  if (/\b(engineering dean|dean of engineering)\b/.test(q)) {
+    return `👨‍🏫 **School of Engineering Leadership**\n\n👤 **Dean:** Dr. G. Sridevi\n• **Associate Dean (Computing):** Dr. M. V Rajesh\n• **Associate Dean (Freshman Engg):** Dr. A. Vanathi`;
+  }
+
+  // H. Highest Placement Package
+  if (/\b(highest package|highest placement|highest salary|top package|max package|highest alumni offer)\b/.test(q)) {
+    return `🏆 **Highest Placement Offer at Aditya University**\n\n• **Highest Alumni Offers:** **₹106.00 LPA** (M. Akhilesh & G. Rajesh)\n• **Top Batch Placement (2025-26):** **₹39.60 LPA** (D. Veera Venkata Durga Bhan Raju)\n🏢 **Top Recruiters:** Capgemini, Accenture, Autodesk, Hitachi, L&T, Walmart`;
+  }
+
+  // Broad Fallback Categorization
+
+  if (/\b(leadership|management|officers|board of directors)\b/.test(q))
     return AU_KB.leadership;
 
   if (/\b(nirf|ranking|rankings|accreditation|accreditations|naac|nba|tier-1|tier 1|academic insights|siliconindia|the week|qs gauge|swayam|nptel|siro|rating|recognit)\b/.test(q))
@@ -350,7 +396,7 @@ function getKBAnswer(question) {
   if (/\b(hostel|mess|food|bus|transport|room|rooms|wifi|accommodation|single room|double room|triple room|quadruple room|stay|canteen)\b/.test(q))
     return AU_KB.hostel;
 
-  if (/\b(placement|placements|recruit|recruiter|recruiters|package|lpa|salary|job|hire|hiring|drive|job offer|placement offer|placed|company|companies|highest package|average package|akhilesh|rajesh|durga bhan raju)\b/.test(q))
+  if (/\b(placement|placements|recruit|recruiter|recruiters|package|lpa|salary|job|hire|hiring|drive|job offer|placement offer|placed|company|companies)\b/.test(q))
     return AU_KB.placements;
 
   if (/\b(admission|admissions|apply|application|eligibility|fee structure|fee details|how to join|enroll|tuition|scholarship|cutoff|rank|cost|price)\b/.test(q))
