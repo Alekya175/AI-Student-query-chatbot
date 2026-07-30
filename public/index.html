@@ -902,6 +902,108 @@ function quickAsk(txt) { document.getElementById('chatIn').value = txt; sendMsg(
 function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,110)+'px'; }
 function handleKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();} }
 
+function cleanTextForSpeech(text) {
+  if (!text) return '';
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .replace(/<[^>]+>/g, '')
+    .replace(/https?:\/\/\S+/gi, '')
+    .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
+    .replace(/[•\-\*]/g, '')
+    .replace(/\n+/g, '. ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+let activeSpeechBtnId = null;
+
+function speakReply(text, btnId = null) {
+  if (!ttsEnabled || !window.speechSynthesis) return;
+
+  try {
+    window.speechSynthesis.cancel();
+  } catch(_) {}
+
+  const clean = cleanTextForSpeech(text);
+  if (!clean) return;
+
+  const utter = new SpeechSynthesisUtterance(clean);
+
+  const langMap = {
+    'en': 'en-IN', 'te': 'te-IN', 'hi': 'hi-IN', 'ta': 'ta-IN',
+    'kn': 'kn-IN', 'ml': 'ml-IN', 'fr': 'fr-FR', 'de': 'de-DE', 'es': 'es-ES'
+  };
+
+  const targetLocale = langMap[selectedLang] || 'en-IN';
+  utter.lang = targetLocale;
+  utter.rate = 0.95;
+
+  const voices = window.speechSynthesis.getVoices();
+  const matchedVoice = voices.find(v => v.lang === targetLocale || v.lang.startsWith(selectedLang));
+  if (matchedVoice) {
+    utter.voice = matchedVoice;
+  }
+
+  utter.onstart = () => {
+    if (btnId) {
+      activeSpeechBtnId = btnId;
+      const btn = document.getElementById(btnId);
+      if (btn) btn.innerHTML = '⏸️ Pause';
+    }
+  };
+
+  utter.onend = () => {
+    if (btnId || activeSpeechBtnId) {
+      const bId = btnId || activeSpeechBtnId;
+      const btn = document.getElementById(bId);
+      if (btn) btn.innerHTML = '▶️ Play';
+      activeSpeechBtnId = null;
+    }
+  };
+
+  utter.onerror = () => {
+    if (btnId || activeSpeechBtnId) {
+      const bId = btnId || activeSpeechBtnId;
+      const btn = document.getElementById(bId);
+      if (btn) btn.innerHTML = '▶️ Play';
+      activeSpeechBtnId = null;
+    }
+  };
+
+  if (window.speechSynthesis.paused) {
+    window.speechSynthesis.resume();
+  }
+
+  window.speechSynthesis.speak(utter);
+}
+
+function togglePlayPauseSpeech(text, btnId) {
+  if (!window.speechSynthesis) return;
+
+  if (window.speechSynthesis.speaking) {
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+      const btn = document.getElementById(btnId);
+      if (btn) btn.innerHTML = '⏸️ Pause';
+    } else {
+      window.speechSynthesis.pause();
+      const btn = document.getElementById(btnId);
+      if (btn) btn.innerHTML = '▶️ Resume';
+    }
+  } else {
+    speakReply(text, btnId);
+  }
+}
+
+function stopSpeech() {
+  if (window.speechSynthesis) {
+    try { window.speechSynthesis.cancel(); } catch(_) {}
+    document.querySelectorAll('.speech-play-btn').forEach(btn => btn.innerHTML = '▶️ Play');
+    activeSpeechBtnId = null;
+  }
+}
+
 function addMsg(role, text) {
   const w = document.querySelector('.welcome'); if(w) w.remove();
   const msgs = document.getElementById('msgs');
@@ -916,47 +1018,25 @@ function addMsg(role, text) {
     .replace(/\n/g,'<br>')
     .replace(/\* (.*?)(<br>|$)/g, '• $1<br>');
 
-  const avatarChar = isUser ? (currentUser && currentUser.name ? currentUser.name[0].toUpperCase() : 'G') : '✦';
+  const msgId = 'msg-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+  const escapedText = text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
 
-  row.innerHTML = `<div class="m-av ${isUser?'us':'ai'}">${avatarChar}</div><div class="m-wrap"><div class="m-bub">${html}</div><div class="m-time" style="font-size:10.5px; color:#94A3B8; margin-top:3px; ${isUser?'text-align:right':'text-align:left'}">${timeStr}</div></div>`;
-  msgs.appendChild(row);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function showTyping() {
-  const msgs = document.getElementById('msgs');
-  const row = document.createElement('div');
-  row.className='msg-row ai'; row.id='typingRow';
-  row.innerHTML=`<div class="m-av ai">✦</div><div class="m-wrap"><div class="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>`;
-  msgs.appendChild(row); msgs.scrollTop=msgs.scrollHeight;
-}
-function hideTyping() { document.getElementById('typingRow')?.remove(); }
-
-/* Universal Multilingual Voice Synthesis Selector */
-function speakReply(text) {
-  if (!ttsEnabled || !window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-
-  const clean = text.replace(/\*\*(.*?)\*\*/g,'$1').replace(/<[^>]+>/g,'');
-  const utter = new SpeechSynthesisUtterance(clean);
-
-  const langMap = {
-    'en': 'en-IN', 'te': 'te-IN', 'hi': 'hi-IN', 'ta': 'ta-IN',
-    'kn': 'kn-IN', 'ml': 'ml-IN', 'fr': 'fr-FR', 'de': 'de-DE', 'es': 'es-ES'
-  };
-
-  const targetLocale = langMap[selectedLang] || 'en-IN';
-  utter.lang = targetLocale;
-  utter.rate = 0.95;
-
-  // Search browser voices for exact language match
-  const voices = window.speechSynthesis.getVoices();
-  const matchedVoice = voices.find(v => v.lang === targetLocale || v.lang.startsWith(selectedLang));
-  if (matchedVoice) {
-    utter.voice = matchedVoice;
+  let audioControlsHtml = '';
+  if (!isUser) {
+    audioControlsHtml = `
+      <div class="audio-control-bar" style="margin-top:10px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:8px; font-size:12px;">
+        <span style="color:#94A3B8; font-weight:600; display:flex; align-items:center; gap:4px;">🔊 Voice:</span>
+        <button id="playBtn-${msgId}" class="speech-btn speech-play-btn" onclick="togglePlayPauseSpeech('${escapedText}', 'playBtn-${msgId}')" style="background:rgba(59,130,246,0.2); color:#60A5FA; border:1px solid rgba(59,130,246,0.4); padding:4px 10px; border-radius:6px; cursor:pointer; font-weight:600; transition:all 0.2s;">▶️ Play</button>
+        <button onclick="stopSpeech()" class="speech-btn" style="background:rgba(239,68,68,0.2); color:#F87171; border:1px solid rgba(239,68,68,0.4); padding:4px 10px; border-radius:6px; cursor:pointer; font-weight:600; transition:all 0.2s;">⏹️ Stop</button>
+      </div>
+    `;
   }
 
-  window.speechSynthesis.speak(utter);
+  const avatarChar = isUser ? (currentUser && currentUser.name ? currentUser.name[0].toUpperCase() : 'G') : '✦';
+
+  row.innerHTML = `<div class="m-av ${isUser?'us':'ai'}">${avatarChar}</div><div class="m-wrap"><div class="m-bub">${html}${audioControlsHtml}</div><div class="m-time" style="font-size:10.5px; color:#94A3B8; margin-top:3px; ${isUser?'text-align:right':'text-align:left'}">${timeStr}</div></div>`;
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
 }
 
 // Pre-load Web Speech Synthesis voices
@@ -1072,21 +1152,6 @@ function startVoice() {
 
 /* Admin Answer Notification Polling */
 let notifPollInterval = null;
-const seenTicketNotifs = new Set(JSON.parse(localStorage.getItem('seenTicketNotifs') || '[]'));
-
-function markTicketNotifSeen(id) {
-  if (!id) return;
-  seenTicketNotifs.add(id);
-  try {
-    localStorage.setItem('seenTicketNotifs', JSON.stringify(Array.from(seenTicketNotifs)));
-  } catch (_) {}
-}
-
-function dismissNotifBanner(id) {
-  markTicketNotifSeen(id);
-  const el = document.getElementById(`notif-banner-${id}`);
-  if (el) el.remove();
-}
 
 function startNotificationPolling() {
   if (notifPollInterval) clearInterval(notifPollInterval);
@@ -1105,7 +1170,7 @@ async function checkAdminNotifications() {
       answeredTickets.forEach(ticket => {
         const id = ticket._id || ticket.ticketId;
         if (!seenTicketNotifs.has(id)) {
-          markTicketNotifSeen(id);
+          seenTicketNotifs.add(id);
           showAdminNotificationBanner(ticket);
         }
       });
@@ -1127,16 +1192,13 @@ function cleanAdminReply(text) {
 }
 
 function showAdminNotificationBanner(ticket) {
-  const tId = ticket._id || ticket.ticketId;
-  markTicketNotifSeen(tId);
-
   const fTime = new Date(ticket.createdAt).toLocaleString('en-IN', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
   const aTime = new Date(ticket.answeredAt || Date.now()).toLocaleString('en-IN', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
   const cleanAns = cleanAdminReply(ticket.answer);
 
   const banner = document.createElement('div');
   banner.className = 'notif-banner';
-  banner.id = `notif-banner-${tId}`;
+  banner.id = `notif-banner-${ticket._id || ticket.ticketId}`;
   banner.innerHTML = `
     <div class="notif-header">
       <div class="notif-icon">📩</div>
@@ -1144,7 +1206,7 @@ function showAdminNotificationBanner(ticket) {
         <div class="notif-title">Admin Answered Your Query</div>
         <div class="notif-status">Status: ✅ Answered &amp; Resolved</div>
       </div>
-      <button class="notif-close" onclick="dismissNotifBanner('${tId}')">✕</button>
+      <button class="notif-close" onclick="this.parentElement.parentElement.remove()">✕</button>
     </div>
     <div class="notif-body">
       <p style="margin-bottom:6px;"><strong>Your Issue:</strong> "${ticket.question}"</p>
@@ -1155,8 +1217,8 @@ function showAdminNotificationBanner(ticket) {
       <span>✅ Answered: ${aTime}</span>
     </div>
     <div class="notif-actions">
-      <button class="notif-btn primary" onclick="dismissNotifBanner('${tId}'); viewAnswerInChat('${ticket.question.replace(/'/g, "\\'")}', '${cleanAns.replace(/'/g, "\\'")}', '${aTime}')">View in Chat</button>
-      <button class="notif-btn secondary" onclick="dismissNotifBanner('${tId}')">Dismiss</button>
+      <button class="notif-btn primary" onclick="viewAnswerInChat('${ticket.question.replace(/'/g, "\\'")}', '${cleanAns.replace(/'/g, "\\'")}', '${aTime}')">View in Chat</button>
+      <button class="notif-btn secondary" onclick="this.parentElement.parentElement.remove()">Dismiss</button>
     </div>
   `;
   document.body.appendChild(banner);

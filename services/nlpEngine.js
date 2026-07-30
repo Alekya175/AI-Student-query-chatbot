@@ -152,21 +152,6 @@ function searchSpecificFaculty(question) {
   if (!bestFaculty) return null;
   const f = bestFaculty;
 
-  // Check if question asks for location / meeting / availability / schedule
-  const isLocationOrScheduleQuery = /where|meet|cabin|find|room|class|schedule|time|available|free|taking class|class right now|monday|tuesday|wednesday|thursday|friday|saturday/.test(cleanQ);
-
-  const empTxt = f.empId ? `\n• **Emp ID:** ${f.empId}` : '';
-  const deptTxt = f.department ? `\n• **Department:** ${f.department}` : '';
-  const blockTxt = f.block ? `\n• **Block / Building:** ${f.block}` : '';
-  const floorTxt = f.floor ? `\n• **Floor:** ${f.floor}` : '';
-  const cabinTxt = f.cabin ? `\n• **Cabin Number / Room:** ${f.cabin}` : '';
-  const mobileTxt = f.mobile ? `\n• **Mobile Contact:** +91 ${f.mobile}` : '';
-
-  // If question is a general "who is X" or profile inquiry, return clean Faculty Profile & Cabin Location
-  if (!isLocationOrScheduleQuery) {
-    return `👨‍🏫 **Faculty Profile & Cabin Details**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation:** ${f.designation}${deptTxt}\n\n📌 **Faculty Cabin Location:**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}\n• **Institution:** Aditya University`;
-  }
-
   // Extract requested Day and Time from student query
   const { targetDay, targetMinutes } = parseDayAndTime(question);
 
@@ -219,6 +204,14 @@ function searchSpecificFaculty(question) {
     if (activeClass) break;
   }
 
+  const empTxt = f.empId ? `\n• **Emp ID:** ${f.empId}` : '';
+  const deptTxt = f.department ? `\n• **Department:** ${f.department}` : '';
+  const blockTxt = f.block ? `\n• **Block / Building:** ${f.block}` : '';
+  const floorTxt = f.floor ? `\n• **Floor:** ${f.floor}` : '';
+  const cabinTxt = f.cabin ? `\n• **Cabin Number / Room:** ${f.cabin}` : '';
+  const mobileTxt = f.mobile ? `\n• **Mobile Contact:** +91 ${f.mobile}` : '';
+
+  const dayStr = targetDay ? ` on ${targetDay}` : '';
   const timeDisplayHour = targetMinutes !== null ? Math.floor(targetMinutes / 60) : null;
   const timeDisplayMin = targetMinutes !== null ? String(targetMinutes % 60).padStart(2, '0') : null;
   const timeStr = targetMinutes !== null ? ` at ${timeDisplayHour > 12 ? (timeDisplayHour - 12) : (timeDisplayHour === 0 ? 12 : timeDisplayHour)}:${timeDisplayMin}${timeDisplayHour >= 12 ? ' PM' : ' AM'}` : '';
@@ -229,7 +222,11 @@ function searchSpecificFaculty(question) {
     return `👨‍🏫 **Faculty Availability & Cabin Location**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation:** ${f.designation}${deptTxt}\n\n🟢 **Availability Status (${targetDay || 'Requested Day'}${timeStr}):** FREE (No Class Scheduled)\n\n📌 **Where to Meet (${f.name}):**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}\n• **Institution:** Aditya University`;
   }
 
-  return `👨‍🏫 **Faculty Profile & Cabin Details**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation:** ${f.designation}${deptTxt}\n\n📌 **Faculty Cabin Location:**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}\n• **Institution:** Aditya University`;
+  if (activeClass) {
+    return `👨‍🏫 **Faculty Profile & Room Location Details**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation / Role:** ${f.designation}${deptTxt}\n\n🏫 **Assigned Teaching Classroom:**\n• **Classroom:** ${activeClass.hallName} (${activeClass.floor}, ${activeClass.block})\n• **Subject:** ${activeClass.subject}\n• **Section:** ${activeClass.section}\n\n📌 **Faculty Cabin Location:**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}`;
+  }
+
+  return `👨‍🏫 **Faculty Profile & Availability Details**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation / Role:** ${f.designation}${deptTxt}\n\n🟢 **Availability Status:** Available in Cabin\n📌 **Cabin Location Details:**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}\n• **Institution:** Aditya University`;
 }
 
 // Section & Room Timetable Search Engine with Hall Differentiator
