@@ -311,8 +311,28 @@ footer .sep{color:rgba(255,255,255,0.2)}
           <div id="loginForm" class="auth-form">
             <input type="email" id="loginEmail" placeholder="Email address" autocomplete="email" value="student@aditya.edu"/>
             <input type="password" id="loginPwd" placeholder="Password" autocomplete="current-password" value="123456"/>
+            <div style="display:flex; justify-content:flex-end; margin-top:-4px; margin-bottom:8px;">
+              <button type="button" onclick="showForgotPasswordForm()" style="background:none; border:none; color:#F5954A; font-size:12px; font-weight:600; cursor:pointer; padding:0; font-family:inherit;">Forgot Password?</button>
+            </div>
             <div class="auth-err" id="loginErr"></div>
             <button type="button" class="rp-btn btn-login" onclick="doLogin()">Student Login</button>
+          </div>
+          <div id="forgotPasswordForm" class="auth-form" style="display:none">
+            <div style="font-size:12px; color:#CBD5E1; margin-bottom:10px; line-height:1.4;">
+              Enter your registered email address below to receive a password reset code.
+            </div>
+            <input type="email" id="forgotEmail" placeholder="Enter your email address" autocomplete="email"/>
+            <div class="auth-err" id="forgotErr"></div>
+            <div id="forgotSuccess" style="display:none; color:#34D399; font-size:12px; font-weight:600; margin-bottom:10px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); padding:8px 10px; border-radius:8px;"></div>
+            
+            <div id="otpResetSection" style="display:none; margin-top:8px;">
+              <input type="text" id="resetOtpCode" placeholder="Enter 6-digit reset code" style="margin-bottom:8px; letter-spacing:2px; font-weight:700; text-align:center;"/>
+              <input type="password" id="resetNewPwd" placeholder="Enter new password (min 6 chars)" autocomplete="new-password"/>
+              <button type="button" class="rp-btn btn-login" style="margin-top:10px;" onclick="doResetPassword()">Reset Password Now</button>
+            </div>
+
+            <button type="button" id="btnSendResetCode" class="rp-btn btn-login" onclick="doSendResetEmail()">Send Reset Code to Email ✉️</button>
+            <button type="button" class="rp-btn btn-guest" style="margin-top:8px;" onclick="cancelForgotPassword()">← Back to Login</button>
           </div>
           <div id="signupForm" class="auth-form" style="display:none">
             <input type="text"     id="suName"  placeholder="Full name"/>
@@ -770,6 +790,108 @@ function switchTab(tab) {
   document.getElementById('loginForm').style.display = tab==='login' ? 'flex' : 'none';
   document.getElementById('signupForm').style.display = tab==='signup' ? 'flex' : 'none';
   document.getElementById('adminForm').style.display = tab==='admin' ? 'flex' : 'none';
+  const fp = document.getElementById('forgotPasswordForm');
+  if (fp) fp.style.display = 'none';
+}
+
+function showForgotPasswordForm() {
+  const loginEmail = document.getElementById('loginEmail');
+  const forgotEmail = document.getElementById('forgotEmail');
+  if (loginEmail && forgotEmail && loginEmail.value) {
+    forgotEmail.value = loginEmail.value;
+  }
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('signupForm').style.display = 'none';
+  document.getElementById('adminForm').style.display = 'none';
+  document.getElementById('forgotPasswordForm').style.display = 'block';
+  document.getElementById('forgotErr').textContent = '';
+  const succ = document.getElementById('forgotSuccess');
+  if (succ) succ.style.display = 'none';
+  const otpSec = document.getElementById('otpResetSection');
+  if (otpSec) otpSec.style.display = 'none';
+  const btn = document.getElementById('btnSendResetCode');
+  if (btn) btn.style.display = 'block';
+}
+
+function cancelForgotPassword() {
+  document.getElementById('forgotPasswordForm').style.display = 'none';
+  document.getElementById('loginForm').style.display = 'flex';
+}
+
+async function doSendResetEmail() {
+  const email = document.getElementById('forgotEmail').value.trim();
+  const errEl = document.getElementById('forgotErr');
+  const succEl = document.getElementById('forgotSuccess');
+  errEl.textContent = '';
+  if (succEl) succEl.style.display = 'none';
+
+  if (!email) {
+    errEl.textContent = 'Please enter your registered email address.';
+    return;
+  }
+
+  try {
+    const res = await fetchWithBackoff(`${API}/auth/forgot-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      if (succEl) {
+        succEl.textContent = `✅ ${data.message} ${data.resetCode ? '(Code: ' + data.resetCode + ')' : ''}`;
+        succEl.style.display = 'block';
+      }
+      document.getElementById('otpResetSection').style.display = 'block';
+      document.getElementById('btnSendResetCode').style.display = 'none';
+      if (data.resetCode) {
+        document.getElementById('resetOtpCode').value = data.resetCode;
+      }
+    } else {
+      errEl.textContent = data.error || 'Failed to send reset code.';
+    }
+  } catch (err) {
+    errEl.textContent = 'Error connecting to server. Please try again.';
+  }
+}
+
+async function doResetPassword() {
+  const email = document.getElementById('forgotEmail').value.trim();
+  const resetCode = document.getElementById('resetOtpCode').value.trim();
+  const newPassword = document.getElementById('resetNewPwd').value.trim();
+  const errEl = document.getElementById('forgotErr');
+  const succEl = document.getElementById('forgotSuccess');
+  errEl.textContent = '';
+
+  if (!resetCode || !newPassword) {
+    errEl.textContent = 'Please enter the 6-digit reset code and your new password.';
+    return;
+  }
+
+  try {
+    const res = await fetchWithBackoff(`${API}/auth/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, resetCode, newPassword })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      if (succEl) {
+        succEl.textContent = '🎉 Password successfully updated! Redirecting to login...';
+        succEl.style.display = 'block';
+      }
+      document.getElementById('loginPwd').value = newPassword;
+      setTimeout(() => {
+        cancelForgotPassword();
+      }, 1500);
+    } else {
+      errEl.textContent = data.error || 'Failed to reset password.';
+    }
+  } catch (err) {
+    errEl.textContent = 'Error connecting to server. Please try again.';
+  }
 }
 
 function navClick(el, topic, autoMsg) {
@@ -902,108 +1024,6 @@ function quickAsk(txt) { document.getElementById('chatIn').value = txt; sendMsg(
 function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,110)+'px'; }
 function handleKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();} }
 
-function cleanTextForSpeech(text) {
-  if (!text) return '';
-  return text
-    .replace(/\*\*(.*?)\*\*/g, '$1')
-    .replace(/\*(.*?)\*/g, '$1')
-    .replace(/<[^>]+>/g, '')
-    .replace(/https?:\/\/\S+/gi, '')
-    .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
-    .replace(/[•\-\*]/g, '')
-    .replace(/\n+/g, '. ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-let activeSpeechBtnId = null;
-
-function speakReply(text, btnId = null) {
-  if (!ttsEnabled || !window.speechSynthesis) return;
-
-  try {
-    window.speechSynthesis.cancel();
-  } catch(_) {}
-
-  const clean = cleanTextForSpeech(text);
-  if (!clean) return;
-
-  const utter = new SpeechSynthesisUtterance(clean);
-
-  const langMap = {
-    'en': 'en-IN', 'te': 'te-IN', 'hi': 'hi-IN', 'ta': 'ta-IN',
-    'kn': 'kn-IN', 'ml': 'ml-IN', 'fr': 'fr-FR', 'de': 'de-DE', 'es': 'es-ES'
-  };
-
-  const targetLocale = langMap[selectedLang] || 'en-IN';
-  utter.lang = targetLocale;
-  utter.rate = 0.95;
-
-  const voices = window.speechSynthesis.getVoices();
-  const matchedVoice = voices.find(v => v.lang === targetLocale || v.lang.startsWith(selectedLang));
-  if (matchedVoice) {
-    utter.voice = matchedVoice;
-  }
-
-  utter.onstart = () => {
-    if (btnId) {
-      activeSpeechBtnId = btnId;
-      const btn = document.getElementById(btnId);
-      if (btn) btn.innerHTML = '⏸️ Pause';
-    }
-  };
-
-  utter.onend = () => {
-    if (btnId || activeSpeechBtnId) {
-      const bId = btnId || activeSpeechBtnId;
-      const btn = document.getElementById(bId);
-      if (btn) btn.innerHTML = '▶️ Play';
-      activeSpeechBtnId = null;
-    }
-  };
-
-  utter.onerror = () => {
-    if (btnId || activeSpeechBtnId) {
-      const bId = btnId || activeSpeechBtnId;
-      const btn = document.getElementById(bId);
-      if (btn) btn.innerHTML = '▶️ Play';
-      activeSpeechBtnId = null;
-    }
-  };
-
-  if (window.speechSynthesis.paused) {
-    window.speechSynthesis.resume();
-  }
-
-  window.speechSynthesis.speak(utter);
-}
-
-function togglePlayPauseSpeech(text, btnId) {
-  if (!window.speechSynthesis) return;
-
-  if (window.speechSynthesis.speaking) {
-    if (window.speechSynthesis.paused) {
-      window.speechSynthesis.resume();
-      const btn = document.getElementById(btnId);
-      if (btn) btn.innerHTML = '⏸️ Pause';
-    } else {
-      window.speechSynthesis.pause();
-      const btn = document.getElementById(btnId);
-      if (btn) btn.innerHTML = '▶️ Resume';
-    }
-  } else {
-    speakReply(text, btnId);
-  }
-}
-
-function stopSpeech() {
-  if (window.speechSynthesis) {
-    try { window.speechSynthesis.cancel(); } catch(_) {}
-    document.querySelectorAll('.speech-play-btn').forEach(btn => btn.innerHTML = '▶️ Play');
-    activeSpeechBtnId = null;
-  }
-}
-
 function addMsg(role, text) {
   const w = document.querySelector('.welcome'); if(w) w.remove();
   const msgs = document.getElementById('msgs');
@@ -1018,25 +1038,47 @@ function addMsg(role, text) {
     .replace(/\n/g,'<br>')
     .replace(/\* (.*?)(<br>|$)/g, '• $1<br>');
 
-  const msgId = 'msg-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
-  const escapedText = text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
-
-  let audioControlsHtml = '';
-  if (!isUser) {
-    audioControlsHtml = `
-      <div class="audio-control-bar" style="margin-top:10px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:8px; font-size:12px;">
-        <span style="color:#94A3B8; font-weight:600; display:flex; align-items:center; gap:4px;">🔊 Voice:</span>
-        <button id="playBtn-${msgId}" class="speech-btn speech-play-btn" onclick="togglePlayPauseSpeech('${escapedText}', 'playBtn-${msgId}')" style="background:rgba(59,130,246,0.2); color:#60A5FA; border:1px solid rgba(59,130,246,0.4); padding:4px 10px; border-radius:6px; cursor:pointer; font-weight:600; transition:all 0.2s;">▶️ Play</button>
-        <button onclick="stopSpeech()" class="speech-btn" style="background:rgba(239,68,68,0.2); color:#F87171; border:1px solid rgba(239,68,68,0.4); padding:4px 10px; border-radius:6px; cursor:pointer; font-weight:600; transition:all 0.2s;">⏹️ Stop</button>
-      </div>
-    `;
-  }
-
   const avatarChar = isUser ? (currentUser && currentUser.name ? currentUser.name[0].toUpperCase() : 'G') : '✦';
 
-  row.innerHTML = `<div class="m-av ${isUser?'us':'ai'}">${avatarChar}</div><div class="m-wrap"><div class="m-bub">${html}${audioControlsHtml}</div><div class="m-time" style="font-size:10.5px; color:#94A3B8; margin-top:3px; ${isUser?'text-align:right':'text-align:left'}">${timeStr}</div></div>`;
+  row.innerHTML = `<div class="m-av ${isUser?'us':'ai'}">${avatarChar}</div><div class="m-wrap"><div class="m-bub">${html}</div><div class="m-time" style="font-size:10.5px; color:#94A3B8; margin-top:3px; ${isUser?'text-align:right':'text-align:left'}">${timeStr}</div></div>`;
   msgs.appendChild(row);
   msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('msgs');
+  const row = document.createElement('div');
+  row.className='msg-row ai'; row.id='typingRow';
+  row.innerHTML=`<div class="m-av ai">✦</div><div class="m-wrap"><div class="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>`;
+  msgs.appendChild(row); msgs.scrollTop=msgs.scrollHeight;
+}
+function hideTyping() { document.getElementById('typingRow')?.remove(); }
+
+/* Universal Multilingual Voice Synthesis Selector */
+function speakReply(text) {
+  if (!ttsEnabled || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+
+  const clean = text.replace(/\*\*(.*?)\*\*/g,'$1').replace(/<[^>]+>/g,'');
+  const utter = new SpeechSynthesisUtterance(clean);
+
+  const langMap = {
+    'en': 'en-IN', 'te': 'te-IN', 'hi': 'hi-IN', 'ta': 'ta-IN',
+    'kn': 'kn-IN', 'ml': 'ml-IN', 'fr': 'fr-FR', 'de': 'de-DE', 'es': 'es-ES'
+  };
+
+  const targetLocale = langMap[selectedLang] || 'en-IN';
+  utter.lang = targetLocale;
+  utter.rate = 0.95;
+
+  // Search browser voices for exact language match
+  const voices = window.speechSynthesis.getVoices();
+  const matchedVoice = voices.find(v => v.lang === targetLocale || v.lang.startsWith(selectedLang));
+  if (matchedVoice) {
+    utter.voice = matchedVoice;
+  }
+
+  window.speechSynthesis.speak(utter);
 }
 
 // Pre-load Web Speech Synthesis voices

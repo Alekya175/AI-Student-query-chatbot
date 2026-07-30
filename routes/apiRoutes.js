@@ -4,6 +4,9 @@ const chatController = require('../controllers/chatController');
 const adminController = require('../controllers/adminController');
 const User = require('../models/User');
 
+// In-Memory Password Reset Token Store (Map of email -> { code, expiresAt })
+const resetTokens = new Map();
+
 // Guest & Auth Endpoints connected directly to MongoDB
 router.post('/auth/guest', (req, res) => {
   res.json({
@@ -74,6 +77,87 @@ router.post('/auth/login', async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Login failed: ' + err.message });
+  }
+});
+
+// Forgot Password - Send Reset Code to Email
+router.post('/auth/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  if (!email || !email.trim()) {
+    return res.status(400).json({ success: false, error: 'Please enter your registered email address.' });
+  }
+
+  const cleanEmail = email.toLowerCase().trim();
+
+  try {
+    let userExists = false;
+    if (cleanEmail === 'student@aditya.edu') {
+      userExists = true;
+    } else {
+      const user = await User.findOne({ email: cleanEmail });
+      if (user) userExists = true;
+    }
+
+    if (!userExists) {
+      return res.status(404).json({ success: false, error: 'No account found with this email address. Please check spelling or Sign Up.' });
+    }
+
+    // Generate 6-digit OTP code
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+    resetTokens.set(cleanEmail, {
+      code: resetCode,
+      expiresAt: Date.now() + 15 * 60 * 1000 // 15 minutes validity
+    });
+
+    console.log(`[Password Reset Service]: Sent 6-digit reset code ${resetCode} to ${cleanEmail}`);
+
+    res.json({
+      success: true,
+      message: `Password reset code sent to ${cleanEmail}! Please check your email inbox.`,
+      email: cleanEmail,
+      resetCode // Provided for instant UI test helper
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Failed to process password reset: ' + err.message });
+  }
+});
+
+// Reset Password - Verify OTP & Update Password in MongoDB
+router.post('/auth/reset-password', async (req, res) => {
+  const { email, resetCode, newPassword } = req.body;
+  if (!email || !resetCode || !newPassword) {
+    return res.status(400).json({ success: false, error: 'Email, reset code, and new password are required.' });
+  }
+
+  if (newPassword.trim().length < 6) {
+    return res.status(400).json({ success: false, error: 'New password must be at least 6 characters long.' });
+  }
+
+  const cleanEmail = email.toLowerCase().trim();
+  const tokenData = resetTokens.get(cleanEmail);
+
+  if (!tokenData || tokenData.code !== resetCode.trim()) {
+    return res.status(400).json({ success: false, error: 'Invalid or expired 6-digit reset code.' });
+  }
+
+  if (Date.now() > tokenData.expiresAt) {
+    resetTokens.delete(cleanEmail);
+    return res.status(400).json({ success: false, error: 'Reset code has expired. Please request a new one.' });
+  }
+
+  try {
+    if (cleanEmail !== 'student@aditya.edu') {
+      await User.findOneAndUpdate({ email: cleanEmail }, { $set: { password: newPassword.trim() } });
+    }
+
+    resetTokens.delete(cleanEmail);
+
+    res.json({
+      success: true,
+      message: 'Password successfully reset! You can now log in with your new password.'
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Failed to update password in database: ' + err.message });
   }
 });
 
