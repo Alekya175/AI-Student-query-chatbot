@@ -43,7 +43,7 @@ body.light-mode #chatIn::placeholder{color:#9ca3af!important}
 body.light-mode .typing{background:#ffffff!important;border-color:rgba(232,119,34,0.2)!important}
 body.light-mode footer{background:rgba(255,255,255,0.9)!important;border-top-color:rgba(232,119,34,0.15)!important;color:#64748b!important}
 
-.bot-stage{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;pointer-events:auto;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:.78;transition:opacity .25s ease, transform .25s ease;}
+.bot-stage{position:fixed;right:8%;top:50%;transform:translateY(-50%);z-index:3;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:.95;transition:opacity .25s ease, transform .25s ease;}
 body.auth-open .bot-stage{display:none!important;}
 .bot-stage > .bot-glow,.bot-stage > .bot-ring,.bot-stage > .bot-ring2{pointer-events:none;opacity:.58;}
 .bot-ring{position:absolute;width:340px;height:340px;border-radius:50%;border:1.5px solid rgba(232,119,34,0.18);animation:spin1 16s linear infinite;}
@@ -262,7 +262,7 @@ footer .sep{color:rgba(255,255,255,0.2)}
   <div class="bot-glow"></div>
   <div class="bot-ring"></div>
   <div class="bot-ring2"></div>
-  <img src="bot_avatar.png" alt="Aditya AI Assistant Avatar" class="robot-avatar-img" onclick="revealAuthPanel()" title="Click to login or register"/>
+  <img src="bot_avatar.png" alt="Aditya AI Assistant Avatar" class="robot-avatar-img" onclick="handleRobotClick()" title="Click to open AI Chatbot"/>
 </div>
 
 <div class="page">
@@ -768,11 +768,20 @@ async function doAdminLogin() {
   } catch {}
 }
 
-async function doGuest() {
+function handleRobotClick() {
+  if (!currentUser) {
+    currentUser = { name: 'Guest Student', role: 'guest' };
+    token = 'guest-token';
+    updateRightPanel();
+  }
+  openChat('General');
+}
+
+async function doGuest(targetTopic = 'General') {
   currentUser = { name: 'Guest Student', role: 'guest' };
   token = 'guest-token';
   updateRightPanel();
-  openChat('General');
+  openChat(targetTopic);
 }
 
 function doLogout() {
@@ -792,13 +801,15 @@ function navClick(el, topic, autoMsg) {
   document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
   el.classList.add('active');
   if (topic === 'Home') { closeChat(); return; }
-  if (!currentUser) doGuest();
   openChat(topic);
   if (autoMsg) setTimeout(() => { document.getElementById('chatIn').value = autoMsg; sendMsg(); }, 300);
 }
 
-function openChat(topic) {
-  if (!currentUser) { doGuest(); return; }
+function openChat(topic = 'General') {
+  if (!currentUser) {
+    doGuest(topic);
+    return;
+  }
   document.getElementById('chatModal').classList.add('show');
   document.getElementById('chatTitle').textContent = topic;
   showWelcome();
