@@ -1070,8 +1070,27 @@ function startVoice() {
   }
 }
 
-/* Admin Answer Notification Polling */
+/* Admin Answer Notification Polling & Persistent Dismissal */
 let notifPollInterval = null;
+let seenTicketNotifs = new Set(JSON.parse(localStorage.getItem('adityaSeenNotifs') || '[]'));
+
+function saveSeenNotifs() {
+  try {
+    localStorage.setItem('adityaSeenNotifs', JSON.stringify([...seenTicketNotifs]));
+  } catch (_) {}
+}
+
+function dismissNotifBanner(ticketId) {
+  if (!ticketId) return;
+  seenTicketNotifs.add(ticketId);
+  saveSeenNotifs();
+
+  const banner = document.getElementById(`notif-banner-${ticketId}`);
+  if (banner) banner.remove();
+
+  // Call API endpoint to mark ticket as read in MongoDB & queue
+  fetch(`${API}/notifications/mark-read/${ticketId}`, { method: 'POST' }).catch(() => {});
+}
 
 function startNotificationPolling() {
   if (notifPollInterval) clearInterval(notifPollInterval);
@@ -1089,8 +1108,7 @@ async function checkAdminNotifications() {
 
       answeredTickets.forEach(ticket => {
         const id = ticket._id || ticket.ticketId;
-        if (!seenTicketNotifs.has(id)) {
-          seenTicketNotifs.add(id);
+        if (!seenTicketNotifs.has(id) && !seenTicketNotifs.has(ticket.ticketId) && !seenTicketNotifs.has(ticket._id)) {
           showAdminNotificationBanner(ticket);
         }
       });
@@ -1099,12 +1117,13 @@ async function checkAdminNotifications() {
 }
 
 function showAdminNotificationBanner(ticket) {
+  const ticketId = ticket.ticketId || ticket._id;
   const fTime = new Date(ticket.createdAt).toLocaleString('en-IN', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
   const aTime = new Date(ticket.answeredAt || Date.now()).toLocaleString('en-IN', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
 
   const banner = document.createElement('div');
   banner.className = 'notif-banner';
-  banner.id = `notif-banner-${ticket._id || ticket.ticketId}`;
+  banner.id = `notif-banner-${ticketId}`;
   banner.innerHTML = `
     <div class="notif-header">
       <div class="notif-icon">📩</div>
@@ -1112,7 +1131,7 @@ function showAdminNotificationBanner(ticket) {
         <div class="notif-title">Admin Answered Your Query</div>
         <div class="notif-status">Status: ✅ Answered &amp; Resolved</div>
       </div>
-      <button class="notif-close" onclick="this.parentElement.parentElement.remove()">✕</button>
+      <button class="notif-close" onclick="dismissNotifBanner('${ticketId}')">✕</button>
     </div>
     <div class="notif-body">
       <p style="margin-bottom:6px;"><strong>Your Issue:</strong> "${ticket.question}"</p>
@@ -1123,15 +1142,16 @@ function showAdminNotificationBanner(ticket) {
       <span>✅ Answered: ${aTime}</span>
     </div>
     <div class="notif-actions">
-      <button class="notif-btn primary" onclick="viewAnswerInChat('${ticket.question.replace(/'/g, "\\'")}', '${ticket.answer.replace(/'/g, "\\'")}', '${aTime}')">View in Chat</button>
-      <button class="notif-btn secondary" onclick="this.parentElement.parentElement.remove()">Dismiss</button>
+      <button class="notif-btn primary" onclick="viewAnswerInChat('${ticket.question.replace(/'/g, "\\'")}', '${ticket.answer.replace(/'/g, "\\'")}', '${aTime}', '${ticketId}')">View in Chat</button>
+      <button class="notif-btn secondary" onclick="dismissNotifBanner('${ticketId}')">Dismiss</button>
     </div>
   `;
   document.body.appendChild(banner);
   speakReply(`Admin has answered your query: ${ticket.answer}`);
 }
 
-function viewAnswerInChat(question, answer, aTime) {
+function viewAnswerInChat(question, answer, aTime, ticketId) {
+  dismissNotifBanner(ticketId);
   openChat('General');
   addMsg('ai', `📩 **Admin Answer Received**\n\n📌 **Your Issue:** "${question}"\n✅ **Admin Reply:** ${answer}\n\n🕒 **Answered By Admin At:** ${aTime}`);
 }
