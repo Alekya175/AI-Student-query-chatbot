@@ -2,7 +2,7 @@
   {
     "section": "AIML - T1 (GOOGLE)",
     "roomNo": "216",
-    "floor": "First Floor",
+    "floor": "Second Floor",
     "block": "Bhaskar Bhavan",
     "semester": "II-B. Tech / III Sem (A.Y. 2026-27)",
     "schedule": {
@@ -195,7 +195,7 @@
   {
     "section": "AIML - T2 (MICROSOFT)",
     "roomNo": "208",
-    "floor": "First Floor",
+    "floor": "Second Floor",
     "block": "Bhaskar Bhavan",
     "semester": "II-B. Tech / III Sem (A.Y. 2026-27)",
     "schedule": {
@@ -373,7 +373,7 @@
   {
     "section": "AIML - T3 (Rooms 204, 205, 206, 207)",
     "roomNo": "204",
-    "floor": "First Floor",
+    "floor": "Second Floor",
     "block": "Bhaskar Bhavan",
     "semester": "II-B. Tech / III Sem (A.Y. 2026-27)",
     "schedule": {
@@ -529,7 +529,7 @@
   {
     "section": "AIML - T4 (Rooms 209, 215)",
     "roomNo": "209",
-    "floor": "First Floor",
+    "floor": "Second Floor",
     "block": "Bhaskar Bhavan",
     "semester": "II-B. Tech / III Sem (A.Y. 2026-27)",
     "schedule": {
@@ -685,7 +685,7 @@
   {
     "section": "AIML - T1 (Rooms 101, 102, 103, 104, 105)",
     "roomNo": "101",
-    "floor": "Ground Floor",
+    "floor": "First Floor",
     "block": "Bhaskar Bhavan",
     "semester": "II-B. Tech / III Sem (A.Y. 2026-27)",
     "schedule": {
@@ -851,7 +851,7 @@
   {
     "section": "AIML 5th Sem - T6 (Cognitive Analytics)",
     "roomNo": "308",
-    "floor": "Second Floor",
+    "floor": "Third Floor",
     "block": "Bhaskar Bhavan",
     "semester": "III-B. Tech / V Sem (A.Y. 2026-27)",
     "schedule": {
@@ -1012,7 +1012,7 @@
   {
     "section": "AIML 5th Sem - T3 (Cognitive Analytics)",
     "roomNo": "304",
-    "floor": "Second Floor",
+    "floor": "Third Floor",
     "block": "Bhaskar Bhavan",
     "semester": "III-B. Tech / V Sem (A.Y. 2026-27)",
     "schedule": {
@@ -1178,7 +1178,7 @@
   {
     "section": "AIML 5th Sem - T4 (Cognitive Analytics)",
     "roomNo": "306",
-    "floor": "Second Floor",
+    "floor": "Third Floor",
     "block": "Bhaskar Bhavan",
     "semester": "III-B. Tech / V Sem (A.Y. 2026-27)",
     "schedule": {
@@ -1339,7 +1339,7 @@
   {
     "section": "AIML 5th Sem - T1 (Network Security)",
     "roomNo": "224",
-    "floor": "First Floor",
+    "floor": "Second Floor",
     "block": "Bhaskar Bhavan",
     "semester": "III-B. Tech / V Sem (A.Y. 2026-27)",
     "schedule": {
@@ -1500,7 +1500,7 @@
   {
     "section": "AIML 5th Sem - T2 (Mobile Application Development)",
     "roomNo": "301",
-    "floor": "Second Floor",
+    "floor": "Third Floor",
     "block": "Bhaskar Bhavan",
     "semester": "III-B. Tech / V Sem (A.Y. 2026-27)",
     "schedule": {
@@ -1661,7 +1661,7 @@
   {
     "section": "AIML 5th Sem - T5 (THUB - Cognitive Analytics)",
     "roomNo": "307",
-    "floor": "Second Floor",
+    "floor": "Third Floor",
     "block": "Bhaskar Bhavan",
     "semester": "III-B. Tech / V Sem (A.Y. 2026-27)",
     "schedule": {
@@ -1835,7 +1835,7 @@
     "section": "AIML 7th Sem - Sec AIML-1 (CV-104)",
     "roomNo": "104",
     "hallName": "CV-104",
-    "floor": "Ground Floor",
+    "floor": "First Floor",
     "block": "Bhaskar Bhavan",
     "semester": "IV B.Tech / VII Sem (A.Y. 2026-27)",
     "schedule": {
@@ -2062,7 +2062,7 @@
     "section": "AIML 7th Sem - Sec AIML-2 (CV-115)",
     "roomNo": "115",
     "hallName": "CV-115",
-    "floor": "Ground Floor",
+    "floor": "First Floor",
     "block": "Bhaskar Bhavan",
     "semester": "IV B.Tech / VII Sem (A.Y. 2026-27)",
     "schedule": {
@@ -2279,7 +2279,7 @@
     "section": "AIML 7th Sem - Sec AIML-3 (CV-116)",
     "roomNo": "116",
     "hallName": "CV-116",
-    "floor": "Ground Floor",
+    "floor": "First Floor",
     "block": "Bhaskar Bhavan",
     "semester": "IV B.Tech / VII Sem (A.Y. 2026-27)",
     "schedule": {

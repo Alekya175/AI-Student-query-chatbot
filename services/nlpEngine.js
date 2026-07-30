@@ -102,8 +102,8 @@ function parseDayAndTime(question) {
     if (ampm === 'pm' && hour < 12) hour += 12;
     else if (ampm === 'am' && hour === 12) hour = 0;
     else if (!ampm) {
-      if (hour >= 1 && hour <= 5) hour += 12; // 1 to 5 without ampm = 1pm to 5pm
-      else if (hour === 12) hour = 12; // 12 noon
+      if (hour >= 1 && hour <= 5) hour += 12;
+      else if (hour === 12) hour = 12;
     }
     targetMinutes = hour * 60 + min;
   }
@@ -111,7 +111,7 @@ function parseDayAndTime(question) {
   return { targetDay, targetMinutes };
 }
 
-// Helper: Convert slot string like "9:30 - 10:20" or "1:50 - 2:40" into start & end minutes
+// Helper: Convert slot string into start & end minutes
 function parseSlotMinutes(slotStr) {
   const parts = slotStr.split('-');
   if (parts.length !== 2) return null;
@@ -120,7 +120,7 @@ function parseSlotMinutes(slotStr) {
     const [hStr, mStr] = tStr.trim().split(':');
     let h = parseInt(hStr);
     let m = mStr ? parseInt(mStr) : 0;
-    if (h >= 1 && h <= 5) h += 12; // afternoon period 1:00 PM to 5:00 PM
+    if (h >= 1 && h <= 5) h += 12;
     return h * 60 + m;
   }
 
@@ -166,8 +166,9 @@ function searchSpecificFaculty(question) {
     });
 
     if (matchSub) {
+      const floorStr = t.floor || (t.roomNo.startsWith('1') ? 'First Floor' : t.roomNo.startsWith('2') ? 'Second Floor' : 'Third Floor');
+
       if (targetDay && targetMinutes !== null) {
-        // Specific Day & Specific Time match
         const daySlots = t.schedule[targetDay];
         if (daySlots && Array.isArray(daySlots)) {
           for (const slot of daySlots) {
@@ -177,7 +178,7 @@ function searchSpecificFaculty(question) {
                 activeClass = {
                   roomNo: t.roomNo,
                   hallName: t.hallName || `Room ${t.roomNo}`,
-                  floor: t.floor || (t.roomNo.startsWith('1') ? 'Ground Floor' : t.roomNo.startsWith('2') ? 'First Floor' : 'Second Floor'),
+                  floor: floorStr,
                   block: t.block || 'Bhaskar Bhavan',
                   section: t.section,
                   subject: matchSub.subject,
@@ -189,11 +190,10 @@ function searchSpecificFaculty(question) {
           }
         }
       } else {
-        // General query without specific time: show assigned classroom
         activeClass = {
           roomNo: t.roomNo,
           hallName: t.hallName || `Room ${t.roomNo}`,
-          floor: t.floor || (t.roomNo.startsWith('1') ? 'Ground Floor' : t.roomNo.startsWith('2') ? 'First Floor' : 'Second Floor'),
+          floor: floorStr,
           block: t.block || 'Bhaskar Bhavan',
           section: t.section,
           subject: matchSub.subject,
@@ -222,7 +222,6 @@ function searchSpecificFaculty(question) {
     return `👨‍🏫 **Faculty Availability & Cabin Location**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation:** ${f.designation}${deptTxt}\n\n🟢 **Availability Status (${targetDay || 'Requested Day'}${timeStr}):** FREE (No Class Scheduled)\n\n📌 **Where to Meet (${f.name}):**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}\n• **Institution:** Aditya University`;
   }
 
-  // General profile output if no day/time specified
   if (activeClass) {
     return `👨‍🏫 **Faculty Profile & Room Location Details**\n\n👤 **Name:** ${f.name}${empTxt}\n• **Designation / Role:** ${f.designation}${deptTxt}\n\n🏫 **Assigned Teaching Classroom:**\n• **Classroom:** ${activeClass.hallName} (${activeClass.floor}, ${activeClass.block})\n• **Subject:** ${activeClass.subject}\n• **Section:** ${activeClass.section}\n\n📌 **Faculty Cabin Location:**${blockTxt}${floorTxt}${cabinTxt}${mobileTxt}`;
   }
@@ -264,7 +263,7 @@ function getTimetableByRoomOrSection(question) {
   if (roomMatches.length === 0) return null;
 
   return roomMatches.map(t => {
-    const floorStr = t.floor || (t.roomNo.startsWith('1') ? 'Ground Floor' : t.roomNo.startsWith('2') ? 'First Floor' : 'Second Floor');
+    const floorStr = t.floor || (t.roomNo.startsWith('1') ? 'First Floor' : t.roomNo.startsWith('2') ? 'Second Floor' : 'Third Floor');
     const hallStr = t.hallName ? ` (${t.hallName})` : '';
     const scheduleText = Object.entries(t.schedule).map(([day, list]) => {
       const periodStr = Array.isArray(list) ? list.map(item => `${item.time}: ${item.subject}`).join(' | ') : list;
@@ -284,7 +283,6 @@ function getStudentPersonalDetails(user, question, studentRecord) {
   const isPersonalQuery = /attendance|present|absent|percentage|mark|grade|result|score|mid|cgpa|gpa|fee balance|fee due|dues|my detail|my profile|timetable|schedule|class today/.test(q);
   if (!isPersonalQuery) return null;
 
-  // Check if student record is found in MongoDB
   if (!studentRecord || !studentRecord.attendance) {
     const userEmail = user.email || 'your email';
     const regNoTxt = user.regNo ? ` (Reg No: ${user.regNo})` : '';
@@ -294,31 +292,26 @@ function getStudentPersonalDetails(user, question, studentRecord) {
   const regNo = studentRecord.regNo || user.regNo || 'N/A';
   const name = studentRecord.name || user.name || 'Student';
 
-  // Attendance query
   if (/attendance|present|absent|percentage/.test(q) && !/wrong|error|incorrect|mismatch|complain|report/.test(q)) {
     const att = studentRecord.attendance || { overallPercentage: 88.5, totalClasses: 320, classesAttended: 283, classesAbsent: 37 };
     return `📊 **Personal Student Attendance Record**\n\n👤 **Student:** ${name} (${regNo})\n🎓 **Branch:** ${studentRecord.branch || 'CSE'} - ${studentRecord.section || 'Sec A'} (${studentRecord.year || '3rd Year'})\n\n• **Overall Attendance:** **${att.overallPercentage}%** ✅ (Eligible for End-Sem Exams)\n• **Total Classes Conducted:** ${att.totalClasses}\n• **Classes Attended:** ${att.classesAttended}\n• **Classes Absent:** ${att.classesAbsent}\n\n*Note: If you notice any discrepancy in your attendance, please ask "My attendance is incorrect" to lodge an admin ticket.*`;
   }
 
-  // Marks / Internal Results query
   if (/mark|grade|result|score|mid|cgpa|gpa/.test(q) && !/wrong|error|incorrect|mismatch|complain|report/.test(q)) {
     const marksList = (studentRecord.marks || []).map(m => `• **${m.subject}:** ${m.score} / ${m.maxScore} (Grade: ${m.grade})`).join('\n');
     return `📈 **Personal Student Marks & Grade Report**\n\n👤 **Student:** ${name} (${regNo})\n🎓 **Semester:** ${studentRecord.year || '3rd Year'} - Mid Term 1 Results\n\n${marksList || '• Mid 1 Marks pending update'}\n• **Current Cumulative CGPA:** **${studentRecord.cgpa || '8.92'}** 🌟`;
   }
 
-  // Fee balance query
   if (/fee|due|pending|balance|paid|installment/.test(q) && !/wrong|error|incorrect|mismatch|complain|report/.test(q)) {
     const fee = studentRecord.feeDetails || { totalTuitionFee: 115000, scholarshipAmount: 35000, feePaid: 80000, pendingDues: 0 };
     return `💳 **Personal Fee Status Report**\n\n👤 **Student:** ${name} (${regNo})\n• **Academic Year:** 2025–2026\n• **Total Tuition Fee:** ₹${fee.totalTuitionFee.toLocaleString('en-IN')}\n• **Scholarship Applied:** ₹${fee.scholarshipAmount.toLocaleString('en-IN')}\n• **Net Fee Paid:** ₹${fee.feePaid.toLocaleString('en-IN')}\n• **Pending Dues:** **₹${fee.pendingDues.toLocaleString('en-IN')} ${fee.pendingDues === 0 ? '(All dues cleared) ✅' : '⚠️'}**`;
   }
 
-  // Timetable query
   if (/timetable|schedule|class today|today class|timing/.test(q)) {
     const ttList = (studentRecord.timetable || []).map(t => `• **${t.time}:** ${t.subject} (${t.venue})`).join('\n');
     return `📅 **Today's Personal Class Timetable**\n\n👤 **Student:** ${name} (${regNo})\n\n${ttList || '• No classes scheduled for today'}`;
   }
 
-  // General Personal Details
   if (/my detail|my profile|my info|my reg|who am i/.test(q)) {
     return `👤 **Student Profile Details**\n\n• **Name:** ${name}\n• **Reg No:** ${regNo}\n• **Email:** ${user.email}\n• **Branch:** ${studentRecord.branch || 'N/A'}\n• **Batch:** ${studentRecord.year || 'N/A'}\n• **Overall CGPA:** ${studentRecord.cgpa || 'N/A'}\n• **Attendance:** ${studentRecord.attendance ? studentRecord.attendance.overallPercentage + '%' : 'N/A'}`;
   }
@@ -330,67 +323,51 @@ function getKBAnswer(question) {
   if (!question) return null;
   const q = question.toLowerCase().trim();
 
-  // 1. Specific Faculty Direct Lookup (Highest priority)
   const specificFaculty = searchSpecificFaculty(q);
   if (specificFaculty) return specificFaculty;
 
-  // 2. Room / Section Timetable Direct Lookup
   const specificTT = getTimetableByRoomOrSection(q);
   if (specificTT) return specificTT;
 
-  // 3. Faculty & Leadership Overview
   if (/\b(faculty|department head|department heads|hod|hods|professor|professors|lecturer|lecturers|deans|chancellor|pro-chancellor|vice chancellor|vc|pro vice-chancellor|registrar|leadership|management)\b/.test(q))
     return AU_KB.leadership;
 
-  // 4. Rankings & Recognitions
   if (/\b(nirf|ranking|rankings|accreditation|accreditations|naac|nba|tier-1|tier 1|academic insights|siliconindia|the week|qs gauge|swayam|nptel|siro|rating|recognit)\b/.test(q))
     return AU_KB.rankings;
 
-  // 5. History & Legacy
   if (/\b(history|legacy|established|founded|foundation|aditya academy|1984|2001|2016|how old|institutions|staff|count)\b/.test(q))
     return AU_KB.history;
 
-  // 6. Vision, Mission & Core Values
   if (/\b(vision|mission|values|core values|motto)\b/.test(q))
     return AU_KB.vision;
 
-  // 7. Recent Happenings & Events
   if (/\b(event|events|happening|happenings|genai|conclave|thunder thursday|vivo|centific|blood donation|workshop|guest lecture)\b/.test(q))
     return AU_KB.happenings;
 
-  // 8. Degree Programs & Courses
   if (/\b(program|programs|course|courses|btech|mtech|bba|mba|bca|mca|phd|pharmacy|degree|branch|branches|specializ|b\.tech|m\.tech|engineering|business)\b/.test(q))
     return AU_KB.programs;
 
-  // 9. Hostel & Transport
   if (/\b(hostel|mess|food|bus|transport|room|rooms|wifi|accommodation|single room|double room|triple room|quadruple room|stay|canteen)\b/.test(q))
     return AU_KB.hostel;
 
-  // 10. Placements & Salary Packages
   if (/\b(placement|placements|recruit|recruiter|recruiters|package|lpa|salary|job|hire|hiring|drive|job offer|placement offer|placed|company|companies|highest package|average package|akhilesh|rajesh|durga bhan raju)\b/.test(q))
     return AU_KB.placements;
 
-  // 11. Admissions, Application & Fees
   if (/\b(admission|admissions|apply|application|eligibility|fee structure|fee details|how to join|enroll|tuition|scholarship|cutoff|rank|cost|price)\b/.test(q))
     return AU_KB.admissions;
 
-  // 12. Schools & Faculties
   if (/\b(school|schools|engineering school|business school|science school|pharmacy school)\b/.test(q))
     return AU_KB.schools;
 
-  // 13. Academics, Calendar & Syllabus
   if (/\b(academic|academics|calendar|curriculum|regulation|regulations|syllabus|conduct|learning academy|educast)\b/.test(q))
     return AU_KB.academics;
 
-  // 14. Examinations & Results
   if (/\b(exam|exams|examination|examinations|result|results|question paper|notification|hall ticket|model paper|gpa|cgpa)\b/.test(q))
     return AU_KB.exams;
 
-  // 15. Library
   if (/\b(library|book|books|knimbus|journal|reading room)\b/.test(q))
     return AU_KB.library;
 
-  // 16. Contact & Campus Location
   if (/\b(contact|address|phone|email|location|reach|office|website|about us|about university|helpline|where is university|campus address)\b/.test(q))
     return AU_KB.contact;
 
