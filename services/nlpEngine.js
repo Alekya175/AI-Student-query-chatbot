@@ -324,8 +324,70 @@ function getStudentPersonalDetails(user, question, studentRecord) {
 function getKBAnswer(question) {
   if (!question) return null;
   const q = question.toLowerCase().trim();
+  const normalizedKey = q.replace(/[^a-z0-9]/g, '');
 
-  // 1. Specific Faculty Query First
+  // DIRECT EXACT DICTIONARY LOOKUP FOR ALL 44 UI SUB-QUESTION CARDS
+  const CARD_MATCHES = {
+    // Timetable Cards
+    "whataretheprojectlabandincubationtimings": `⏰ **Project Lab & AGBI Incubation Timings**\n\n• **Project Labs (Bhaskar Bhavan & Cotton Bhavan):** Open 08:00 AM – 08:00 PM (Monday to Saturday)\n• **Aditya Global Business Incubator (AGBI):** Open 09:00 AM – 07:00 PM\n• **Specialized AI & Robotics Labs:** 24/7 Access available for registered student innovation teams.\n• **Lab In-Charge:** Contact your Department Project Coordinator.`,
+    "mytimetablehasaclassoverlaperror": `🚨 **Class Timetable Overlap Error Reported**\n\nIf you have noticed a class overlap or scheduling error in your timetable, please lodge a ticket or report it to your Department HOD (Dr. Kovvuri N Bhargavi for AI & ML) in Bhaskar Bhavan, First Floor.`,
+
+    // Admissions Cards
+    "whatdegreeprogramsareofferedandwhatistheeligibility": AU_KB.programs,
+    "howdoiapplyforadmissionsatadityauniversity": `📋 **Admissions Application Process**\n\n• **Online Application:** Submit your application via EAMCET / ICET / Merit Rank counseling.\n• **Selection:** Direct merit seats and counseling allocations.\n• **Admissions Helpline:** +91 9989 776661 | info@adityauniversity.in`,
+    "whatistheprogramfeestructureandcost": AU_KB.feeStructure,
+    "whataretheadmissionscontactphonenumbersandemail": `📞 **Admissions Helpline & Contacts**\n\n• **Dean Admissions:** Dr. A. Ramakrishna\n• **Helpline Phone:** +91 9989 776661\n• **Email:** info@adityauniversity.in\n📍 **Campus Address:** Aditya Nagar, ADB Road, Surampalem, Kakinada District, AP – 533437`,
+
+    // Notices Cards
+    "whatarethelatestcollegenotificationsandannouncements": `📣 **Latest Aditya University Notifications & Announcements**\n\n• **GenAI Business Conclave 2026:** Empowering Students with Future Skills (25-Jul-2026)\n• **Thunder Thursday:** Campus Cultural Evening (23-Jul-2026)\n• **Centific Technology Orientation:** Organized by Dept. of Placements (21-Jul-2026)\n• **Vivo India - Frame Your Vision:** Film & Photography Club Workshop (21-Jul-2026)\n• **AI-Driven VLSI & Semiconductor Lecture:** ECE Dept. Guest Lecture (20-Jul-2026)\n• **Blood Donation Camp:** Associated with KKD GGH by School of Pharmacy & NSS (15-Jul-2026)`,
+    "showupcomingexaminationschedulesandnotices": `📅 **Upcoming Examination Schedules & Notices**\n\n• **Mid-Term 1 Examinations:** Conducted per batch academic calendar.\n• **Semester End Examinations:** Timetables, hall tickets, and examination rules issued by the Controller of Examinations.\n• **Controller of Examinations:** Dr. J. Pavan`,
+    "whataretheupcomingholidaysandcampusevents": `📢 **Upcoming Holidays & Campus Events**\n\n• **Thunder Thursday:** Weekly Campus Cultural Festival\n• **GenAI Business Conclave:** National Student Innovation Summit\n• **Blood Donation Camp:** NSS & School of Pharmacy Event`,
+    "wherecanifindofficialacademiccirculars": `📝 **Official Academic Circulars & Guidelines**\n\n• **Academic Circulars:** Issued by Registrar Dr. G. Suresh & Deans of Schools.\n• **Curriculum & Regulations:** Published for B.Tech, M.Tech, MBA, MCA, and Degree programs.`,
+
+    // Hostel Cards
+    "whathostelroomoptionsareavailable": `🏠 **Hostel Room Options & Amenities**\n\n• **Room Types:** Single, Double, Triple, and Quadruple AC & Non-AC Rooms.\n• **Amenities:** 24/7 Power, High-Speed Wi-Fi, TV, Refrigerator, Laundry & Housekeeping.\n• **Mess:** North & South Indian hygienic meals.`,
+    "whatisthehostelfeestructure": `💳 **Hostel Fee Structure**\n\n• **Non-AC Rooms:** ₹75,000 – ₹85,000 per academic year (including food & mess).\n• **AC Rooms:** ₹1,05,000 – ₹1,25,000 per academic year.\n📞 **Hostel Office:** Contact University Hostel Administration for booking.`,
+    "tellmeaboutstudenttransportandbusroutes": `🚌 **Student Transport & Bus Routes**\n\n• **Coverage:** Fleet of 300+ AC & Non-AC buses connecting Kakinada, Rajahmundry, Samalkot, Peddapuram, Pithapuram, and surrounding areas.\n• **Safety:** GPS tracking and dedicated student safety marshals.`,
+    "myhostelroomwifisnotworking": `🚨 **Hostel Maintenance Issue**\n\nWi-Fi and Maintenance issues can be reported directly to the Hostel Warden Office or submitted to the Admin Dashboard for immediate resolution.`,
+
+    // Placements Cards
+    "whatisthehighestplacementpackageoffered": `🏆 **Highest Placement Offer at Aditya University**\n\n• **Highest Alumni Offers:** **₹106.00 LPA** (M. Akhilesh & G. Rajesh)\n• **Top Batch Placement (2025-26):** **₹39.60 LPA** (D. Veera Venkata Durga Bhan Raju)\n🏢 **Top Recruiters:** Capgemini, Accenture, Autodesk, Hitachi, L&T, Walmart`,
+    "whichtopcompaniesrecruitfromadityauniversity": `🏢 **Top Recruiters at Aditya University**\n\n• **IT & Software Giants:** Capgemini, Accenture, Autodesk, Hitachi, Walmart, Control's, ZopSmart.\n• **Core & Engineering:** L&T, Toyota Connect, Daiseki, Sansyu, IHARA, AdTech.\n• **Placement Cell Head:** Dr. G. Sanjiv Rao (Dean Career Development)`,
+    "tellmeaboutoverallplacementstatisticsandaveragepackage": `📊 **Placement Statistics (2025–2026 Batch)**\n\n• **Highest Package:** ₹39.60 LPA\n• **Average Package:** ₹6.50 LPA across CSE, AI&ML, ECE branches.\n• **Total Offers:** 2,500+ Placement Offers generated for 2025 batch.`,
+    "whattrainingisprovidedbytheplacementcell": `💼 **Placement & Soft Skills Training**\n\n• **Technical Skills:** Coding bootcamps in Python, Data Structures, AI, Java, Cloud Computing.\n• **Aptitude & Soft Skills:** Mock interviews, group discussions, and personality development.\n• **Centific & Industry Orientations:** Direct corporate training modules.`,
+
+    // Faculty Cards
+    "whoisaimlhod": `👩‍🏫 **Department of AI & ML Head of Department (HOD)**\n\n👤 **Name:** Dr. Kovvuri N Bhargavi\n• **Designation:** HOD & Associate Professor\n• **Department:** Department of Artificial Intelligence and Machine Learning (AI & ML)\n📍 **Cabin Location:** HoD cabin, First Floor, Bhaskar Bhavan\n📞 **Mobile Contact:** +91 8919776949\n🏛️ **Institution:** Aditya University`,
+    "tellmeaboutthefacultyanddepartmentheads": AU_KB.leadership,
+    "howcanicontactmydepartmentfacultymembers": `📧 **Faculty Contact Information**\n\n• **AI & ML HOD:** Dr. Kovvuri N Bhargavi (+91 8919776949 | HoD cabin, First Floor, Bhaskar Bhavan)\n• **School Deans & Faculty:** Profiles, cabin numbers, and official emails are listed under your student portal and department notice board.`,
+    "whatresearchpapershavefacultypublished": `📚 **Faculty Research Publications**\n\n• **Publications:** 1,500+ Scopus & SCI indexed research papers published by Aditya University faculty.\n• **Patents:** 120+ Patents granted & published in AI, Robotics, Renewable Energy, and Biotech.`,
+
+    // Research Cards
+    "whatresearchcentersandlabsareoncampus": `🔬 **Research Centers & Labs at Aditya University**\n\n• **SIRO Recognition:** Recognized as Scientific and Industrial Research Organisation.\n• **Aditya Global Business Incubator (AGBI):** Startup incubation & patent acceleration hub.\n• **Specialized Labs:** 50+ Advanced Research Labs for AI, Robotics, VLSI, IoT, and Cloud Computing.\n• **Dean Research:** Dr. A. Saravanan`,
+    "tellmeaboutstudentprojectspatentsandincubationcenter": `💡 **Student Innovation & Incubation (AGBI)**\n\n• **AGBI Incubation Hub:** Provides seed funding, mentorship, and patent filing support for student startups.\n• **Innovations:** Over 120+ patents filed by students and faculty.\n• **Hackathons:** GenAI Business Conclave, Thunder Thursday, and national tech competitions.`,
+    "whatresearchgrantsareavailableatadityauniversity": `📜 **Research Grants & Funding**\n\n• **Government Grants:** Funded projects by DST, AICTE, and UGC.\n• **Industry Collaboration:** Sponsored R&D programs with Capgemini, Centific, and Autodesk.\n• **Faculty Funding:** Internal seed money allocated for high-impact research publications.`,
+    "whatphdresearchprogramsareoffered": `🎓 **Ph.D. Doctoral Research Programs**\n\n• **Disciplines:** Ph.D. offered across Engineering, Computing, Business, Pharmacy, and Sciences.\n• **Research Fellowship:** Full-time and Part-time doctoral research opportunities under expert Dean supervision.`,
+
+    // Scholarships Cards
+    "whatmeritscholarshipsareofferedforrankholders": `🛡️ **Merit Scholarships & Concessions**\n\n• **AP EAMCET / ECET Rank Holders:** Fee concessions up to 100% for top rankers.\n• **CBSE / ICSE / Intermediate Ranks:** Special merit tuition waivers.\n• **Sports & Special Talent:** National & State level sports scholarships.`,
+    "howcaniapplyforfeeconcessionsandfinancialaid": `💰 **Fee Concessions & Financial Aid Application**\n\n• **Application:** Submit income certificate and rank card to the Admissions & Student Welfare Office.\n• **Dean Student Welfare:** Dr. Y. Krishna Srinivasa Subba Rao`,
+    "howtoapplyforscholarshipsatadityauniversity": `📋 **Scholarship Application Guidelines**\n\n• **Step 1:** Complete online application or submit physical form at the Welfare Office.\n• **Step 2:** Attach EAMCET rank card, SSC, Intermediate marks memo, and Caste/Income certificate.\n• **Step 3:** Verification by IQAC and Finance office.`,
+
+    // Fees Cards
+    "howdoipaytuitionfeesonline": `🧾 **Online Fee Payment Guidelines**\n\n• **Payment Methods:** UPI, Credit/Debit Card, Net Banking, or Demand Draft.\n• **Official Portal:** Pay fees via your Student Portal or University Accounts Section.\n• **Accounts Office:** Main Administrative Block, Ground Floor.`,
+
+    // Contact Cards
+    "whatistheexactcampusaddressandlocation": AU_KB.contact,
+    "whatarethemainphonenumbersforadityauniversity": `📞 **Admissions & Campus Helplines**\n\n• **Main Helpline:** +91 9989 776661\n• **Admissions Office:** +91 9989 776662\n• **Email:** info@adityauniversity.in`,
+    "whatistheofficialemailaddressforstudentqueries": `📧 **Official Email Addresses**\n\n• **General Queries:** info@adityauniversity.in\n• **Admissions:** admissions@adityauniversity.in\n• **Examinations:** coe@adityauniversity.in`,
+    "whoarethemainofficersandleadershipcontacts": AU_KB.leadership
+  };
+
+  if (CARD_MATCHES[normalizedKey]) {
+    return CARD_MATCHES[normalizedKey];
+  }
+
+  // 1. Specific Faculty Query
   const specificFaculty = searchSpecificFaculty(q);
   if (specificFaculty) return specificFaculty;
 
@@ -333,9 +395,12 @@ function getKBAnswer(question) {
   const specificTT = getTimetableByRoomOrSection(q);
   if (specificTT) return specificTT;
 
-  // 3. EXACT HIGH-PRECISION SUB-QUESTION MATCHING FOR ALL 11 TOPICS
+  // 3. REGEX INTENT MATCHING FOR CUSTOM VARIATIONS
 
-  // A. Admissions Sub-Questions
+  if (/\b(lab.*timings?|incubation.*timings?|project lab|lab hours|lab timing)\b/.test(q)) {
+    return `⏰ **Project Lab & AGBI Incubation Timings**\n\n• **Project Labs (Bhaskar Bhavan & Cotton Bhavan):** Open 08:00 AM – 08:00 PM (Monday to Saturday)\n• **Aditya Global Business Incubator (AGBI):** Open 09:00 AM – 07:00 PM\n• **Specialized AI & Robotics Labs:** 24/7 Access available for registered student innovation teams.\n• **Lab In-Charge:** Contact your Department Project Coordinator.`;
+  }
+
   if (/\b(fee structure and cost|fee structure|program fee|tuition fee|program cost)\b/.test(q)) {
     return AU_KB.feeStructure;
   }
@@ -349,7 +414,7 @@ function getKBAnswer(question) {
     return `📞 **Admissions Helpline & Contacts**\n\n• **Dean Admissions:** Dr. A. Ramakrishna\n• **Helpline Phone:** +91 9989 776661\n• **Email:** info@adityauniversity.in\n📍 **Campus Address:** Aditya Nagar, ADB Road, Surampalem, Kakinada District, AP – 533437`;
   }
 
-  // B. Notices / College Notifications Sub-Questions
+  // Notices Sub-Questions
   if (/\b(latest (college )?notifications?|latest announcements?|recent updates?|college notifications)\b/.test(q)) {
     return `📣 **Latest Aditya University Notifications & Announcements**\n\n• **GenAI Business Conclave 2026:** Empowering Students with Future Skills (25-Jul-2026)\n• **Thunder Thursday:** Campus Cultural Evening (23-Jul-2026)\n• **Centific Technology Orientation:** Organized by Dept. of Placements (21-Jul-2026)\n• **Vivo India - Frame Your Vision:** Film & Photography Club Workshop (21-Jul-2026)\n• **AI-Driven VLSI & Semiconductor Lecture:** ECE Dept. Guest Lecture (20-Jul-2026)\n• **Blood Donation Camp:** Associated with KKD GGH by School of Pharmacy & NSS (15-Jul-2026)`;
   }
@@ -357,13 +422,13 @@ function getKBAnswer(question) {
     return `📅 **Upcoming Examination Schedules & Notices**\n\n• **Mid-Term 1 Examinations:** Conducted per batch academic calendar.\n• **Semester End Examinations:** Timetables, hall tickets, and examination rules issued by the Controller of Examinations.\n• **Controller of Examinations:** Dr. J. Pavan`;
   }
   if (/\b(upcoming holidays|holidays and (campus )?events|campus events)\b/.test(q)) {
-    return `📢 **Upcoming Holidays & Campus Events**\n\n• **Thunder Thursday:** Weekly Campus Cultural Evening Festival\n• **GenAI Business Conclave:** National Student Innovation Summit\n• **NSS Blood Donation Camp:** Organized at School of Pharmacy`;
+    return `📢 **Upcoming Holidays & Campus Events**\n\n• **Thunder Thursday:** Weekly Campus Cultural Festival\n• **GenAI Business Conclave:** National Student Innovation Summit\n• **Blood Donation Camp:** NSS & School of Pharmacy Event`;
   }
   if (/\b(official academic circulars|academic circulars|circulars)\b/.test(q)) {
     return `📝 **Official Academic Circulars & Guidelines**\n\n• **Academic Circulars:** Issued by Registrar Dr. G. Suresh & Deans of Schools.\n• **Curriculum & Regulations:** Published for B.Tech, M.Tech, MBA, MCA, and Degree programs.`;
   }
 
-  // C. Research Sub-Questions
+  // Research Sub-Questions
   if (/\b(research center|research centers|siro|research labs)\b/.test(q)) {
     return `🔬 **Research Centers & Labs at Aditya University**\n\n• **SIRO Recognition:** Recognized as Scientific and Industrial Research Organisation.\n• **Aditya Global Business Incubator (AGBI):** Startup incubation & patent acceleration hub.\n• **Specialized Labs:** 50+ Advanced Research Labs for AI, Robotics, VLSI, IoT, and Cloud Computing.\n• **Dean Research:** Dr. A. Saravanan`;
   }
@@ -377,7 +442,7 @@ function getKBAnswer(question) {
     return `🎓 **Ph.D. Doctoral Research Programs**\n\n• **Disciplines:** Ph.D. offered across Engineering, Computing, Business, Pharmacy, and Sciences.\n• **Research Fellowship:** Full-time and Part-time doctoral research opportunities under expert Dean supervision.`;
   }
 
-  // D. Placements Sub-Questions
+  // Placements Sub-Questions
   if (/\b(highest package|highest placement|highest salary|top package|max package|highest alumni offer)\b/.test(q)) {
     return `🏆 **Highest Placement Offer at Aditya University**\n\n• **Highest Alumni Offers:** **₹106.00 LPA** (M. Akhilesh & G. Rajesh)\n• **Top Batch Placement (2025-26):** **₹39.60 LPA** (D. Veera Venkata Durga Bhan Raju)\n🏢 **Top Recruiters:** Capgemini, Accenture, Autodesk, Hitachi, L&T, Walmart`;
   }
@@ -391,7 +456,7 @@ function getKBAnswer(question) {
     return `💼 **Placement & Soft Skills Training**\n\n• **Technical Skills:** Coding bootcamps in Python, Data Structures, AI, Java, Cloud Computing.\n• **Aptitude & Soft Skills:** Mock interviews, group discussions, and personality development.\n• **Centific & Industry Orientations:** Direct corporate training modules.`;
   }
 
-  // E. Hostel & Transport Sub-Questions
+  // Hostel & Transport Sub-Questions
   if (/\b(hostel room options|room options|hostel rooms)\b/.test(q)) {
     return `🏠 **Hostel Room Options & Amenities**\n\n• **Room Types:** Single, Double, Triple, and Quadruple AC & Non-AC Rooms.\n• **Amenities:** 24/7 Power, High-Speed Wi-Fi, TV, Refrigerator, Laundry & Housekeeping.\n• **Mess:** North & South Indian hygienic meals.`;
   }
@@ -402,7 +467,7 @@ function getKBAnswer(question) {
     return `🚌 **Student Transport & Bus Routes**\n\n• **Coverage:** Fleet of 300+ AC & Non-AC buses connecting Kakinada, Rajahmundry, Samalkot, Peddapuram, Pithapuram, and surrounding areas.\n• **Safety:** GPS tracking and dedicated student safety marshals.`;
   }
 
-  // F. Exact Officers Sub-Questions
+  // Exact Officers Sub-Questions
   if (/\b(aiml hod|hod of aiml|hod aiml|who is hod|head of department|department head|aiml head)\b/.test(q) || (q.includes('hod') && !q.includes('other'))) {
     return `👩‍🏫 **Department of AI & ML Head of Department (HOD)**\n\n👤 **Name:** Dr. Kovvuri N Bhargavi\n• **Designation:** HOD & Associate Professor\n• **Department:** Department of Artificial Intelligence and Machine Learning (AI & ML)\n📍 **Cabin Location:** HoD cabin, First Floor, Bhaskar Bhavan\n📞 **Mobile Contact:** +91 8919776949\n🏛️ **Institution:** Aditya University`;
   }
