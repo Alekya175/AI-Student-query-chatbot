@@ -123,6 +123,55 @@ async function submitReply(ticketId) {
   }
 }
 
+async function importExcelDataset() {
+  const filePath = document.getElementById('excelFilePath').value.trim();
+  const datasetType = document.getElementById('excelDatasetType').value;
+  const statusDiv = document.getElementById('excelImportStatus');
+
+  statusDiv.style.display = 'none';
+
+  if (!filePath) {
+    statusDiv.style.display = 'block';
+    statusDiv.style.background = 'rgba(239, 68, 68, 0.15)';
+    statusDiv.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+    statusDiv.style.color = '#FCA5A5';
+    statusDiv.textContent = '❌ Please enter an Excel file path (e.g. C:\\Data\\Faculty_Directory.xlsx)';
+    return;
+  }
+
+  statusDiv.style.display = 'block';
+  statusDiv.style.background = 'rgba(232, 119, 34, 0.15)';
+  statusDiv.style.border = '1px solid rgba(232, 119, 34, 0.4)';
+  statusDiv.style.color = '#FFD4A8';
+  statusDiv.textContent = '⏳ Parsing and integrating Excel dataset...';
+
+  try {
+    const res = await fetch('/api/admin/import-excel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filePath, datasetType })
+    });
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      statusDiv.style.background = 'rgba(16, 185, 129, 0.15)';
+      statusDiv.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+      statusDiv.style.color = '#6EE7B7';
+      statusDiv.textContent = `✅ ${data.message}`;
+    } else {
+      statusDiv.style.background = 'rgba(239, 68, 68, 0.15)';
+      statusDiv.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+      statusDiv.style.color = '#FCA5A5';
+      statusDiv.textContent = `❌ ${data.error || 'Excel import failed.'}`;
+    }
+  } catch (err) {
+    statusDiv.style.background = 'rgba(239, 68, 68, 0.15)';
+    statusDiv.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+    statusDiv.style.color = '#FCA5A5';
+    statusDiv.textContent = '❌ Error connecting to server.';
+  }
+}
+
 function filterStatus(btn, status) {
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');

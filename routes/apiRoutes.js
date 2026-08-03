@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const chatController = require('../controllers/chatController');
 const adminController = require('../controllers/adminController');
+const excelService = require('../services/excelService');
 const User = require('../models/User');
 
 // In-Memory Password Reset Token Store (Map of email -> { code, expiresAt })
@@ -171,6 +172,26 @@ router.post('/admin/login', (req, res) => {
     });
   }
   res.status(401).json({ success: false, error: 'Invalid admin credentials' });
+});
+
+// Admin Excel Dataset Import Endpoint
+router.post('/admin/import-excel', async (req, res) => {
+  const { filePath, datasetType } = req.body;
+  if (!filePath) {
+    return res.status(400).json({ success: false, error: 'Excel file path is required.' });
+  }
+
+  try {
+    if (datasetType === 'student') {
+      const result = await excelService.importStudentExcel(filePath);
+      return res.json({ success: true, message: `Successfully imported ${result.count} student academic records into MongoDB!`, result });
+    } else {
+      const result = excelService.importFacultyExcel(filePath);
+      return res.json({ success: true, message: `Successfully imported ${result.count} faculty records into dataset!`, result });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Excel import failed: ' + err.message });
+  }
 });
 
 // Student Chat & Notifications Routes

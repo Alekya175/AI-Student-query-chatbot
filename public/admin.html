@@ -56,6 +56,31 @@
       </div>
     </section>
 
+    <!-- Excel Dataset Upload & Import Section -->
+    <section style="background:rgba(15,23,42,0.6); border:1px solid rgba(232,119,34,0.3); border-radius:16px; padding:20px; margin-bottom:24px; box-shadow:0 8px 30px rgba(0,0,0,0.3);">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <h3 style="font-family:'Outfit',sans-serif; font-size:16px; font-weight:700; color:#F8FAFC; display:flex; align-items:center; gap:8px;">
+          📊 Excel / CSV Dataset Import &amp; Sync Engine
+        </h3>
+        <span style="font-size:11.5px; color:#F5954A; background:rgba(232,119,34,0.15); border:1px solid rgba(232,119,34,0.3); padding:3px 10px; border-radius:20px; font-weight:600;">Supports .xlsx, .xls, .csv</span>
+      </div>
+      <p style="font-size:12.5px; color:#94A3B8; margin-bottom:14px; line-height:1.5;">
+        Specify any Excel dataset spreadsheet file path (Faculty Directory, Timetables, or Student Academic Records) to automatically parse and integrate with the AI Chatbot knowledge engine.
+      </p>
+
+      <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+        <input type="text" id="excelFilePath" placeholder="Enter absolute file path (e.g. C:\Data\Faculty_Directory.xlsx)" style="flex:1; min-width:280px; background:rgba(30,41,59,0.8); border:1px solid rgba(232,119,34,0.3); border-radius:10px; padding:10px 14px; color:#F8FAFC; font-size:13px; outline:none;" />
+        <select id="excelDatasetType" style="background:rgba(30,41,59,0.8); border:1px solid rgba(232,119,34,0.3); border-radius:10px; padding:10px 14px; color:#F8FAFC; font-size:13px; outline:none;">
+          <option value="faculty">👨‍🏫 Faculty Directory Dataset</option>
+          <option value="student">📊 Student Academic &amp; Attendance Records</option>
+        </select>
+        <button onclick="importExcelDataset()" class="btn-primary" style="padding:10px 20px; font-size:13px; font-weight:700; display:flex; align-items:center; gap:6px;">
+          📥 Import Excel Dataset
+        </button>
+      </div>
+      <div id="excelImportStatus" style="display:none; margin-top:12px; font-size:12.5px; font-weight:600; padding:10px 14px; border-radius:10px;"></div>
+    </section>
+
     <!-- Filter Bar -->
     <section class="filter-bar">
       <span class="filter-label">Filter Student Issues:</span>
