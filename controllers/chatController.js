@@ -26,9 +26,10 @@ exports.handleChat = async (req, res) => {
   let servedFromCache = false;
   let ticketCreated = null;
 
-  // 1. Instant LRU Cache Lookup (Sub-3ms Speed for General Queries)
-  const isPersonalQuery = /attendance|present|absent|percentage|mark|grade|result|score|cgpa|gpa|fee balance|fee due|dues|my detail|my profile|timetable|schedule/.test(qLower);
+  // Strict personal query identifier
+  const isPersonalQuery = /\b(my attendance|my marks|my grade|my result|my score|my cgpa|my gpa|my fee|my balance|my dues|my profile|my detail|my info|who am i|my timetable|my class|my schedule|today's class|today class)\b/i.test(qLower);
 
+  // 1. Instant LRU Cache Lookup (Sub-3ms Speed for General Queries)
   if (!isPersonalQuery) {
     const cachedResponse = cacheService.get(message);
     if (cachedResponse) {
@@ -37,7 +38,13 @@ exports.handleChat = async (req, res) => {
     }
   }
 
-  // 2. Student Personal Records Lookup via MongoDB (Parallelized)
+  // 2. High-Precision Knowledge Base & Intent Matcher (Primary Source of Truth)
+  if (!reply) {
+    const nlpAnswer = getKBAnswer(message);
+    if (nlpAnswer) reply = nlpAnswer;
+  }
+
+  // 3. Student Personal Records Lookup (Only if explicit personal query and KB returned null)
   if (!reply && isPersonalQuery && user && user.role !== 'guest') {
     let studentRecord = null;
     try {
@@ -54,53 +61,53 @@ exports.handleChat = async (req, res) => {
     if (personalReply) reply = personalReply;
   }
 
-  // 3. Complaint Ticket Classifier & Enqueue
-  const category = classifyQuery(message);
-  if (category && user.role !== 'guest' && user.email) {
-    const ticketId = `T-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-    ticketCreated = {
-      ticketId,
-      studentId: user.email,
-      studentName: user.name,
-      studentEmail: user.email,
-      regNo: user.regNo || '',
-      question: message,
-      category,
-      topic: topic || 'General Issue',
-      status: 'pending',
-      createdAt: new Date()
-    };
+  // 4. Complaint Ticket Classifier & Enqueue
+  if (!reply) {
+    const category = classifyQuery(message);
+    if (category && user.role !== 'guest' && user.email) {
+      const ticketId = `T-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      ticketCreated = {
+        ticketId,
+        studentId: user.email,
+        studentName: user.name,
+        studentEmail: user.email,
+        regNo: user.regNo || '',
+        question: message,
+        category,
+        topic: topic || 'General Issue',
+        status: 'pending',
+        createdAt: new Date()
+      };
 
-    queueService.enqueueTicket(ticketCreated);
+      queueService.enqueueTicket(ticketCreated);
 
-    const categoryNames = {
-      complaint: 'complaint',
-      faculty: 'attendance/faculty issue',
-      personal: 'personal issue',
-      request: 'student request',
-      general: 'query'
-    };
+      const categoryNames = {
+        complaint: 'complaint',
+        faculty: 'attendance/faculty issue',
+        personal: 'personal issue',
+        request: 'student request',
+        general: 'query'
+      };
 
-    reply = `I have received your ${categoryNames[category] || 'query'}. This has been **forwarded to the admin team** (Ticket ID: ${ticketId}) at ${new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })} for review.\n\nYou will receive a notification banner with the admin's answer as soon as it is resolved.`;
-  } else if (!reply) {
-    // 4. Ultra-Fast Intent Matcher
-    const nlpAnswer = getKBAnswer(message);
-    if (nlpAnswer) reply = nlpAnswer;
-
-    // 5. MongoDB Inverted Index Full-Text Search Fallback
-    if (!reply) {
-      try {
-        const kbMatch = await KnowledgeBase.findOne({ $text: { $search: message } }).lean().exec();
-        if (kbMatch) reply = kbMatch.content;
-      } catch (_) {}
+      reply = `I have received your ${categoryNames[category] || 'query'}. This has been **forwarded to the admin team** (Ticket ID: ${ticketId}) at ${new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })} for review.\n\nYou will receive a notification banner with the admin's answer as soon as it is resolved.`;
     }
+  }
 
-    // 6. Comprehensive Fallback Answer
-    if (!reply) {
-      reply = `Aditya University offers comprehensive programs across Engineering (B.Tech/M.Tech), Business (BBA/MBA), Pharmacy, Science, and Research.\n\n🏆 **Highest Placement:** ₹39.60 LPA (2025–2026)\n📍 **Location:** Surampalem, Kakinada District, AP\n📞 **Admissions Helpline:** +91 9989 776661 | info@adityauniversity.in\n🌐 **Official Portal:** https://www.adityauniversity.in`;
-    }
+  // 5. MongoDB Inverted Index Full-Text Search Fallback
+  if (!reply) {
+    try {
+      const kbMatch = await KnowledgeBase.findOne({ $text: { $search: message } }).lean().exec();
+      if (kbMatch) reply = kbMatch.content;
+    } catch (_) {}
+  }
 
-    // Cache the resolved answer for future sub-3ms speed
+  // 6. Comprehensive Fallback Answer
+  if (!reply) {
+    reply = `Aditya University offers comprehensive programs across Engineering (B.Tech/M.Tech), Business (BBA/MBA), Pharmacy, Science, and Research.\n\n🏆 **Highest Placement:** ₹39.60 LPA (2025–2026)\n📍 **Location:** Surampalem, Kakinada District, AP\n📞 **Admissions Helpline:** +91 9989 776661 | info@adityauniversity.in`;
+  }
+
+  // Cache non-personal resolved answers for future sub-3ms speed
+  if (!isPersonalQuery && reply) {
     cacheService.set(message, reply);
   }
 
