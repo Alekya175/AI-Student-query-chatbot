@@ -45,6 +45,8 @@ const AU_KB = {
 
   programs: `**Degree Programs Offered at Aditya University:**\n\n🎓 **School of Engineering (B.Tech & BCA):**\n• AI & Machine Learning | Data Science | CSE | ECE | EEE | Civil | Mechanical | Mining | Agricultural | Petroleum | BCA\n\n🎓 **School of Engineering (M.Tech & MCA):**\n• Structural Engg | Power Electronics | VLSI Design | Energy Science | Real Estate Valuation | AI & Data Science | MCA\n\n🎓 **School of Business (BBA & MBA):**\n• BBA & MBA in Business Analytics (KPMG), FinTech (EY), Global Finance (PWC), Health Care Management, Deloitte MBA\n\n🎓 **School of Pharmacy & Sciences:**\n• B.Pharm | Pharm.D | M.Pharm | B.Sc & M.Sc Cyber Security & Forensic Science | Ph.D. in all disciplines`,
 
+  feeStructure: `💳 **Program Fee Structure & Cost Details (2025–2026)**\n\n• **B.Tech Programs (CSE, AI&ML, ECE, EEE, Civil, Mech, etc.):** ₹1,15,000 per year (Scholarships up to ₹35,000 based on EAMCET rank)\n• **Management & Business (BBA / MBA):** ₹90,000 – ₹1,20,000 per year (KPMG / EY / PWC integrated)\n• **Pharmacy (B.Pharm / M.Pharm / Pharm.D):** ₹85,000 – ₹1,10,000 per year\n• **Polytechnic / Diploma & Degree:** ₹45,000 – ₹65,000 per year\n• **Hostel & Mess Charges:** ₹75,000 – ₹1,25,000 per year (AC / Non-AC)\n• **Admissions Helpline:** +91 9989 776661 | info@adityauniversity.in`,
+
   schools: `**Schools at Aditya University:**\n1. **School of Engineering:** Department of Computer Science, AI & ML, ECE, EEE, Civil, Mechanical, Mining & Petroleum.\n2. **School of Business:** BBA & MBA Programs with KPMG, EY, PWC, Deloitte industry certifications.\n3. **School of Sciences:** Cyber Security, Forensic Science, Mathematics, Physics, Chemistry.\n4. **School of Pharmacy:** B.Pharm, Pharm.D, M.Pharm Programs.`,
 
   admissions: `**Admissions, Eligibility & Fees:**\n\n📋 **Admissions Process:** Online application & EAMCET / ICET / Merit Rank counseling.\n📚 **Eligibility:** 10+2 with PCM for B.Tech; Bachelor's Degree for PG & MBA programs.\n🎓 **Scholarships:** Merit-based concessions for top rank holders & need-based assistance.\n🏠 **Hostel & Amenities:** AC, Wi-Fi, 24/7 Power, TV & Refrigerator facilities.\n📞 **Helpline:** +91 9989 776661 | info@adityauniversity.in`,
@@ -331,9 +333,23 @@ function getKBAnswer(question) {
   const specificTT = getTimetableByRoomOrSection(q);
   if (specificTT) return specificTT;
 
-  // 3. Exact Sub-Questions Matching for All 11 Topics
+  // 3. EXACT HIGH-PRECISION SUB-QUESTION MATCHING FOR ALL 11 TOPICS
 
-  // A. Notices / College Notifications Sub-Questions
+  // A. Admissions Sub-Questions
+  if (/\b(fee structure and cost|fee structure|program fee|tuition fee|program cost)\b/.test(q)) {
+    return AU_KB.feeStructure;
+  }
+  if (/\b(degree programs are offered|programs offered|courses offered|programs and eligibility|what degree programs)\b/.test(q)) {
+    return AU_KB.programs;
+  }
+  if (/\b(how do i apply|apply for admissions|apply online|how to apply for admissions)\b/.test(q)) {
+    return `📋 **Admissions Application Process**\n\n• **Online Application:** Submit your application via EAMCET / ICET / Merit Rank counseling.\n• **Selection:** Direct merit seats and counseling allocations.\n• **Admissions Helpline:** +91 9989 776661 | info@adityauniversity.in`;
+  }
+  if (/\b(admissions helpline|admissions contact|admissions phone)\b/.test(q)) {
+    return `📞 **Admissions Helpline & Contacts**\n\n• **Dean Admissions:** Dr. A. Ramakrishna\n• **Helpline Phone:** +91 9989 776661\n• **Email:** info@adityauniversity.in\n📍 **Campus Address:** Aditya Nagar, ADB Road, Surampalem, Kakinada District, AP – 533437`;
+  }
+
+  // B. Notices / College Notifications Sub-Questions
   if (/\b(latest (college )?notifications?|latest announcements?|recent updates?|college notifications)\b/.test(q)) {
     return `📣 **Latest Aditya University Notifications & Announcements**\n\n• **GenAI Business Conclave 2026:** Empowering Students with Future Skills (25-Jul-2026)\n• **Thunder Thursday:** Campus Cultural Evening (23-Jul-2026)\n• **Centific Technology Orientation:** Organized by Dept. of Placements (21-Jul-2026)\n• **Vivo India - Frame Your Vision:** Film & Photography Club Workshop (21-Jul-2026)\n• **AI-Driven VLSI & Semiconductor Lecture:** ECE Dept. Guest Lecture (20-Jul-2026)\n• **Blood Donation Camp:** Associated with KKD GGH by School of Pharmacy & NSS (15-Jul-2026)`;
   }
@@ -345,17 +361,6 @@ function getKBAnswer(question) {
   }
   if (/\b(official academic circulars|academic circulars|circulars)\b/.test(q)) {
     return `📝 **Official Academic Circulars & Guidelines**\n\n• **Academic Circulars:** Issued by Registrar Dr. G. Suresh & Deans of Schools.\n• **Curriculum & Regulations:** Published for B.Tech, M.Tech, MBA, MCA, and Degree programs.`;
-  }
-
-  // B. Admissions Sub-Questions
-  if (/\b(degree programs are offered|programs offered|courses offered|programs and eligibility)\b/.test(q)) {
-    return `🎓 **Degree Programs & Eligibility at Aditya University**\n\n• **School of Engineering (UG):** B.Tech in AI & ML, Data Science, CSE, ECE, EEE, Civil, Mech, Mining, Agri, Pet | BCA\n• **School of Engineering (PG):** M.Tech in AI & Data Science, CSE, VLSI, Power Electronics | MCA\n• **School of Business:** BBA & MBA (Business Analytics, FinTech, Global Finance)\n• **School of Pharmacy & Sciences:** B.Pharm, Pharm.D, M.Pharm, B.Sc/M.Sc Cyber Security & Forensic Science, Ph.D.\n• **Eligibility:** 10+2 with PCM for B.Tech; Bachelor's Degree for PG/MBA.`;
-  }
-  if (/\b(how do i apply|apply for admissions|apply online)\b/.test(q)) {
-    return `📋 **Admissions Application Process**\n\n• **Online Application:** Submit your application via EAMCET / ICET / Merit Rank counseling.\n• **Selection:** Direct merit seats and counseling allocations.\n• **Admissions Helpline:** +91 9989 776661 | info@adityauniversity.in`;
-  }
-  if (/\b(admissions helpline|admissions contact|admissions phone)\b/.test(q)) {
-    return `📞 **Admissions Helpline & Contacts**\n\n• **Dean Admissions:** Dr. A. Ramakrishna\n• **Helpline Phone:** +91 9989 776661\n• **Email:** info@adityauniversity.in\n📍 **Campus Address:** Aditya Nagar, ADB Road, Surampalem, Kakinada District, AP – 533437`;
   }
 
   // C. Research Sub-Questions
@@ -372,40 +377,55 @@ function getKBAnswer(question) {
     return `🎓 **Ph.D. Doctoral Research Programs**\n\n• **Disciplines:** Ph.D. offered across Engineering, Computing, Business, Pharmacy, and Sciences.\n• **Research Fellowship:** Full-time and Part-time doctoral research opportunities under expert Dean supervision.`;
   }
 
-  // D. Exact Officers Sub-Questions
+  // D. Placements Sub-Questions
+  if (/\b(highest package|highest placement|highest salary|top package|max package|highest alumni offer)\b/.test(q)) {
+    return `🏆 **Highest Placement Offer at Aditya University**\n\n• **Highest Alumni Offers:** **₹106.00 LPA** (M. Akhilesh & G. Rajesh)\n• **Top Batch Placement (2025-26):** **₹39.60 LPA** (D. Veera Venkata Durga Bhan Raju)\n🏢 **Top Recruiters:** Capgemini, Accenture, Autodesk, Hitachi, L&T, Walmart`;
+  }
+  if (/\b(top recruiters|top companies|recruiters)\b/.test(q)) {
+    return `🏢 **Top Recruiters at Aditya University**\n\n• **IT & Software Giants:** Capgemini, Accenture, Autodesk, Hitachi, Walmart, Control's, ZopSmart.\n• **Core & Engineering:** L&T, Toyota Connect, Daiseki, Sansyu, IHARA, AdTech.\n• **Placement Cell Head:** Dr. G. Sanjiv Rao (Dean Career Development)`;
+  }
+  if (/\b(placement statistics|average package|overall placement)\b/.test(q)) {
+    return `📊 **Placement Statistics (2025–2026 Batch)**\n\n• **Highest Package:** ₹39.60 LPA\n• **Average Package:** ₹6.50 LPA across CSE, AI&ML, ECE branches.\n• **Total Offers:** 2,500+ Placement Offers generated for 2025 batch.`;
+  }
+  if (/\b(placement training|career development|training provided)\b/.test(q)) {
+    return `💼 **Placement & Soft Skills Training**\n\n• **Technical Skills:** Coding bootcamps in Python, Data Structures, AI, Java, Cloud Computing.\n• **Aptitude & Soft Skills:** Mock interviews, group discussions, and personality development.\n• **Centific & Industry Orientations:** Direct corporate training modules.`;
+  }
+
+  // E. Hostel & Transport Sub-Questions
+  if (/\b(hostel room options|room options|hostel rooms)\b/.test(q)) {
+    return `🏠 **Hostel Room Options & Amenities**\n\n• **Room Types:** Single, Double, Triple, and Quadruple AC & Non-AC Rooms.\n• **Amenities:** 24/7 Power, High-Speed Wi-Fi, TV, Refrigerator, Laundry & Housekeeping.\n• **Mess:** North & South Indian hygienic meals.`;
+  }
+  if (/\b(hostel fee details|hostel fee structure|hostel fee)\b/.test(q)) {
+    return `💳 **Hostel Fee Structure**\n\n• **Non-AC Rooms:** ₹75,000 – ₹85,000 per academic year (including food & mess).\n• **AC Rooms:** ₹1,05,000 – ₹1,25,000 per academic year.\n📞 **Hostel Office:** Contact University Hostel Administration for booking.`;
+  }
+  if (/\b(transport|bus routes|student transport|buses)\b/.test(q)) {
+    return `🚌 **Student Transport & Bus Routes**\n\n• **Coverage:** Fleet of 300+ AC & Non-AC buses connecting Kakinada, Rajahmundry, Samalkot, Peddapuram, Pithapuram, and surrounding areas.\n• **Safety:** GPS tracking and dedicated student safety marshals.`;
+  }
+
+  // F. Exact Officers Sub-Questions
   if (/\b(aiml hod|hod of aiml|hod aiml|who is hod|head of department|department head|aiml head)\b/.test(q) || (q.includes('hod') && !q.includes('other'))) {
     return `👩‍🏫 **Department of AI & ML Head of Department (HOD)**\n\n👤 **Name:** Dr. Kovvuri N Bhargavi\n• **Designation:** HOD & Associate Professor\n• **Department:** Department of Artificial Intelligence and Machine Learning (AI & ML)\n📍 **Cabin Location:** HoD cabin, First Floor, Bhaskar Bhavan\n📞 **Mobile Contact:** +91 8919776949\n🏛️ **Institution:** Aditya University`;
   }
-
   if (/\b(chancellor|who is chancellor)\b/.test(q) && !q.includes('pro') && !q.includes('vice')) {
     return `🏛️ **Chancellor of Aditya University**\n\n👤 **Name:** Dr. N. Sesha Reddy\n• **Role:** Chancellor (Founder & Chairman)\n🏛️ **Institution:** Aditya University`;
   }
-
   if (/\b(pro chancellor|pro-chancellor)\b/.test(q) && !q.includes('vice')) {
     return `🏛️ **Pro-Chancellors of Aditya University**\n\n• **Pro-Chancellors:** Dr. N. Satish Reddy & Sri. N. Deepak Reddy\n• **Dy. Pro-Chancellor:** Dr. M. Sreenivasa Reddy\n🏛️ **Institution:** Aditya University`;
   }
-
   if (/\b(vice chancellor|who is vc|who is vice chancellor|vc of aditya|vc name)\b/.test(q) || q === 'vc') {
     return `🏛️ **Vice Chancellor of Aditya University**\n\n👤 **Name:** Dr. M.B. Srinivas\n• **Role:** Vice Chancellor\n🏛️ **Institution:** Aditya University`;
   }
-
   if (/\b(registrar|who is registrar)\b/.test(q)) {
     return `🏛️ **Registrar of Aditya University**\n\n👤 **Name:** Dr. G. Suresh\n• **Role:** Registrar\n🏛️ **Institution:** Aditya University`;
   }
-
   if (/\b(controller of examinations|coe|exam controller)\b/.test(q)) {
     return `🏛️ **Controller of Examinations (COE)**\n\n👤 **Name:** Dr. J. Pavan\n• **Role:** Controller of Examinations\n🏛️ **Institution:** Aditya University`;
   }
-
   if (/\b(engineering dean|dean of engineering)\b/.test(q)) {
     return `👨‍🏫 **School of Engineering Leadership**\n\n👤 **Dean:** Dr. G. Sridevi\n• **Associate Dean (Computing):** Dr. M. V Rajesh\n• **Associate Dean (Freshman Engg):** Dr. A. Vanathi`;
   }
 
-  if (/\b(highest package|highest placement|highest salary|top package|max package|highest alumni offer)\b/.test(q)) {
-    return `🏆 **Highest Placement Offer at Aditya University**\n\n• **Highest Alumni Offers:** **₹106.00 LPA** (M. Akhilesh & G. Rajesh)\n• **Top Batch Placement (2025-26):** **₹39.60 LPA** (D. Veera Venkata Durga Bhan Raju)\n🏢 **Top Recruiters:** Capgemini, Accenture, Autodesk, Hitachi, L&T, Walmart`;
-  }
-
-  // Broad Fallback Categorization
+  // Broad Fallback Categorization (Evaluated ONLY IF no exact sub-question matched)
 
   if (/\b(leadership|management|officers|board of directors)\b/.test(q))
     return AU_KB.leadership;
@@ -422,9 +442,6 @@ function getKBAnswer(question) {
   if (/\b(event|events|happening|happenings|genai|conclave|thunder thursday|vivo|centific|blood donation|workshop|guest lecture)\b/.test(q))
     return AU_KB.happenings;
 
-  if (/\b(program|programs|course|courses|btech|mtech|bba|mba|bca|mca|phd|pharmacy|degree|branch|branches|specializ|b\.tech|m\.tech|engineering|business)\b/.test(q))
-    return AU_KB.programs;
-
   if (/\b(hostel|mess|food|bus|transport|room|rooms|wifi|accommodation|single room|double room|triple room|quadruple room|stay|canteen)\b/.test(q))
     return AU_KB.hostel;
 
@@ -433,6 +450,9 @@ function getKBAnswer(question) {
 
   if (/\b(admission|admissions|apply|application|eligibility|fee structure|fee details|how to join|enroll|tuition|scholarship|cutoff|rank|cost|price)\b/.test(q))
     return AU_KB.admissions;
+
+  if (/\b(program|programs|course|courses|btech|mtech|bba|mba|bca|mca|phd|pharmacy|degree|branch|branches|specializ|b\.tech|m\.tech|engineering|business)\b/.test(q))
+    return AU_KB.programs;
 
   if (/\b(school|schools|engineering school|business school|science school|pharmacy school)\b/.test(q))
     return AU_KB.schools;
