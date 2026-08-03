@@ -30,13 +30,16 @@ exports.handleChat = async (req, res) => {
   // Strict personal query identifier
   const isPersonalQuery = /\b(my attendance|my marks|my grade|my result|my score|my cgpa|my gpa|my fee|my balance|my dues|my profile|my detail|my info|who am i|my timetable|my class|my schedule|today's class|today class)\b/i.test(qLower);
 
-  // Guest Mode Personal Query Protection
-  if (isPersonalQuery && (!user || user.role === 'guest')) {
-    reply = `🔒 **Guest Mode Notice**\n\nGuest Mode is designed to provide general information about **Aditya University** (Admissions, Degree Programs, Placements, Hostel Facilities, Research, and Campus Leadership).\n\nTo view your personal student attendance, internal marks, fee balance, or submit support tickets, please **Log In** or **Sign Up** with your registered student account.`;
+  // Issue / Complaint query identifier
+  const isIssueQuery = classifyQuery(message) || /\b(report|complaint|complain|issue with|problem with|wifi is not working|overlap error|not credited|deducted but not|incorrect|wrongly marked)\b/i.test(qLower);
+
+  // Guest Mode Restrictions: Guests CANNOT report issues or view personal records
+  if ((isPersonalQuery || isIssueQuery) && (!user || user.role === 'guest')) {
+    reply = `🔒 **Guest Mode Restriction**\n\nGuests cannot report issues, submit support tickets, or view personal student records.\n\nGuest Mode is designed for general university information (Admissions, Degree Programs, Placements, Hostel Facilities, Research, and Campus Leadership).\n\nTo report complaints, attendance issues, Wi-Fi faults, or fee payment errors, please **Log In** or **Sign Up** with your registered student account.`;
   }
 
   // 1. Instant LRU Cache Lookup (Sub-3ms Speed for General Queries)
-  if (!reply && !isPersonalQuery) {
+  if (!reply && !isPersonalQuery && !isIssueQuery) {
     const cachedResponse = cacheService.get(message);
     if (cachedResponse) {
       reply = cachedResponse;
@@ -67,7 +70,7 @@ exports.handleChat = async (req, res) => {
     if (personalReply) reply = personalReply;
   }
 
-  // 4. Complaint Ticket Classifier & Enqueue (Students Only)
+  // 4. Complaint Ticket Classifier & Enqueue (Logged-In Students Only)
   if (!reply && user && user.role !== 'guest' && user.email) {
     const category = classifyQuery(message);
     if (category) {
@@ -115,7 +118,7 @@ exports.handleChat = async (req, res) => {
   }
 
   // Cache non-personal resolved answers for future sub-3ms speed
-  if (!isPersonalQuery && reply) {
+  if (!isPersonalQuery && !isIssueQuery && reply) {
     cacheService.set(message, reply);
   }
 

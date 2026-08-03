@@ -1004,8 +1004,22 @@ function showWelcome() {
   ];
 
   let list = TOPIC_SUGGESTIONS[activeTopic] || TOPIC_SUGGESTIONS['General'];
-  if (isGuest && activeTopic === 'General') {
-    list = GUEST_GENERAL_SUGGESTIONS;
+  if (isGuest) {
+    if (activeTopic === 'General') {
+      list = GUEST_GENERAL_SUGGESTIONS;
+    } else {
+      list = list.map(s => {
+        if (s.title.includes('Report') || s.icon === '🚨' || s.title.startsWith('My ')) {
+          if (activeTopic === 'Hostel') return { icon: '🍱', title: 'Mess & Dining', query: 'Tell me about hostel mess and food quality' };
+          if (activeTopic === 'Timetable') return { icon: '📅', title: 'Academic Calendar', query: 'Where can I find official academic circulars?' };
+          if (activeTopic === 'Faculty') return { icon: '👩‍🏫', title: 'AIML HOD Profile', query: 'Who is AIML HOD?' };
+          if (activeTopic === 'Scholarships') return { icon: '🎓', title: 'Rank Waiver Rules', query: 'What merit scholarships are offered for rank holders?' };
+          if (activeTopic === 'Fees') return { icon: '💳', title: 'Program Fee Structure', query: 'What is the program fee structure and cost?' };
+          return { icon: '🏛️', title: 'About University', query: 'Tell me about Aditya University — its vision, mission and campus.' };
+        }
+        return s;
+      });
+    }
   }
 
   const suggsHtml = `
