@@ -5,6 +5,7 @@ const KnowledgeBase = require('../models/KnowledgeBase');
 const Ticket = require('../models/Ticket');
 const Student = require('../models/Student');
 const ChatHistory = require('../models/ChatHistory');
+const mongoose = require('mongoose');
 
 /**
  * Ultra-Fast High-Throughput Chat Controller
@@ -76,6 +77,8 @@ exports.handleChat = async (req, res) => {
         category,
         topic: topic || 'General Issue',
         status: 'pending',
+        dismissed: false,
+        viewed: false,
         createdAt: new Date()
       };
 
@@ -170,19 +173,53 @@ exports.getStudentNotifications = async (req, res) => {
     let dbTickets = [];
     try {
       dbTickets = await Ticket.find({
-        $or: [{ studentId: studentEmail }, { studentEmail: studentEmail }]
+        $or: [{ studentId: studentEmail }, { studentEmail: studentEmail }],
+        dismissed: { $ne: true },
+        viewed: { $ne: true }
       }).sort({ createdAt: -1 }).limit(10).lean();
     } catch (_) {}
 
     const memTickets = (queueService.ticketQueue || []).filter(t => {
       const sId = (t.studentId || '').toLowerCase();
       const sEmail = (t.studentEmail || '').toLowerCase();
-      return (sId === studentEmail || sEmail === studentEmail) && !dbTickets.some(d => d.ticketId === t.ticketId);
+      return (sId === studentEmail || sEmail === studentEmail) && !t.dismissed && !t.viewed && !dbTickets.some(d => d.ticketId === t.ticketId);
     });
 
     const notifications = [...memTickets, ...dbTickets];
     res.json({ success: true, notifications });
   } catch (err) {
     res.json({ success: false, notifications: [] });
+  }
+};
+
+/**
+ * Permanently Dismiss Notification Once Viewed
+ */
+exports.dismissNotification = async (req, res) => {
+  const { id } = req.params;
+  if (!id) return res.status(400).json({ success: false, error: 'Ticket ID required' });
+
+  try {
+    // Update memory queue
+    const memTicket = (queueService.ticketQueue || []).find(t => (t._id && t._id.toString() === id) || t.ticketId === id);
+    if (memTicket) {
+      memTicket.dismissed = true;
+      memTicket.viewed = true;
+    }
+
+    const queryConds = [{ ticketId: id }];
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      queryConds.push({ _id: id });
+    }
+
+    // Update MongoDB Ticket
+    await Ticket.updateMany(
+      { $or: queryConds },
+      { $set: { dismissed: true, viewed: true } }
+    );
+
+    res.json({ success: true, message: 'Notification permanently dismissed.' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 };

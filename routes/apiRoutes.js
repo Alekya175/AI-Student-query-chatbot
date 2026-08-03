@@ -197,6 +197,7 @@ router.post('/admin/import-excel', async (req, res) => {
 // Student Chat & Notifications Routes
 router.post('/chat', chatController.handleChat);
 router.get('/notifications/:email', chatController.getStudentNotifications);
+router.post('/notifications/:id/dismiss', chatController.dismissNotification);
 
 // Admin Dashboard Routes
 router.get('/admin/tickets', adminController.getTickets);

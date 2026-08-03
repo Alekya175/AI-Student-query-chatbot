@@ -1194,6 +1194,18 @@ function startVoice() {
 
 /* Admin Answer Notification Polling */
 let notifPollInterval = null;
+let dismissedTicketIds = new Set(JSON.parse(localStorage.getItem('dismissedTickets') || '[]'));
+
+function dismissAdminNotification(ticketId, bannerEl) {
+  if (bannerEl) bannerEl.remove();
+  if (ticketId) {
+    dismissedTicketIds.add(ticketId);
+    localStorage.setItem('dismissedTickets', JSON.stringify(Array.from(dismissedTicketIds)));
+    
+    // Send persistent dismissal request to backend
+    fetch(`${API}/notifications/${encodeURIComponent(ticketId)}/dismiss`, { method: 'POST' }).catch(_ => {});
+  }
+}
 
 function startNotificationPolling() {
   if (notifPollInterval) clearInterval(notifPollInterval);
@@ -1211,7 +1223,7 @@ async function checkAdminNotifications() {
 
       answeredTickets.forEach(ticket => {
         const id = ticket._id || ticket.ticketId;
-        if (!seenTicketNotifs.has(id)) {
+        if (!dismissedTicketIds.has(id) && !seenTicketNotifs.has(id)) {
           seenTicketNotifs.add(id);
           showAdminNotificationBanner(ticket);
         }
@@ -1234,13 +1246,14 @@ function cleanAdminReply(text) {
 }
 
 function showAdminNotificationBanner(ticket) {
+  const ticketId = ticket._id || ticket.ticketId;
   const fTime = new Date(ticket.createdAt).toLocaleString('en-IN', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
   const aTime = new Date(ticket.answeredAt || Date.now()).toLocaleString('en-IN', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
   const cleanAns = cleanAdminReply(ticket.answer);
 
   const banner = document.createElement('div');
   banner.className = 'notif-banner';
-  banner.id = `notif-banner-${ticket._id || ticket.ticketId}`;
+  banner.id = `notif-banner-${ticketId}`;
   banner.innerHTML = `
     <div class="notif-header">
       <div class="notif-icon">📩</div>
@@ -1248,7 +1261,7 @@ function showAdminNotificationBanner(ticket) {
         <div class="notif-title">Admin Answered Your Query</div>
         <div class="notif-status">Status: ✅ Answered &amp; Resolved</div>
       </div>
-      <button class="notif-close" onclick="this.parentElement.parentElement.remove()">✕</button>
+      <button class="notif-close" onclick="dismissAdminNotification('${ticketId}', this.parentElement.parentElement)">✕</button>
     </div>
     <div class="notif-body">
       <p style="margin-bottom:6px;"><strong>Your Issue:</strong> "${ticket.question}"</p>
@@ -1259,8 +1272,8 @@ function showAdminNotificationBanner(ticket) {
       <span>✅ Answered: ${aTime}</span>
     </div>
     <div class="notif-actions">
-      <button class="notif-btn primary" onclick="viewAnswerInChat('${ticket.question.replace(/'/g, "\\'")}', '${cleanAns.replace(/'/g, "\\'")}', '${aTime}')">View in Chat</button>
-      <button class="notif-btn secondary" onclick="this.parentElement.parentElement.remove()">Dismiss</button>
+      <button class="notif-btn primary" onclick="dismissAdminNotification('${ticketId}', this.parentElement.parentElement); viewAnswerInChat('${ticket.question.replace(/'/g, "\\'")}', '${cleanAns.replace(/'/g, "\\'")}', '${aTime}')">View in Chat</button>
+      <button class="notif-btn secondary" onclick="dismissAdminNotification('${ticketId}', this.parentElement.parentElement)">Dismiss</button>
     </div>
   `;
   document.body.appendChild(banner);
