@@ -994,7 +994,19 @@ const TOPIC_SUGGESTIONS = {
 
 function showWelcome() {
   const activeTopic = document.getElementById('chatTitle')?.textContent || 'General';
-  const list = TOPIC_SUGGESTIONS[activeTopic] || TOPIC_SUGGESTIONS['General'];
+  const isGuest = !currentUser || currentUser.role === 'guest';
+
+  const GUEST_GENERAL_SUGGESTIONS = [
+    { icon: '🏛️', title: 'About University', query: 'Tell me about Aditya University — its vision, mission and campus.' },
+    { icon: '🏆', title: 'Rankings & NAAC', query: 'What are the rankings and accreditations of Aditya University?' },
+    { icon: '🎓', title: 'Degree Programs', query: 'What degree programs are offered and what is the eligibility?' },
+    { icon: '📍', title: 'Campus Location', query: 'What is the exact campus address and location?' }
+  ];
+
+  let list = TOPIC_SUGGESTIONS[activeTopic] || TOPIC_SUGGESTIONS['General'];
+  if (isGuest && activeTopic === 'General') {
+    list = GUEST_GENERAL_SUGGESTIONS;
+  }
 
   const suggsHtml = `
     <div class="sugg-grid">
@@ -1006,10 +1018,9 @@ function showWelcome() {
       `).join('')}
     </div>`;
 
-  const isStudent = currentUser && currentUser.role === 'student';
-  const subtitleTxt = isStudent 
+  const subtitleTxt = !isGuest 
     ? `Topic: <strong>${activeTopic}</strong> — Select a quick option below or type your question.` 
-    : `Topic: <strong>${activeTopic}</strong> — Ask Aditya Chatbot anything about campus life!`;
+    : `Topic: <strong>${activeTopic}</strong> — Ask Aditya Chatbot anything about campus life &amp; university details!`;
 
   document.getElementById('msgs').innerHTML = `
     <div class="welcome">

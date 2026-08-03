@@ -30,8 +30,13 @@ exports.handleChat = async (req, res) => {
   // Strict personal query identifier
   const isPersonalQuery = /\b(my attendance|my marks|my grade|my result|my score|my cgpa|my gpa|my fee|my balance|my dues|my profile|my detail|my info|who am i|my timetable|my class|my schedule|today's class|today class)\b/i.test(qLower);
 
+  // Guest Mode Personal Query Protection
+  if (isPersonalQuery && (!user || user.role === 'guest')) {
+    reply = `🔒 **Guest Mode Notice**\n\nGuest Mode is designed to provide general information about **Aditya University** (Admissions, Degree Programs, Placements, Hostel Facilities, Research, and Campus Leadership).\n\nTo view your personal student attendance, internal marks, fee balance, or submit support tickets, please **Log In** or **Sign Up** with your registered student account.`;
+  }
+
   // 1. Instant LRU Cache Lookup (Sub-3ms Speed for General Queries)
-  if (!isPersonalQuery) {
+  if (!reply && !isPersonalQuery) {
     const cachedResponse = cacheService.get(message);
     if (cachedResponse) {
       reply = cachedResponse;
@@ -62,10 +67,10 @@ exports.handleChat = async (req, res) => {
     if (personalReply) reply = personalReply;
   }
 
-  // 4. Complaint Ticket Classifier & Enqueue
-  if (!reply) {
+  // 4. Complaint Ticket Classifier & Enqueue (Students Only)
+  if (!reply && user && user.role !== 'guest' && user.email) {
     const category = classifyQuery(message);
-    if (category && user.role !== 'guest' && user.email) {
+    if (category) {
       const ticketId = `T-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
       ticketCreated = {
         ticketId,
