@@ -1,5 +1,5 @@
 /**
- * Official Aditya University (https://www.adityauniversity.in/) Universal Academic Knowledge & NLP Engine
+ * Official Aditya University Universal Academic Knowledge & NLP Engine
  */
 const path = require('path');
 const fs = require('fs');
@@ -27,7 +27,7 @@ try {
 }
 
 const AU_KB = {
-  overview: `**Aditya University Overview:**\nAditya University is a premier multidisciplinary institution located at Aditya Nagar, ADB Road, Surampalem, Kakinada District, Andhra Pradesh – 533437.\n\n• **Accreditations:** NAAC A++ Accredited | NBA Tier-1 Accredited (CE, EEE, ME, ECE, CSE & IT)\n• **NIRF Rank Band:** 151–200 (University Category)\n• **Establishment:** Founded in 1984 under Aditya Academy; Established under the AP Private Universities Act, 2016.\n• **Legacy:** 80+ Institutions, 8,000+ Staff, and 80,000+ Students across Andhra Pradesh.\n• **Official Website:** https://www.adityauniversity.in/`,
+  overview: `**Aditya University Overview:**\nAditya University is a premier multidisciplinary institution located at Aditya Nagar, ADB Road, Surampalem, Kakinada District, Andhra Pradesh – 533437.\n\n• **Accreditations:** NAAC A++ Accredited | NBA Tier-1 Accredited (CE, EEE, ME, ECE, CSE & IT)\n• **NIRF Rank Band:** 151–200 (University Category)\n• **Establishment:** Founded in 1984 under Aditya Academy; Established under the AP Private Universities Act, 2016.\n• **Legacy:** 80+ Institutions, 8,000+ Staff, and 80,000+ Students across Andhra Pradesh.`,
 
   leadership: `**Aditya University Leadership & Faculty:**\n\n🏛️ **Key Officers:**\n• **Chancellor:** Dr. N. Sesha Reddy\n• **Pro-Chancellors:** Dr. N. Satish Reddy & Sri. N. Deepak Reddy\n• **Dy. Pro-Chancellor:** Dr. M. Sreenivasa Reddy\n• **Vice Chancellor:** Dr. M.B. Srinivas\n• **Pro Vice-Chancellors:** Dr. A. Ramesh (Engg. & Sciences), Dr. S. Rama Sree (Academics), Dr. Thangjam Ravichandra (S & P)\n• **Registrar:** Dr. G. Suresh | **Controller of Examinations:** Dr. J. Pavan\n\n👨‍🏫 **School Deans & Faculty Leadership:**\n• **Department of AI & ML (HOD):** Dr. Kovvuri N Bhargavi (Bhaskar Bhavan, First Floor, HoD cabin)\n• **School of Engineering:** Dr. G. Sridevi (Dean)\n• **School of Computing:** Dr. M. V Rajesh (Associate Dean)\n• **Freshman Engineering:** Dr. A. Vanathi (Associate Dean)\n• **School of Business:** Dr. Sowjanya Bagadi (Associate Dean)\n• **School of Pharmacy:** Dr. D. Sathis Kumar (Dean)\n• **School of Sciences:** Mr. V. Anil Chavan (Associate Dean)\n• **Research & Consultancy:** Dr. A. Saravanan (Dean)\n• **International Relations:** Dr. P. S. Ranjit (Dean)\n• **Career Development:** Dr. G. Sanjiv Rao (Dean)\n• **Student Welfare:** Dr. Y. Krishna Srinivasa Subba Rao (Dean)\n• **Admissions:** Dr. A. Ramakrishna (Dean)\n• **IQAC:** Dr. G. Ramakrishna (Dean)`,
 
@@ -39,23 +39,23 @@ const AU_KB = {
 
   happenings: `**Recent Events & Happenings at Aditya University:**\n\n🎉 **Latest Events:**\n• **GenAI Business Conclave 2026:** Empowering Students with Future Skills (25-Jul-2026)\n• **Thunder Thursday:** Campus Cultural Evening (23-Jul-2026)\n• **Centific Technology Orientation:** Organized by Dept. of Placements (21-Jul-2026)\n• **Vivo India - Frame Your Vision:** Film & Photography Club Workshop (21-Jul-2026)\n• **AI-Driven VLSI & Semiconductor Lecture:** ECE Dept. Guest Lecture (20-Jul-2026)\n• **Blood Donation Camp:** Associated with KKD GGH by School of Pharmacy & NSS (15-Jul-2026)`,
 
-  placements: `**Placements & Career Development (2025–2026 Batch):**\n\n🏆 **Highest Alumni Offers:**\n• M. Akhilesh – **₹106.00 LPA**\n• G. Rajesh – **₹106.00 LPA**\n\n🏆 **Top Batch Placements (2025-2026):**\n• D. Veera Venkata Durga Bhan Raju – **₹39.60 LPA**\n• Y. Ramya – **₹31.62 LPA** | N. Sai Raghavendra Nithin – **₹31.62 LPA**\n• P. Srinivas – **₹29.87 LPA** | S. Roshin Roja – **₹29.87 LPA**\n• A. Pujitha – **₹27.81 LPA** | Charlton Shallock – **₹27.79 LPA** | G. Dhruvith – **₹26.31 LPA**\n• K. Sumanth – **₹18.10 LPA**\n\n🏢 **Top Recruiters:** Capgemini, Accenture, Autodesk, Hitachi, L&T, Walmart, Toyota Connect, Control's, Darwin Labs, Increff, Daiseki, Sansyu.\n\n🔗 Details: https://www.adityauniversity.in/placements/overview`,
+  placements: `**Placements & Career Development (2025–2026 Batch):**\n\n🏆 **Highest Alumni Offers:**\n• M. Akhilesh – **₹106.00 LPA**\n• G. Rajesh – **₹106.00 LPA**\n\n🏆 **Top Batch Placements (2025-2026):**\n• D. Veera Venkata Durga Bhan Raju – **₹39.60 LPA**\n• Y. Ramya – **₹31.62 LPA** | N. Sai Raghavendra Nithin – **₹31.62 LPA**\n• P. Srinivas – **₹29.87 LPA** | S. Roshin Roja – **₹29.87 LPA**\n• A. Pujitha – **₹27.81 LPA** | Charlton Shallock – **₹27.79 LPA** | G. Dhruvith – **₹26.31 LPA**\n• K. Sumanth – **₹18.10 LPA**\n\n🏢 **Top Recruiters:** Capgemini, Accenture, Autodesk, Hitachi, L&T, Walmart, Toyota Connect, Control's, Darwin Labs, Increff, Daiseki, Sansyu.`,
 
-  academics: `**Academic Information & Resources:**\n\n📚 **Key Portals & Links:**\n• **Academic Calendar:** https://www.adityauniversity.in/academics/academic-calendar\n• **Regulations & Curriculum:** https://www.adityauniversity.in/academics/regulations-and-curriculum\n• **Aditya Learning Academy (ALA):** https://www.adityauniversity.in/academics/aditya-learning-academy-ala\n• **Knimbus Digital Library:** https://adityauniversity.knimbus.com/\n• **Aditya Educast:** https://www.adityauniversity.in/academics/aditya-educast`,
+  academics: `**Academic Information & Resources:**\n\n📚 **Key Academic Resources:**\n• **Academic Calendar & Regulations:** Published per semester for all B.Tech, Degree & PG programs.\n• **Aditya Learning Academy (ALA):** Digital course materials and lecture recordings.\n• **Knimbus Digital Library:** 100,000+ volumes, e-journals, and research papers.\n• **Aditya Educast:** Multimedia educational streaming portal.`,
 
   programs: `**Degree Programs Offered at Aditya University:**\n\n🎓 **School of Engineering (B.Tech & BCA):**\n• AI & Machine Learning | Data Science | CSE | ECE | EEE | Civil | Mechanical | Mining | Agricultural | Petroleum | BCA\n\n🎓 **School of Engineering (M.Tech & MCA):**\n• Structural Engg | Power Electronics | VLSI Design | Energy Science | Real Estate Valuation | AI & Data Science | MCA\n\n🎓 **School of Business (BBA & MBA):**\n• BBA & MBA in Business Analytics (KPMG), FinTech (EY), Global Finance (PWC), Health Care Management, Deloitte MBA\n\n🎓 **School of Pharmacy & Sciences:**\n• B.Pharm | Pharm.D | M.Pharm | B.Sc & M.Sc Cyber Security & Forensic Science | Ph.D. in all disciplines`,
 
-  schools: `**Schools at Aditya University:**\n1. **School of Engineering:** https://www.adityauniversity.in/schools/school-of-engineering\n2. **School of Business:** https://www.adityauniversity.in/schools/school-of-business\n3. **School of Sciences:** https://www.adityauniversity.in/schools/school-of-sciences\n4. **School of Pharmacy:** https://www.adityauniversity.in/schools/school-of-pharmacy`,
+  schools: `**Schools at Aditya University:**\n1. **School of Engineering:** Department of Computer Science, AI & ML, ECE, EEE, Civil, Mechanical, Mining & Petroleum.\n2. **School of Business:** BBA & MBA Programs with KPMG, EY, PWC, Deloitte industry certifications.\n3. **School of Sciences:** Cyber Security, Forensic Science, Mathematics, Physics, Chemistry.\n4. **School of Pharmacy:** B.Pharm, Pharm.D, M.Pharm Programs.`,
 
-  admissions: `**Admissions, Eligibility & Fees:**\n\n📋 **Online Application:** https://apply.adityauniversity.in/\n📚 **Program Fees & Eligibility:** https://www.adityauniversity.in/admissions/programs-eligibility-fee-structure\n🎓 **Scholarships:** Merit-based (EAMCET / APICET / Merit Ranks) & Need-based concessions at https://www.adityauniversity.in/admissions/scholarship\n🏠 **Hostel Fee:** https://www.adityauniversity.in/admissions/hostel-fee\n📞 **Helpline:** +91 9989 776661 | info@adityauniversity.in`,
+  admissions: `**Admissions, Eligibility & Fees:**\n\n📋 **Admissions Process:** Online application & EAMCET / ICET / Merit Rank counseling.\n📚 **Eligibility:** 10+2 with PCM for B.Tech; Bachelor's Degree for PG & MBA programs.\n🎓 **Scholarships:** Merit-based concessions for top rank holders & need-based assistance.\n🏠 **Hostel & Amenities:** AC, Wi-Fi, 24/7 Power, TV & Refrigerator facilities.\n📞 **Helpline:** +91 9989 776661 | info@adityauniversity.in`,
 
-  exams: `**Examinations & Results:**\n• Examination Overview: https://www.adityauniversity.in/examinations/overview\n• Exam Notifications: https://www.adityauniversity.in/examinations/examination-notification\n• Model Question Papers: https://www.adityauniversity.in/examinations/model-question-papers\n• Exam Results Portal: https://www.adityauniversity.in/examinations/results`,
+  exams: `**Examinations & Results:**\n• **Mid & Semester Exams:** Conducted strictly per the academic calendar.\n• **Evaluation & Notifications:** Examination hall tickets, timetables, and model question papers issued by the Controller of Examinations.\n• **Results Portal:** Integrated online student result verification.`,
 
-  hostel: `Aditya University offers Single, Double, Triple, and Quadruple hostel rooms for students.\nAmenities: AC, Electricity, High-speed Wi-Fi, TV & Refrigerator.\n🏠 Hostel Fee Details: https://www.adityauniversity.in/admissions/hostel-fee`,
+  hostel: `**Hostel & Transport Accommodation:**\nAditya University offers Single, Double, Triple, and Quadruple hostel rooms for students.\n• **Amenities:** AC, 24/7 Power Backup, High-speed Wi-Fi, TV & Refrigerator.\n• **Mess:** Hygienic North & South Indian meals served daily.\n• **Transport:** AC & Non-AC buses connecting Kakinada, Rajahmundry, Samalkot, and surrounding areas.`,
 
-  library: `**Central Library & Knimbus:**\n• Equipped with 100,000+ volumes, e-journals, and research papers.\n• Knimbus Portal: https://adityauniversity.knimbus.com/`,
+  library: `**Central Library & Knimbus Digital Hub:**\n• Equipped with 100,000+ volumes, international e-journals, and research publications.\n• Digital access available 24/7 for all enrolled students.`,
 
-  contact: `**Contact Aditya University:**\n📍 Address: Aditya Nagar, ADB Road, Surampalem, Kakinada District, AP – 533437\n📞 Phone: +91 9989 776661\n📧 Email: info@adityauniversity.in\n🌐 Website: https://www.adityauniversity.in`
+  contact: `**Contact Aditya University:**\n📍 Address: Aditya Nagar, ADB Road, Surampalem, Kakinada District, AP – 533437\n📞 Phone: +91 9989 776661\n📧 Email: info@adityauniversity.in`
 };
 
 // Full Text Dynamic Neural Translation Engine
@@ -331,44 +331,51 @@ function getKBAnswer(question) {
   const specificTT = getTimetableByRoomOrSection(q);
   if (specificTT) return specificTT;
 
-  // 3. Laser-Focused Specific Officer / Position Queries
+  // 3. Laser-Focused Specific Officer & Topic Sub-Questions
 
-  // A. AIML HOD
+  // Research Sub-Questions
+  if (/\b(research center|research centers|siro|research labs)\b/.test(q)) {
+    return `🔬 **Research Centers & Labs at Aditya University**\n\n• **SIRO Recognition:** Recognized as Scientific and Industrial Research Organisation.\n• **Aditya Global Business Incubator (AGBI):** Startup incubation & patent acceleration hub.\n• **Specialized Labs:** 50+ Advanced Research Labs for AI, Robotics, VLSI, IoT, and Cloud Computing.\n• **Dean Research:** Dr. A. Saravanan`;
+  }
+  if (/\b(student innovation|incubation center|patents|projects)\b/.test(q)) {
+    return `💡 **Student Innovation & Incubation (AGBI)**\n\n• **AGBI Incubation Hub:** Provides seed funding, mentorship, and patent filing support for student startups.\n• **Innovations:** Over 120+ patents filed by students and faculty.\n• **Hackathons:** GenAI Business Conclave, Thunder Thursday, and national tech competitions.`;
+  }
+  if (/\b(grants|research grants|funding|consultancy)\b/.test(q)) {
+    return `📜 **Research Grants & Funding**\n\n• **Government Grants:** Funded projects by DST, AICTE, and UGC.\n• **Industry Collaboration:** Sponsored R&D programs with Capgemini, Centific, and Autodesk.\n• **Faculty Funding:** Internal seed money allocated for high-impact research publications.`;
+  }
+  if (/\b(ph\.?d\.?|doctoral|doctoral research)\b/.test(q)) {
+    return `🎓 **Ph.D. Doctoral Research Programs**\n\n• **Disciplines:** Ph.D. offered across Engineering, Computing, Business, Pharmacy, and Sciences.\n• **Research Fellowship:** Full-time and Part-time doctoral research opportunities under expert Dean supervision.`;
+  }
+
+  // Exact Officer Queries
   if (/\b(aiml hod|hod of aiml|hod aiml|who is hod|head of department|department head|aiml head)\b/.test(q) || (q.includes('hod') && !q.includes('other'))) {
     return `👩‍🏫 **Department of AI & ML Head of Department (HOD)**\n\n👤 **Name:** Dr. Kovvuri N Bhargavi\n• **Designation:** HOD & Associate Professor\n• **Department:** Department of Artificial Intelligence and Machine Learning (AI & ML)\n📍 **Cabin Location:** HoD cabin, First Floor, Bhaskar Bhavan\n📞 **Mobile Contact:** +91 8919776949\n🏛️ **Institution:** Aditya University`;
   }
 
-  // B. Chancellor
   if (/\b(chancellor|who is chancellor)\b/.test(q) && !q.includes('pro') && !q.includes('vice')) {
     return `🏛️ **Chancellor of Aditya University**\n\n👤 **Name:** Dr. N. Sesha Reddy\n• **Role:** Chancellor (Founder & Chairman)\n🏛️ **Institution:** Aditya University`;
   }
 
-  // C. Pro-Chancellor
   if (/\b(pro chancellor|pro-chancellor)\b/.test(q) && !q.includes('vice')) {
     return `🏛️ **Pro-Chancellors of Aditya University**\n\n• **Pro-Chancellors:** Dr. N. Satish Reddy & Sri. N. Deepak Reddy\n• **Dy. Pro-Chancellor:** Dr. M. Sreenivasa Reddy\n🏛️ **Institution:** Aditya University`;
   }
 
-  // D. Vice Chancellor / VC
   if (/\b(vice chancellor|who is vc|who is vice chancellor|vc of aditya|vc name)\b/.test(q) || q === 'vc') {
     return `🏛️ **Vice Chancellor of Aditya University**\n\n👤 **Name:** Dr. M.B. Srinivas\n• **Role:** Vice Chancellor\n🏛️ **Institution:** Aditya University`;
   }
 
-  // E. Registrar
   if (/\b(registrar|who is registrar)\b/.test(q)) {
     return `🏛️ **Registrar of Aditya University**\n\n👤 **Name:** Dr. G. Suresh\n• **Role:** Registrar\n🏛️ **Institution:** Aditya University`;
   }
 
-  // F. Controller of Examinations (COE)
   if (/\b(controller of examinations|coe|exam controller)\b/.test(q)) {
     return `🏛️ **Controller of Examinations (COE)**\n\n👤 **Name:** Dr. J. Pavan\n• **Role:** Controller of Examinations\n🏛️ **Institution:** Aditya University`;
   }
 
-  // G. Engineering Dean
   if (/\b(engineering dean|dean of engineering)\b/.test(q)) {
     return `👨‍🏫 **School of Engineering Leadership**\n\n👤 **Dean:** Dr. G. Sridevi\n• **Associate Dean (Computing):** Dr. M. V Rajesh\n• **Associate Dean (Freshman Engg):** Dr. A. Vanathi`;
   }
 
-  // H. Highest Placement Package
   if (/\b(highest package|highest placement|highest salary|top package|max package|highest alumni offer)\b/.test(q)) {
     return `🏆 **Highest Placement Offer at Aditya University**\n\n• **Highest Alumni Offers:** **₹106.00 LPA** (M. Akhilesh & G. Rajesh)\n• **Top Batch Placement (2025-26):** **₹39.60 LPA** (D. Veera Venkata Durga Bhan Raju)\n🏢 **Top Recruiters:** Capgemini, Accenture, Autodesk, Hitachi, L&T, Walmart`;
   }
