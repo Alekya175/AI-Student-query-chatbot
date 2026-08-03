@@ -323,17 +323,42 @@ function getKBAnswer(question) {
   if (!question) return null;
   const q = question.toLowerCase().trim();
 
-  // 1. Check for specific faculty query first
+  // 1. Specific Faculty Query First
   const specificFaculty = searchSpecificFaculty(q);
   if (specificFaculty) return specificFaculty;
 
-  // 2. Check for specific timetable query
+  // 2. Specific Timetable Query
   const specificTT = getTimetableByRoomOrSection(q);
   if (specificTT) return specificTT;
 
-  // 3. Laser-Focused Specific Officer & Topic Sub-Questions
+  // 3. Exact Sub-Questions Matching for All 11 Topics
 
-  // Research Sub-Questions
+  // A. Notices / College Notifications Sub-Questions
+  if (/\b(latest (college )?notifications?|latest announcements?|recent updates?|college notifications)\b/.test(q)) {
+    return `📣 **Latest Aditya University Notifications & Announcements**\n\n• **GenAI Business Conclave 2026:** Empowering Students with Future Skills (25-Jul-2026)\n• **Thunder Thursday:** Campus Cultural Evening (23-Jul-2026)\n• **Centific Technology Orientation:** Organized by Dept. of Placements (21-Jul-2026)\n• **Vivo India - Frame Your Vision:** Film & Photography Club Workshop (21-Jul-2026)\n• **AI-Driven VLSI & Semiconductor Lecture:** ECE Dept. Guest Lecture (20-Jul-2026)\n• **Blood Donation Camp:** Associated with KKD GGH by School of Pharmacy & NSS (15-Jul-2026)`;
+  }
+  if (/\b(examination schedules?|upcoming examination|exam timetable notice|exam schedule|mid term and semester exams)\b/.test(q)) {
+    return `📅 **Upcoming Examination Schedules & Notices**\n\n• **Mid-Term 1 Examinations:** Conducted per batch academic calendar.\n• **Semester End Examinations:** Timetables, hall tickets, and examination rules issued by the Controller of Examinations.\n• **Controller of Examinations:** Dr. J. Pavan`;
+  }
+  if (/\b(upcoming holidays|holidays and (campus )?events|campus events)\b/.test(q)) {
+    return `📢 **Upcoming Holidays & Campus Events**\n\n• **Thunder Thursday:** Weekly Campus Cultural Evening Festival\n• **GenAI Business Conclave:** National Student Innovation Summit\n• **NSS Blood Donation Camp:** Organized at School of Pharmacy`;
+  }
+  if (/\b(official academic circulars|academic circulars|circulars)\b/.test(q)) {
+    return `📝 **Official Academic Circulars & Guidelines**\n\n• **Academic Circulars:** Issued by Registrar Dr. G. Suresh & Deans of Schools.\n• **Curriculum & Regulations:** Published for B.Tech, M.Tech, MBA, MCA, and Degree programs.`;
+  }
+
+  // B. Admissions Sub-Questions
+  if (/\b(degree programs are offered|programs offered|courses offered|programs and eligibility)\b/.test(q)) {
+    return `🎓 **Degree Programs & Eligibility at Aditya University**\n\n• **School of Engineering (UG):** B.Tech in AI & ML, Data Science, CSE, ECE, EEE, Civil, Mech, Mining, Agri, Pet | BCA\n• **School of Engineering (PG):** M.Tech in AI & Data Science, CSE, VLSI, Power Electronics | MCA\n• **School of Business:** BBA & MBA (Business Analytics, FinTech, Global Finance)\n• **School of Pharmacy & Sciences:** B.Pharm, Pharm.D, M.Pharm, B.Sc/M.Sc Cyber Security & Forensic Science, Ph.D.\n• **Eligibility:** 10+2 with PCM for B.Tech; Bachelor's Degree for PG/MBA.`;
+  }
+  if (/\b(how do i apply|apply for admissions|apply online)\b/.test(q)) {
+    return `📋 **Admissions Application Process**\n\n• **Online Application:** Submit your application via EAMCET / ICET / Merit Rank counseling.\n• **Selection:** Direct merit seats and counseling allocations.\n• **Admissions Helpline:** +91 9989 776661 | info@adityauniversity.in`;
+  }
+  if (/\b(admissions helpline|admissions contact|admissions phone)\b/.test(q)) {
+    return `📞 **Admissions Helpline & Contacts**\n\n• **Dean Admissions:** Dr. A. Ramakrishna\n• **Helpline Phone:** +91 9989 776661\n• **Email:** info@adityauniversity.in\n📍 **Campus Address:** Aditya Nagar, ADB Road, Surampalem, Kakinada District, AP – 533437`;
+  }
+
+  // C. Research Sub-Questions
   if (/\b(research center|research centers|siro|research labs)\b/.test(q)) {
     return `🔬 **Research Centers & Labs at Aditya University**\n\n• **SIRO Recognition:** Recognized as Scientific and Industrial Research Organisation.\n• **Aditya Global Business Incubator (AGBI):** Startup incubation & patent acceleration hub.\n• **Specialized Labs:** 50+ Advanced Research Labs for AI, Robotics, VLSI, IoT, and Cloud Computing.\n• **Dean Research:** Dr. A. Saravanan`;
   }
@@ -347,7 +372,7 @@ function getKBAnswer(question) {
     return `🎓 **Ph.D. Doctoral Research Programs**\n\n• **Disciplines:** Ph.D. offered across Engineering, Computing, Business, Pharmacy, and Sciences.\n• **Research Fellowship:** Full-time and Part-time doctoral research opportunities under expert Dean supervision.`;
   }
 
-  // Exact Officer Queries
+  // D. Exact Officers Sub-Questions
   if (/\b(aiml hod|hod of aiml|hod aiml|who is hod|head of department|department head|aiml head)\b/.test(q) || (q.includes('hod') && !q.includes('other'))) {
     return `👩‍🏫 **Department of AI & ML Head of Department (HOD)**\n\n👤 **Name:** Dr. Kovvuri N Bhargavi\n• **Designation:** HOD & Associate Professor\n• **Department:** Department of Artificial Intelligence and Machine Learning (AI & ML)\n📍 **Cabin Location:** HoD cabin, First Floor, Bhaskar Bhavan\n📞 **Mobile Contact:** +91 8919776949\n🏛️ **Institution:** Aditya University`;
   }
