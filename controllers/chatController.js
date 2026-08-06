@@ -28,7 +28,7 @@ exports.handleChat = async (req, res) => {
   let ticketCreated = null;
 
   // Strict personal query identifier
-  const isPersonalQuery = /\b(my attendance|my marks|my grade|my result|my score|my cgpa|my gpa|my fee|my balance|my dues|my profile|my detail|my info|who am i|my timetable|my class|my schedule|today's class|today class)\b/i.test(qLower);
+  const isPersonalQuery = /\b(my attendance|my marks|my grade|my result|my score|my cgpa|my gpa|my fee|my balance|my dues|my profile|my detail|my info|who am i|my timetable|my class|my schedule|today's class|today class|internal marks|show my internal marks)\b/i.test(qLower);
 
   // Issue / Complaint query identifier
   const isIssueQuery = classifyQuery(message) || /\b(report|complaint|complain|issue with|problem with|wifi is not working|overlap error|not credited|deducted but not|incorrect|wrongly marked)\b/i.test(qLower);
@@ -47,13 +47,13 @@ exports.handleChat = async (req, res) => {
     }
   }
 
-  // 2. High-Precision Knowledge Base & Intent Matcher (Primary Source of Truth)
-  if (!reply) {
+  // 2. High-Precision Knowledge Base & Intent Matcher (Only for Non-Personal Queries)
+  if (!reply && !isPersonalQuery) {
     const nlpAnswer = getKBAnswer(message);
     if (nlpAnswer) reply = nlpAnswer;
   }
 
-  // 3. Student Personal Records Lookup (Only if explicit personal query and KB returned null)
+  // 3. Student Personal Records Lookup (For explicit personal queries when logged in)
   if (!reply && isPersonalQuery && user && user.role !== 'guest') {
     let studentRecord = null;
     try {
