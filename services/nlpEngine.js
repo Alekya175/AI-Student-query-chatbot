@@ -282,7 +282,7 @@ function getStudentPersonalDetails(user, question, studentRecord) {
   if (!user || user.role === 'guest') return null;
   const q = question.toLowerCase();
 
-  const isPersonalQuery = /attendance|present|absent|percentage|mark|grade|result|score|mid|cgpa|gpa|fee balance|fee due|dues|my detail|my profile|timetable|schedule|class today/.test(q);
+  const isPersonalQuery = /attendance|present|absent|percentage|mark|grade|result|score|mid|cgpa|gpa|fee balance|fee due|dues|my detail|my profile|timetable|schedule|class today|rank|eamcet|ecet|entrance|hallticket|hall ticket/.test(q);
   if (!isPersonalQuery) return null;
 
   if (!studentRecord || !studentRecord.attendance) {
@@ -293,6 +293,15 @@ function getStudentPersonalDetails(user, question, studentRecord) {
 
   const regNo = studentRecord.regNo || user.regNo || 'N/A';
   const name = studentRecord.name || user.name || 'Student';
+
+  if (/rank|eamcet|ecet|entrance|hallticket|hall ticket/.test(q) && !/wrong|error|incorrect|mismatch|complain|report/.test(q)) {
+    const entrance = studentRecord.entranceType || 'EAMCET';
+    const rankVal = studentRecord.rank ? studentRecord.rank.toLocaleString('en-IN') : 'N/A';
+    const htNo = studentRecord.hallTicketNo || 'N/A';
+    const mob = studentRecord.mobile ? `+91 ${studentRecord.mobile}` : 'N/A';
+
+    return `🏆 **Personal Entrance Examination & Rank Details**\n\n👤 **Student Name:** ${name} (${regNo})\n🎓 **Branch & Section:** ${studentRecord.branch || 'AI & ML'} - ${studentRecord.section || ''}\n\n• **Entrance Examination:** **${entrance}**\n• **EAMCET / ECET Rank:** **${rankVal}** 🌟\n• **Hall Ticket Number:** ${htNo}\n• **Registered Mobile Contact:** ${mob}`;
+  }
 
   if (/attendance|present|absent|percentage/.test(q) && !/wrong|error|incorrect|mismatch|complain|report/.test(q)) {
     const att = studentRecord.attendance || { overallPercentage: 88.5, totalClasses: 320, classesAttended: 283, classesAbsent: 37 };
@@ -316,6 +325,63 @@ function getStudentPersonalDetails(user, question, studentRecord) {
 
   if (/my detail|my profile|my info|my reg|who am i/.test(q)) {
     return `👤 **Student Profile Details**\n\n• **Name:** ${name}\n• **Reg No:** ${regNo}\n• **Email:** ${user.email}\n• **Branch:** ${studentRecord.branch || 'N/A'}\n• **Batch:** ${studentRecord.year || 'N/A'}\n• **Overall CGPA:** ${studentRecord.cgpa || 'N/A'}\n• **Attendance:** ${studentRecord.attendance ? studentRecord.attendance.overallPercentage + '%' : 'N/A'}`;
+  }
+
+  return null;
+}
+
+// Student Specific Rank & Profile Search Engine by Name or Roll No
+async function searchStudentRankDetails(question, StudentModel) {
+  if (!question) return null;
+  const q = question.toLowerCase().trim();
+
+  if (!/rank|eamcet|ecet|hallticket|hall ticket/.test(q)) return null;
+
+  // Extract roll number if present (e.g. 24B11AI283)
+  const rollMatch = q.match(/\b([0-9][0-9][a-z0-9]{8})\b/i);
+  let studentDoc = null;
+
+  if (rollMatch && StudentModel) {
+    try {
+      studentDoc = await StudentModel.findOne({ regNo: rollMatch[1].toUpperCase() }).lean().exec();
+    } catch (_) {}
+  }
+
+  // Search by student name in memory dataset
+  if (!studentDoc) {
+    const cleanQ = q.replace(/[^a-z0-9\s]/g, ' ');
+    const studentsPath = path.join(__dirname, '..', 'data', 'students.json');
+    let localStudents = [];
+    try {
+      if (fs.existsSync(studentsPath)) {
+        localStudents = JSON.parse(fs.readFileSync(studentsPath, 'utf8'));
+      }
+    } catch (_) {}
+
+    let bestMatch = null;
+    let maxScore = 0;
+
+    for (const s of localStudents) {
+      const sName = s.name.toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
+      const nameParts = sName.split(/\s+/).filter(p => p.length > 2);
+      if (nameParts.length > 0 && nameParts.every(part => cleanQ.includes(part))) {
+        const score = nameParts.join(' ').length;
+        if (score > maxScore) {
+          maxScore = score;
+          bestMatch = s;
+        }
+      }
+    }
+    if (bestMatch) studentDoc = bestMatch;
+  }
+
+  if (studentDoc) {
+    const entrance = studentDoc.entranceType || 'EAMCET';
+    const rankVal = studentDoc.rank ? studentDoc.rank.toLocaleString('en-IN') : 'N/A';
+    const htNo = studentDoc.hallTicketNo || 'N/A';
+    const mob = studentDoc.mobile ? `+91 ${studentDoc.mobile}` : 'N/A';
+
+    return `🏆 **EAMCET Rank & Admission Details**\n\n👤 **Student Name:** ${studentDoc.name}\n🆔 **Roll Number:** ${studentDoc.regNo}\n📧 **Registered Email:** ${studentDoc.email}\n🎓 **Branch & Section:** ${studentDoc.branch || 'AI & ML'} - ${studentDoc.section || ''}\n\n• **Entrance Examination:** **${entrance}**\n• **EAMCET / ECET Rank:** **${rankVal}** 🌟\n• **Hall Ticket Number:** ${htNo}\n• **Registered Mobile:** ${mob}`;
   }
 
   return null;
@@ -513,7 +579,7 @@ function getKBAnswer(question) {
   if (/\b(placement|placements|recruit|recruiter|recruiters|package|lpa|salary|job|hire|hiring|drive|job offer|placement offer|placed|company|companies)\b/.test(q))
     return AU_KB.placements;
 
-  if (/\b(admission|admissions|apply|application|eligibility|fee structure|fee details|how to join|enroll|tuition|scholarship|cutoff|rank|cost|price)\b/.test(q))
+  if (/\b(admission|admissions|apply|application|eligibility|fee structure|fee details|how to join|enroll|tuition|cutoff|cost|price)\b/.test(q))
     return AU_KB.admissions;
 
   if (/\b(program|programs|course|courses|btech|mtech|bba|mba|bca|mca|phd|pharmacy|degree|branch|branches|specializ|b\.tech|m\.tech|engineering|business)\b/.test(q))
@@ -597,4 +663,4 @@ function classifyQuery(msg) {
   return 'general';
 }
 
-module.exports = { classifyQuery, getKBAnswer, getStudentPersonalDetails, translateText, AU_KB };
+module.exports = { classifyQuery, getKBAnswer, getStudentPersonalDetails, searchStudentRankDetails, translateText, AU_KB };

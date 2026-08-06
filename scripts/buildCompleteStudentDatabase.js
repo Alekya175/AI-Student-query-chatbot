@@ -18,22 +18,22 @@ async function main() {
   
   const res = await parser.getText();
   const cleanText = res.text.replace(/\r/g, '');
-  const lines = cleanText.split('\n');
+  const lines = cleanText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
   // 1. Extract 540 Students (Sl.No, Roll.No, Name, Section)
-  const studentMap = new Map(); // slNo -> studentObj
+  const studentList = [];
   let currentRoll = null;
   let currentSl = null;
   let currentNameBuffer = [];
   let currentSection = null;
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
+    const line = lines[i];
     const startMatch = line.match(/^(\d{1,3})\s+([0-9A-Z]{10})\b(.*)/i);
 
     if (startMatch) {
       if (currentRoll && currentSl) {
-        studentMap.set(parseInt(currentSl), {
+        studentList.push({
           slNo: parseInt(currentSl),
           regNo: currentRoll,
           name: currentNameBuffer.join(' ').replace(/\s+AIML\s+V\s+Semester.*/i, '').replace(/\s+/g, ' ').trim(),
@@ -52,7 +52,7 @@ async function main() {
         currentSection = secMatch[1];
         const namePart = line.replace(/AIML\s+V\s+Semester.*/i, '').trim();
         if (namePart) currentNameBuffer.push(namePart);
-        studentMap.set(parseInt(currentSl), {
+        studentList.push({
           slNo: parseInt(currentSl),
           regNo: currentRoll,
           name: currentNameBuffer.join(' ').replace(/\s+AIML\s+V\s+Semester.*/i, '').replace(/\s+/g, ' ').trim(),
@@ -68,7 +68,7 @@ async function main() {
 
   // Flush last student
   if (currentRoll && currentSl) {
-    studentMap.set(parseInt(currentSl), {
+    studentList.push({
       slNo: parseInt(currentSl),
       regNo: currentRoll,
       name: currentNameBuffer.join(' ').replace(/\s+AIML\s+V\s+Semester.*/i, '').replace(/\s+/g, ' ').trim(),
@@ -76,35 +76,26 @@ async function main() {
     });
   }
 
-  console.log(`Extracted basic profiles for ${studentMap.size} students.`);
+  console.log(`Extracted basic profiles for ${studentList.length} students.`);
 
-  // 2. Extract Email & Mobile & Rank (Pages 45-66)
-  const emailRegex = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
-  const mobileRegex = /\b([6-9]\d{9})\b/g;
-
-  // Extract all email occurrences in order
-  const allEmails = [];
-  const emailMatches = cleanText.matchAll(/([6-9]\d{9})\s+([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)\s+(EAMCET|ECET)?\s*(\d+)?/gi);
-  for (const m of emailMatches) {
-    allEmails.push({ mobile: m[1], email: m[2].toLowerCase(), rank: m[4] ? parseInt(m[4]) : 0 });
-  }
-
-  // Map extracted emails to student list sequentially
-  let emailIdx = 0;
-  for (const [slNo, s] of studentMap.entries()) {
-    if (emailIdx < allEmails.length) {
-      s.mobile = allEmails[emailIdx].mobile;
-      s.email = allEmails[emailIdx].email;
-      s.rank = allEmails[emailIdx].rank;
-      emailIdx++;
-    } else {
-      s.email = `${s.regNo.toLowerCase()}@adityauniversity.in`;
-      s.mobile = `98480${String(10000 + slNo).slice(-5)}`;
+  // 2. Extract Detail Rows (Mobile, Email, Entrance, Rank, HallTicketNo)
+  const detailRows = [];
+  for (const line of lines) {
+    const m = line.match(/([6-9]\d{9})\s+([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)\s*(EAMCET|ECET)?\s*(\d+)?\s*(\d+)?/i);
+    if (m) {
+      detailRows.push({
+        mobile: m[1],
+        email: m[2].toLowerCase(),
+        entranceType: m[3] ? m[3].toUpperCase() : 'EAMCET',
+        rank: m[4] ? parseInt(m[4]) : 0,
+        hallTicketNo: m[5] || ''
+      });
     }
   }
 
-  // 3. Build Full Rich Student Profiles
-  const fullStudents = [];
+  console.log(`Extracted ${detailRows.length} email detail rows.`);
+
+  // Tiered Matching: Match by Roll No in email -> Match by Name in email -> Match by SlNo position
   const sectionVenues = {
     '1': 'Bhaskar Bhavan Room 101 (First Floor)',
     '2': 'Bhaskar Bhavan Room 102 (First Floor)',
@@ -114,26 +105,45 @@ async function main() {
     '6': 'Bhaskar Bhavan Room 106 (First Floor)'
   };
 
-  for (const [slNo, s] of studentMap.entries()) {
+  const fullStudents = [];
+
+  for (let idx = 0; idx < studentList.length; idx++) {
+    const s = studentList[idx];
+    let matched = detailRows.find(d => d.email.includes(s.regNo.toLowerCase()));
+
+    if (!matched) {
+      const nameParts = s.name.toLowerCase().split(/\s+/).filter(p => p.length > 2);
+      matched = detailRows.find(d => nameParts.every(part => d.email.includes(part) || part.includes(d.email.split('@')[0])));
+    }
+
+    if (!matched && idx < detailRows.length) {
+      matched = detailRows[idx];
+    }
+
+    const e = matched || {};
     const venue = sectionVenues[s.section] || 'Bhaskar Bhavan Room 101';
-    
-    // Deterministic realistic scores based on SlNo
-    const baseCgpa = parseFloat((7.8 + (slNo % 22) * 0.09).toFixed(2));
-    const attPct = parseFloat((82.0 + (slNo % 15) * 1.1).toFixed(1));
+
+    const rankVal = e.rank || 0;
+    const baseCgpa = parseFloat((7.8 + (s.slNo % 22) * 0.09).toFixed(2));
+    const attPct = parseFloat((82.0 + (s.slNo % 15) * 1.1).toFixed(1));
     const totalCls = 320;
     const attCls = Math.round((attPct / 100) * totalCls);
-    const hasScholarship = (slNo % 3 === 0 || s.rank > 0 && s.rank < 50000);
+    const hasScholarship = (s.slNo % 3 === 0 || (rankVal > 0 && rankVal < 50000));
     const scholarshipAmt = hasScholarship ? 35000 : 0;
     const totalFee = 115000;
     const feePaid = totalFee - scholarshipAmt;
 
     const studentRecord = {
-      email: s.email,
+      email: (e.email || `${s.regNo.toLowerCase()}@adityauniversity.in`).toLowerCase().trim(),
       name: s.name,
       regNo: s.regNo,
       branch: 'Artificial Intelligence and Machine Learning (AI & ML)',
       section: `Section ${s.section}`,
       year: '3rd Year (V Semester)',
+      entranceType: e.entranceType || 'EAMCET',
+      rank: rankVal,
+      hallTicketNo: e.hallTicketNo || '',
+      mobile: e.mobile || '',
       cgpa: Math.min(baseCgpa, 9.8),
       attendance: {
         overallPercentage: Math.min(attPct, 98.5),
@@ -142,10 +152,10 @@ async function main() {
         classesAbsent: totalCls - attCls
       },
       marks: [
-        { subject: 'Deep Learning & Neural Networks', score: 45 + (slNo % 5), maxScore: 50, grade: 'O' },
-        { subject: 'Natural Language Processing', score: 42 + (slNo % 6), maxScore: 50, grade: 'A+' },
-        { subject: 'Generative AI & LLMs', score: 44 + (slNo % 5), maxScore: 50, grade: 'O' },
-        { subject: 'Cloud Computing & MLOps', score: 43 + (slNo % 6), maxScore: 50, grade: 'A+' }
+        { subject: 'Deep Learning & Neural Networks', score: 45 + (s.slNo % 5), maxScore: 50, grade: 'O' },
+        { subject: 'Natural Language Processing', score: 42 + (s.slNo % 6), maxScore: 50, grade: 'A+' },
+        { subject: 'Generative AI & LLMs', score: 44 + (s.slNo % 5), maxScore: 50, grade: 'O' },
+        { subject: 'Cloud Computing & MLOps', score: 43 + (s.slNo % 6), maxScore: 50, grade: 'A+' }
       ],
       feeDetails: {
         totalTuitionFee: totalFee,
@@ -167,7 +177,6 @@ async function main() {
   // 4. Save to data/students.json
   const studentsJsonPath = path.join(__dirname, '..', 'data', 'students.json');
   
-  // Preserve existing demo accounts student@aditya.edu and john.doe@aditya.edu
   let existingJson = [];
   try {
     if (fs.existsSync(studentsJsonPath)) {
@@ -179,33 +188,44 @@ async function main() {
   const mergedJson = [...demoAccounts];
 
   fullStudents.forEach(s => {
-    if (!mergedJson.some(e => e.email.toLowerCase() === s.email.toLowerCase() || e.regNo.toUpperCase() === s.regNo.toUpperCase())) {
+    const idx = mergedJson.findIndex(e => e.regNo.toUpperCase() === s.regNo.toUpperCase());
+    if (idx >= 0) {
+      mergedJson[idx] = s;
+    } else {
       mergedJson.push(s);
     }
+  });
+
+  // Ensure strict email uniqueness for MongoDB index
+  const seenEmails = new Set();
+  mergedJson.forEach(s => {
+    let lcEmail = (s.email || '').toLowerCase().trim();
+    if (!lcEmail || seenEmails.has(lcEmail)) {
+      lcEmail = `${s.regNo.toLowerCase()}@adityauniversity.in`;
+    }
+    let counter = 1;
+    let finalEmail = lcEmail;
+    while (seenEmails.has(finalEmail)) {
+      finalEmail = `${s.regNo.toLowerCase()}_${counter}@adityauniversity.in`;
+      counter++;
+    }
+    s.email = finalEmail;
+    seenEmails.add(finalEmail);
   });
 
   fs.writeFileSync(studentsJsonPath, JSON.stringify(mergedJson, null, 2), 'utf8');
   console.log(`Saved ${mergedJson.length} student records to data/students.json!`);
 
-  // 5. Upsert into MongoDB Student collection
+  // 5. Fresh ingestion into MongoDB Student collection
   try {
     await mongoose.connect(MONGO_URI);
-    console.log('[MongoDB Connected] Ingesting student records...');
-
-    let upsertCount = 0;
-    for (const student of mergedJson) {
-      await Student.findOneAndUpdate(
-        { $or: [{ email: student.email.toLowerCase() }, { regNo: student.regNo.toUpperCase() }] },
-        { $set: student },
-        { upsert: true, new: true }
-      );
-      upsertCount++;
-    }
-
-    console.log(`Successfully ingested and updated ${upsertCount} student records in MongoDB!`);
+    console.log('[MongoDB Connected] Resetting and populating student records...');
+    await Student.deleteMany({});
+    await Student.insertMany(mergedJson);
+    console.log(`Successfully inserted ${mergedJson.length} student records into MongoDB!`);
     await mongoose.disconnect();
   } catch (err) {
-    console.warn('[MongoDB Notice]: Could not connect to MongoDB, saved to local JSON:', err.message);
+    console.warn('[MongoDB Notice]: Could not insert:', err.message);
   }
 }
 

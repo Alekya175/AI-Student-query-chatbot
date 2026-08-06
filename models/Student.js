@@ -7,6 +7,10 @@ const StudentSchema = new mongoose.Schema({
   branch: { type: String, default: 'CSE (AI & ML)' },
   section: { type: String, default: 'Section A' },
   year: { type: String, default: '3rd Year' },
+  entranceType: { type: String, default: 'EAMCET' },
+  rank: { type: Number, default: 0 },
+  hallTicketNo: { type: String, default: '' },
+  mobile: { type: String, default: '' },
   cgpa: { type: Number, default: 8.92 },
   attendance: {
     overallPercentage: { type: Number, default: 88.5 },

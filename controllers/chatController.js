@@ -1,6 +1,6 @@
 const cacheService = require('../services/cacheService');
 const queueService = require('../services/queueService');
-const { classifyQuery, getKBAnswer, getStudentPersonalDetails, translateText } = require('../services/nlpEngine');
+const { classifyQuery, getKBAnswer, getStudentPersonalDetails, searchStudentRankDetails, translateText } = require('../services/nlpEngine');
 const KnowledgeBase = require('../models/KnowledgeBase');
 const Ticket = require('../models/Ticket');
 const Student = require('../models/Student');
@@ -28,7 +28,7 @@ exports.handleChat = async (req, res) => {
   let ticketCreated = null;
 
   // Strict personal query identifier
-  const isPersonalQuery = /\b(my attendance|my marks|my grade|my result|my score|my cgpa|my gpa|my fee|my balance|my dues|my profile|my detail|my info|who am i|my timetable|my class|my schedule|today's class|today class|internal marks|show my internal marks)\b/i.test(qLower);
+  const isPersonalQuery = /\b(my attendance|my marks|my grade|my result|my score|my cgpa|my gpa|my fee|my balance|my dues|my profile|my detail|my info|who am i|my timetable|my class|my schedule|today's class|today class|internal marks|show my internal marks|my eamcet|my rank|eamcet rank|my entrance|my hallticket|my hall ticket|my admission rank|my mobile|my phone)\b/i.test(qLower);
 
   // Issue / Complaint query identifier
   const isIssueQuery = classifyQuery(message) || /\b(report|complaint|complain|issue with|problem with|wifi is not working|overlap error|not credited|deducted but not|incorrect|wrongly marked)\b/i.test(qLower);
@@ -47,30 +47,44 @@ exports.handleChat = async (req, res) => {
     }
   }
 
-  // 2. High-Precision Knowledge Base & Intent Matcher (Only for Non-Personal Queries)
+  // 2. Student Personal Records Lookup (For explicit personal queries when logged in)
+  if (!reply && isPersonalQuery && user && user.role !== 'guest') {
+    const hasSpecificStudentQuery = /\b(24B11AI\d{3}|25B21AI\d{3}|25B61AI\d{3})\b/i.test(qLower) || (qLower.includes('of ') && !qLower.includes('of my'));
+    if (hasSpecificStudentQuery) {
+      const searchedRank = await searchStudentRankDetails(message, Student);
+      if (searchedRank) reply = searchedRank;
+    }
+
+    if (!reply) {
+      let studentRecord = null;
+      try {
+        const queryConds = [];
+        if (user.email) queryConds.push({ email: user.email.toLowerCase().trim() });
+        if (user.regNo) queryConds.push({ regNo: user.regNo.trim() });
+
+        if (queryConds.length > 0) {
+          studentRecord = await Student.findOne({ $or: queryConds }).lean().exec();
+        }
+      } catch (_) {}
+
+      const personalReply = getStudentPersonalDetails(user, message, studentRecord);
+      if (personalReply) reply = personalReply;
+    }
+  }
+
+  // 3. Specific Student Rank / Profile Search Engine (Search by name or Roll No)
+  if (!reply && /\b(rank|eamcet|ecet|hallticket|hall ticket)\b/i.test(qLower)) {
+    const studentSearchReply = await searchStudentRankDetails(message, Student);
+    if (studentSearchReply) reply = studentSearchReply;
+  }
+
+  // 4. High-Precision Knowledge Base & Intent Matcher (Only for Non-Personal Queries)
   if (!reply && !isPersonalQuery) {
     const nlpAnswer = getKBAnswer(message);
     if (nlpAnswer) reply = nlpAnswer;
   }
 
-  // 3. Student Personal Records Lookup (For explicit personal queries when logged in)
-  if (!reply && isPersonalQuery && user && user.role !== 'guest') {
-    let studentRecord = null;
-    try {
-      const queryConds = [];
-      if (user.email) queryConds.push({ email: user.email.toLowerCase().trim() });
-      if (user.regNo) queryConds.push({ regNo: user.regNo.trim() });
-
-      if (queryConds.length > 0) {
-        studentRecord = await Student.findOne({ $or: queryConds }).lean().exec();
-      }
-    } catch (_) {}
-
-    const personalReply = getStudentPersonalDetails(user, message, studentRecord);
-    if (personalReply) reply = personalReply;
-  }
-
-  // 4. Complaint Ticket Classifier & Enqueue (Logged-In Students Only)
+  // 5. Complaint Ticket Classifier & Enqueue (Logged-In Students Only)
   if (!reply && user && user.role !== 'guest' && user.email) {
     const category = classifyQuery(message);
     if (category) {
@@ -104,7 +118,7 @@ exports.handleChat = async (req, res) => {
     }
   }
 
-  // 5. MongoDB Inverted Index Full-Text Search Fallback
+  // 6. MongoDB Inverted Index Full-Text Search Fallback
   if (!reply) {
     try {
       const kbMatch = await KnowledgeBase.findOne({ $text: { $search: message } }).lean().exec();
@@ -112,7 +126,7 @@ exports.handleChat = async (req, res) => {
     } catch (_) {}
   }
 
-  // 6. Comprehensive Fallback Answer
+  // 7. Comprehensive Fallback Answer
   if (!reply) {
     reply = `Aditya University offers comprehensive programs across Engineering (B.Tech/M.Tech), Business (BBA/MBA), Pharmacy, Science, and Research.\n\n🏆 **Highest Placement:** ₹39.60 LPA (2025–2026)\n📍 **Location:** Surampalem, Kakinada District, AP\n📞 **Admissions Helpline:** +91 9989 776661 | info@adityauniversity.in`;
   }
@@ -122,13 +136,13 @@ exports.handleChat = async (req, res) => {
     cacheService.set(message, reply);
   }
 
-  // 7. Full Text Dynamic Neural Translation into Target Language
+  // 8. Full Text Dynamic Neural Translation into Target Language
   let translatedReply = reply;
   if (langCode && langCode !== 'en') {
     translatedReply = await translateText(reply, langCode);
   }
 
-  // 8. Async Non-Blocking Chat History Persistence to MongoDB
+  // 9. Async Non-Blocking Chat History Persistence to MongoDB
   setImmediate(async () => {
     try {
       await ChatHistory.findOneAndUpdate(
