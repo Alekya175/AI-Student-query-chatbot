@@ -9,7 +9,7 @@ const mongoose = require('mongoose');
 
 /**
  * Ultra-Fast High-Throughput Chat Controller
- * Sub-3ms response speed via LRU Cache + MongoDB Indexing & Neural Translation
+ * Implements Token Authentication & Student Privacy Guardrails (Step 1 - Step 6)
  */
 exports.handleChat = async (req, res) => {
   const startTime = Date.now();
@@ -27,19 +27,27 @@ exports.handleChat = async (req, res) => {
   let servedFromCache = false;
   let ticketCreated = null;
 
-  // Strict personal query identifier
+  // Strict personal query identifier (Step 3: Identify Student Queries)
   const isPersonalQuery = /\b(my attendance|my marks|my grade|my result|my score|my cgpa|my gpa|my fee|my balance|my dues|my profile|my detail|my info|who am i|my timetable|my class|my schedule|today's class|today class|internal marks|show my internal marks|my eamcet|my rank|eamcet rank|my entrance|my hallticket|my hall ticket|my admission rank|my mobile|my phone)\b/i.test(qLower);
 
   // Issue / Complaint query identifier
   const isIssueQuery = classifyQuery(message) || /\b(report|complaint|complain|issue with|problem with|wifi is not working|overlap error|not credited|deducted but not|incorrect|wrongly marked)\b/i.test(qLower);
 
+  // Step 5: Privacy Guardrail - Prevent querying other students' data
+  const targetRollMatch = qLower.match(/\b(24B11AI\d{3}|25B21AI\d{3}|25B61AI\d{3})\b/i);
+  const isQueryingAnotherStudent = targetRollMatch && user && user.role === 'student' && user.regNo && targetRollMatch[1].toUpperCase() !== user.regNo.toUpperCase();
+
+  if (isQueryingAnotherStudent && (isPersonalQuery || /\b(rank|eamcet|ecet|attendance|marks|cgpa|fee|timetable)\b/i.test(qLower))) {
+    reply = `🔒 **Authorization Notice**\n\nYou are authorized to view only your own academic information.`;
+  }
+
   // Guest Mode Restrictions: Guests CANNOT report issues or view personal records
-  if ((isPersonalQuery || isIssueQuery) && (!user || user.role === 'guest')) {
+  if (!reply && (isPersonalQuery || isIssueQuery) && (!user || user.role === 'guest')) {
     reply = `🔒 **Guest Mode Restriction**\n\nGuests cannot report issues, submit support tickets, or view personal student records.\n\nGuest Mode is designed for general university information (Admissions, Degree Programs, Placements, Hostel Facilities, Research, and Campus Leadership).\n\nTo report complaints, attendance issues, Wi-Fi faults, or fee payment errors, please **Log In** or **Sign Up** with your registered student account.`;
   }
 
   // 1. Instant LRU Cache Lookup (Sub-3ms Speed for General Queries)
-  if (!reply && !isPersonalQuery && !isIssueQuery) {
+  if (!reply && !isPersonalQuery && !isIssueQuery && !isQueryingAnotherStudent) {
     const cachedResponse = cacheService.get(message);
     if (cachedResponse) {
       reply = cachedResponse;
@@ -49,31 +57,23 @@ exports.handleChat = async (req, res) => {
 
   // 2. Student Personal Records Lookup (For explicit personal queries when logged in)
   if (!reply && isPersonalQuery && user && user.role !== 'guest') {
-    const hasSpecificStudentQuery = /\b(24B11AI\d{3}|25B21AI\d{3}|25B61AI\d{3})\b/i.test(qLower) || (qLower.includes('of ') && !qLower.includes('of my'));
-    if (hasSpecificStudentQuery) {
-      const searchedRank = await searchStudentRankDetails(message, Student);
-      if (searchedRank) reply = searchedRank;
-    }
+    let studentRecord = null;
+    try {
+      const queryConds = [];
+      if (user.email) queryConds.push({ email: user.email.toLowerCase().trim() });
+      if (user.regNo) queryConds.push({ regNo: user.regNo.trim() });
 
-    if (!reply) {
-      let studentRecord = null;
-      try {
-        const queryConds = [];
-        if (user.email) queryConds.push({ email: user.email.toLowerCase().trim() });
-        if (user.regNo) queryConds.push({ regNo: user.regNo.trim() });
+      if (queryConds.length > 0) {
+        studentRecord = await Student.findOne({ $or: queryConds }).lean().exec();
+      }
+    } catch (_) {}
 
-        if (queryConds.length > 0) {
-          studentRecord = await Student.findOne({ $or: queryConds }).lean().exec();
-        }
-      } catch (_) {}
-
-      const personalReply = getStudentPersonalDetails(user, message, studentRecord);
-      if (personalReply) reply = personalReply;
-    }
+    const personalReply = getStudentPersonalDetails(user, message, studentRecord);
+    if (personalReply) reply = personalReply;
   }
 
-  // 3. Specific Student Rank / Profile Search Engine (Search by name or Roll No)
-  if (!reply && /\b(rank|eamcet|ecet|hallticket|hall ticket)\b/i.test(qLower)) {
+  // 3. Specific Student Rank / Profile Search Engine (For Admins or authorized lookups)
+  if (!reply && /\b(rank|eamcet|ecet|hallticket|hall ticket)\b/i.test(qLower) && user && user.role === 'admin') {
     const studentSearchReply = await searchStudentRankDetails(message, Student);
     if (studentSearchReply) reply = studentSearchReply;
   }
@@ -132,7 +132,7 @@ exports.handleChat = async (req, res) => {
   }
 
   // Cache non-personal resolved answers for future sub-3ms speed
-  if (!isPersonalQuery && !isIssueQuery && reply) {
+  if (!isPersonalQuery && !isIssueQuery && !isQueryingAnotherStudent && reply) {
     cacheService.set(message, reply);
   }
 
