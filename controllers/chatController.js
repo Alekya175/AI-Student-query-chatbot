@@ -28,16 +28,16 @@ exports.handleChat = async (req, res) => {
   let ticketCreated = null;
 
   // Strict personal query identifier (Step 3: Identify Student Queries)
-  const isPersonalQuery = /\b(my attendance|my marks|my grade|my result|my score|my cgpa|my gpa|my fee|my balance|my dues|my profile|my detail|my info|who am i|my timetable|my class|my schedule|today's class|today class|internal marks|show my internal marks|my eamcet|my rank|eamcet rank|my entrance|my hallticket|my hall ticket|my admission rank|my mobile|my phone)\b/i.test(qLower);
+  const isPersonalQuery = /\b(my attendance|my marks|my grade|my result|my score|my cgpa|my gpa|my fee|my balance|my dues|my profile|my detail|my details|my info|my information|personal details|who am i|my timetable|my class|my schedule|today's class|today class|internal marks|show my internal marks|my eamcet|my rank|eamcet rank|my entrance|my hallticket|my hall ticket|my admission rank|my mobile|my phone)\b/i.test(qLower);
 
   // Issue / Complaint query identifier
   const isIssueQuery = classifyQuery(message) || /\b(report|complaint|complain|issue with|problem with|wifi is not working|overlap error|not credited|deducted but not|incorrect|wrongly marked)\b/i.test(qLower);
 
   // Step 5: Privacy Guardrail - Prevent querying other students' data
-  const targetRollMatch = qLower.match(/\b(24B11AI\d{3}|25B21AI\d{3}|25B61AI\d{3})\b/i);
+  const targetRollMatch = qLower.match(/\b(24B11AI\d{3}|25B21AI\d{3}|25B61AI\d{3}|25B11CS\d{3}|AUS26-\d{5}|[0-9]{2}[A-Z0-9]{8,10})\b/i);
   const isQueryingAnotherStudent = targetRollMatch && user && user.role === 'student' && user.regNo && targetRollMatch[1].toUpperCase() !== user.regNo.toUpperCase();
 
-  if (isQueryingAnotherStudent && (isPersonalQuery || /\b(rank|eamcet|ecet|attendance|marks|cgpa|fee|timetable)\b/i.test(qLower))) {
+  if (isQueryingAnotherStudent && (isPersonalQuery || /\b(rank|eamcet|ecet|attendance|marks|cgpa|fee|timetable|detail|details|info|profile)\b/i.test(qLower))) {
     reply = `🔒 **Authorization Notice**\n\nYou are authorized to view only your own academic information.`;
   }
 

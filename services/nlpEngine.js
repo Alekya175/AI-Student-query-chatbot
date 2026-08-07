@@ -282,7 +282,7 @@ function getStudentPersonalDetails(user, question, studentRecord) {
   if (!user || user.role === 'guest') return null;
   const q = question.toLowerCase();
 
-  const isPersonalQuery = /attendance|present|absent|percentage|mark|grade|result|score|mid|cgpa|gpa|fee balance|fee due|dues|my detail|my profile|timetable|schedule|class today|rank|eamcet|ecet|entrance|hallticket|hall ticket/.test(q);
+  const isPersonalQuery = /attendance|present|absent|percentage|mark|grade|result|score|mid|cgpa|gpa|fee balance|fee due|dues|detail|profile|info|information|personal|who am i|timetable|schedule|class today|rank|eamcet|ecet|entrance|hallticket|hall ticket/.test(q);
   if (!isPersonalQuery) return null;
 
   if (!studentRecord || !studentRecord.attendance) {
@@ -323,8 +323,10 @@ function getStudentPersonalDetails(user, question, studentRecord) {
     return `📅 **Today's Personal Class Timetable**\n\n👤 **Student:** ${name} (${regNo})\n\n${ttList || '• No classes scheduled for today'}`;
   }
 
-  if (/my detail|my profile|my info|my reg|who am i/.test(q)) {
-    return `👤 **Student Profile Details**\n\n• **Name:** ${name}\n• **Reg No:** ${regNo}\n• **Email:** ${user.email}\n• **Branch:** ${studentRecord.branch || 'N/A'}\n• **Batch:** ${studentRecord.year || 'N/A'}\n• **Overall CGPA:** ${studentRecord.cgpa || 'N/A'}\n• **Attendance:** ${studentRecord.attendance ? studentRecord.attendance.overallPercentage + '%' : 'N/A'}`;
+  if (/detail|profile|info|information|personal|who am i/.test(q)) {
+    const mob = studentRecord.mobile ? `\n• **Mobile:** +91 ${studentRecord.mobile}` : '';
+    const rankVal = studentRecord.rank ? `\n• **Entrance Rank:** ${studentRecord.rank.toLocaleString('en-IN')} (${studentRecord.entranceType || 'EAMCET'})` : '';
+    return `👤 **Student Profile & Academic Details**\n\n• **Name:** ${name}\n• **Reg No:** ${regNo}\n• **Email:** ${user.email}${mob}\n• **Branch:** ${studentRecord.branch || 'N/A'}\n• **Section:** ${studentRecord.section || 'N/A'}\n• **Semester / Year:** ${studentRecord.year || 'N/A'}${rankVal}\n• **Overall CGPA:** ${studentRecord.cgpa || 'N/A'}\n• **Attendance:** ${studentRecord.attendance ? studentRecord.attendance.overallPercentage + '%' : 'N/A'}`;
   }
 
   return null;
